@@ -4,7 +4,7 @@ import { gado } from "@/assets";
 import {
     Container
 } from './style'
-import { Header } from "../Header/Header";
+import { Header } from "../../components/Header/Header";
 
 export function Hero(){
     return (
