@@ -6,13 +6,12 @@ import {
 } from './style'
 import { Header } from "../Header/Header";
 
-export function HomeTemplate(){
+export function Hero(){
     return (
        <Container>
         <Header/>
         <div style={{position:'relative', width:'100%', height:'100vh'}}>
          <Image src={gado} alt="Foto de gado" layout='fill' objectFit='cover' />
-
         </div>
        </Container>
     )

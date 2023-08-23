@@ -1,7 +1,7 @@
-import { HomeTemplate } from '@/src/components'
+import { Hero } from "@/components"
 
 export default function Home() {
   return (
-    <HomeTemplate/>
+    <Hero/>
   )
 }
