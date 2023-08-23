@@ -8,4 +8,5 @@ export const Container = styled.div `
     background-color: white;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 `
