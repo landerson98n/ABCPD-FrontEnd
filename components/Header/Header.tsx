@@ -6,7 +6,7 @@ import { Button } from '../Button';
 export function Header(){
     return (
     <Container>
-        <div style={{paddingLeft:'4vw',display:'flex', justifyContent:'center', alignItems:'center'}}>
+        <div style={{width:'16vw',paddingLeft:'4vw',display:'flex', justifyContent:'center', alignItems:'center'}}>
             <div style={{ width:'4vw', height:'3vw'}}>
                 <Image src={logo} alt="Logo" layout='responsive' objectFit='contain' />
             </div>

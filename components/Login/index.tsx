@@ -15,12 +15,12 @@ export function Login(){
     return (
        <Container>
             <div style={{width:'100%', display:'flex', justifyContent:'center', flexDirection:'column', alignItems:'center'}}>
-                <div style={{position:'relative', width:'4vw', height:'3vw'}}>
-                    <Image src={logo} alt="Logo" layout='fill' objectFit='contain' />
+                <div style={{ width:'4vw', height:'3vw'}}>
+                    <Image src={logo} alt="Logo" layout='responsive' objectFit='contain' />
                 </div>
 
-                <div style={{position:'relative', width:'12vw', height:'6vw'}}>
-                    <Image src={logo2} alt="Logo" layout='fill' objectFit='contain' />
+                <div style={{ width:'12vw', height:'6vw'}}>
+                    <Image src={logo2} alt="Logo" layout='responsive' objectFit='contain' />
                 </div>
             </div>
 
