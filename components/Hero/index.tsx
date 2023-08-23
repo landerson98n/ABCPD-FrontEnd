@@ -58,7 +58,7 @@ export function Hero(){
 
 
         <Social>
-            <div style={{display:'flex', width:'40vw', paddingLeft:'4vw', alignItems:'initial', flexDirection:'column', paddingLeft:'10vw'}}>
+            <div style={{display:'flex', width:'40vw', alignItems:'initial', flexDirection:'column', paddingLeft:'10vw'}}>
                     <Text fontFamily="rob" size={"1.5vw"} text="Login" color="white" fontWeight="300"/>
                     <Text fontFamily="rob" size={"1.5vw"} text="Sobre" color="white" fontWeight="300"/>
                     <Text fontFamily="rob" size={"1.5vw"} text="Endereço" color="white" fontWeight="300"/>
