@@ -1,2 +1,2 @@
-import { Hero } from "../pages/Home/Hero";
-export {Hero}
+import { HomeTemplate } from "./HomeTemplate/HomeTemplate";
+export {HomeTemplate}

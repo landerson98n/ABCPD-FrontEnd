@@ -4,9 +4,9 @@ import { gado } from "@/assets";
 import {
     Container
 } from './style'
-import { Header } from "../../components/Header/Header";
+import { Header } from "../Header/Header";
 
-export function Hero(){
+export function HomeTemplate(){
     return (
        <Container>
         <Header/>
