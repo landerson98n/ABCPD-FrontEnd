@@ -32,7 +32,7 @@ export function Register(){
     const [pageThreeX, setPageThreeX] = useState(false)
     const [paymentX, setPaymentX] = useState(false)
     return (
-       <Container style={{backgroundColor: pageThreeX ? 'white' : '#E0E0E0', height: pageThreeX ? '40vw' :  ""}}>
+       <Container style={{backgroundColor: pageThreeX ? 'white' : '#E0E0E0', height: pageThreeX ? '40vw' : '260vw'}}>
         <Header page="Register" />
         <GreenBackground style={{display: pageThreeX ? 'none' : ''}}/>
 
@@ -359,7 +359,7 @@ export function Register(){
             <RegisterPainel>
                 <WhiteBackground width="80%" height="100vw">
                     <Content>
-                        <Button onClick={()=>{setPageTwoX(!pageTwoX)}} widthButton="10%" heightButton="3vw" colorButton="black" textButton="← "/>
+                        <Button onClick={()=>{setPageThreeX(!pageThreeX)}} widthButton="10%" heightButton="3vw" colorButton="black" textButton="← "/>
                         <div style={{marginLeft:'8vw'}}>
                         <Title>
                             <Text fontFamily="pop" size={"2vw"} text="Pagamento" color="black" fontWeight="600"/>
