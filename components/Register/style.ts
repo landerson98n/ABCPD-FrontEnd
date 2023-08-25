@@ -1,6 +1,7 @@
 'use client'
 
 import styled from "styled-components"
+import { motion } from "framer-motion"
 
 export const Container = styled.div `
     width: 100%;
@@ -21,7 +22,7 @@ export const GreenBackground = styled.div `
 
 export const RegisterPainel = styled.div `
     width: 100%;
-    height: 80vw;
+    height: 50vw;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -44,7 +45,7 @@ export const WhiteBackground = styled.div `
 
 export const Title = styled.div `
     width: 100%;
-    margin-top: 7vw;
+    margin-top: 6vw;
 `
 
 export const InputData = styled.div `
@@ -68,22 +69,23 @@ export const TitleContent = styled.div `
 export const Content = styled.div `
     width:100%;
 `
-export const ScreenOne = styled.div `
-    width:100%;
-    margin-top: -35vw;
-    position: absolute;
-`
-
-export const ScreenTwo = styled.div `
+export const ScreenOne = styled(motion.div) `
     width:100%;
     margin-top: -25vw;
     position: absolute;
+`
+
+export const ScreenTwo = styled(motion.div) `
+    width:100%;
+    margin-top: -15vw;
+    position: absolute;
+
     
 `
 
-export const ScreenThree = styled.div `
+export const ScreenThree = styled(motion.div)`
     width:100%;
-    margin-top: 40vw;
+    margin-top: 55vw;
     position: absolute;
 `
 
@@ -95,6 +97,7 @@ export const InputPlace = styled.div `
 export const InputPair = styled.div `
     display: flex;
     justify-content: space-between;
+    align-items: center;
 `
 
 export const ButtonPanel = styled.div `
@@ -116,6 +119,14 @@ export const GrayBackground = styled.div `
     border-bottom-left-radius: 0.5vw;
     border-bottom-right-radius: 0.5vw;
 `
-
-
+export const Payment = styled(motion.div) `
+    width:100%;
+    margin-top: 35vw;
+    position: absolute;
+`
+export const CreditCard = styled.div `
+   width:100%;
+   margin-bottom: 5vw;
+   display: flex;
+`
 

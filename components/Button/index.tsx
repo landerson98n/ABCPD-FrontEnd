@@ -9,14 +9,16 @@ interface ButtonProps{
     widthButton: string,
     heightButton: string,
     colorButton: string
-    textButton: string
+    textButton: string,
+    onClick?: ()=>void
 }
 
 export function Button(props: ButtonProps){
-    const {widthButton, heightButton, colorButton, textButton} = props
+    const {widthButton, heightButton, colorButton, textButton, onClick} = props
+    
     return (
-       <Container style={{width:`${widthButton}`, height:`${heightButton}`, backgroundColor: `${colorButton}`}}>
-        <Text fontFamily="pop" size={"1.5vw"} text={textButton} color="white" fontWeight="300"/>
+       <Container onClick={onClick} style={{width:`${widthButton}`, height:`${heightButton}`, backgroundColor: `${colorButton}`, cursor:"pointer"}}>
+            <Text fontFamily="pop" size={"1.2vw"} text={textButton} color="white" fontWeight="300"/>
        </Container>
     )
 }
