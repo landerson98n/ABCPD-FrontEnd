@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 
 export const Container = styled.div `
     width: 100%;
-    height:250vw;
+    height:260vw;
     background-color: #E0E0E0;
     flex-direction: column;
     overflow: hidden;

@@ -32,7 +32,7 @@ export function Register(){
     const [pageThreeX, setPageThreeX] = useState(false)
     const [paymentX, setPaymentX] = useState(false)
     return (
-       <Container style={{backgroundColor: pageThreeX ? 'white' : '', height: pageThreeX ? '40vw' : ''}}>
+       <Container style={{backgroundColor: pageThreeX ? 'white' : '#E0E0E0', height: pageThreeX ? '40vw' :  ""}}>
         <Header page="Register" />
         <GreenBackground style={{display: pageThreeX ? 'none' : ''}}/>
 
