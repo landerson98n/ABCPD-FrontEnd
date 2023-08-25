@@ -6,12 +6,13 @@ interface WhiteBackgroundProps{
     children: React.JSX.Element
     boxShadow?: string
     padding?: string
+    alignItems?: string
 }
 
 export function WhiteBackground(contenProps:WhiteBackgroundProps){
-    const {height, width, children, boxShadow, padding} = contenProps
+    const {height, width, children, boxShadow, padding, alignItems} = contenProps
     return(
-        <Container style={{height, width, boxShadow, padding} }>{children}</Container>
+        <Container style={{height, width, boxShadow, padding, alignItems} }>{children}</Container>
     )
 
 }

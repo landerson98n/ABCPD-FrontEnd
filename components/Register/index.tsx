@@ -417,7 +417,7 @@ export function Register(){
                                 </div>
                             </div>
 
-                            <WhiteBackground padding='3vw' boxShadow='0.1vw 0.1vw 0.6vw black' width="40%" height="15vw">
+                            <WhiteBackground alignItems="normal" padding='3vw' boxShadow='0.1vw 0.1vw 0.6vw black' width="40%" height="15vw">
                                 <div style={{width:'100%',display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
                                     <InputPair style={{alignItems:'center'}}>
                                         <div style={{width:'20%', display:'flex', justifyContent:'center', flexDirection:'column', alignItems:'center'}}>
