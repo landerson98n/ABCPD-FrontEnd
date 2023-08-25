@@ -13,10 +13,3 @@ export const Container = styled.div `
     padding:3vw
 `
 
-export const InputText = styled.input `
-    width: 100%;
-    height: 4vw;
-    background-color: white;
-    border-radius: 0.5vw;
-    border-color: black;
-`

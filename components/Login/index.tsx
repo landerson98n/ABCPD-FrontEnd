@@ -3,11 +3,11 @@ import Image from "next/image";
 
 import { logo, logo2 } from "@/assets";
 import {
-    Container, 
-    InputText
+    Container
 } from './style'
 import { Button } from "../Button";
 import { Poppins } from 'next/font/google'
+import { InputText } from "../InputText";
 
 const poppins = Poppins({weight:['300'], subsets:['latin']})
 

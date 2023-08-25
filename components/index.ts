@@ -1,3 +1,4 @@
-import { Hero } from "./Hero";
+import { InitialPage } from "./InitialPage";
 import { Login } from "./Login";
-export {Hero, Login}
+import { Register } from "./Register";
+export {InitialPage, Login,Register}

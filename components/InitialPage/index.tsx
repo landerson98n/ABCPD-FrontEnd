@@ -5,7 +5,7 @@ import {Text} from '../Text'
 import {
     Container,
     About,
-    Social,
+    GreenBackground,
     AboutSecond
 } from './style'
 import { Header } from "../Header/Header";
@@ -13,10 +13,10 @@ import { Login } from "..";
 import { Button } from "../Button";
 
 
-export function Hero(){
+export function InitialPage(){
     return (
        <Container>
-        <Header/>
+        <Header page="Home"/>
         <div style={{position:'relative', width:'100%', height:'50vw'}}>
             <Image src={gado} alt="Foto de gado" layout='fill' objectFit='cover' />
         </div>
@@ -33,7 +33,7 @@ export function Hero(){
             
         </About>
 
-        <Social>
+        <GreenBackground>
             <div style={{marginLeft:'10vw', width:'30vw'}}>
                     <Text fontFamily="pop" size={"1.8vw"} text={"A confiança dos nossos clientes é o mais importante."} color="white" fontWeight="600"/>
                     <Text fontFamily="pop" size={"1.4vw"} text={"Veja alguns depoimentos:"} color="white" fontWeight="200"/>
@@ -41,7 +41,7 @@ export function Hero(){
             <div style={{height:'30vw', width:'45vw', marginRight:'10vw', marginTop:'4vw'}}>
                 <Image src={social} alt="Foto de gado"  objectFit='cover' layout="responsive"/>
             </div>
-        </Social>
+        </GreenBackground>
 
     
         <AboutSecond>
@@ -57,7 +57,7 @@ export function Hero(){
         </AboutSecond>
 
 
-        <Social>
+        <GreenBackground>
             <div style={{display:'flex', width:'40vw', alignItems:'initial', flexDirection:'column', paddingLeft:'10vw'}}>
                     <Text fontFamily="rob" size={"1.5vw"} text="Login" color="white" fontWeight="300"/>
                     <Text fontFamily="rob" size={"1.5vw"} text="Sobre" color="white" fontWeight="300"/>
@@ -75,7 +75,7 @@ export function Hero(){
                 </div>
                 
             </div>
-        </Social>
+        </GreenBackground>
        </Container>
     )
 }

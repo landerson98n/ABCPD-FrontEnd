@@ -3,7 +3,15 @@ import Image from "next/image";
 import {logo, logo2} from '@/assets'
 import {Text} from '../Text'
 import { Button } from '../Button';
-export function Header(){
+
+interface HeaderProps{
+    page: string
+}
+
+
+export function Header(props: HeaderProps){
+    const {page} =  props
+
     return (
     <Container>
         <div style={{width:'16vw',paddingLeft:'4vw',display:'flex', justifyContent:'center', alignItems:'center'}}>
@@ -16,15 +24,15 @@ export function Header(){
             </div>
         </div>
            
- 
-        <div style={{display:'flex', justifyContent:'space-between', width:'40vw', paddingRight:'4vw', alignItems:'center'}}>
+        {page == 'Home' ? <div style={{display:'flex', justifyContent:'space-between', width:'40vw', paddingRight:'4vw', alignItems:'center'}}>
                 <Text fontFamily="pop" size={"1.5vw"} text="Sobre" color="black" fontWeight="300"/>
                 <Text fontFamily="pop" size={"1.5vw"} text="|" color="gray" fontWeight="300"/>
                 <Text fontFamily="pop" size={"1.5vw"} text="Depoimentos" color="black" fontWeight="300"/>
                 <Text fontFamily="pop" size={"1.5vw"} text="|" color="gray" fontWeight="300"/>
                 <Text fontFamily="pop" size={"1.5vw"} text="Contato" color="black" fontWeight="300"/>
-                <Button widthButton="9vw" heightButton="3.3vw" colorButton="green" textButton='Entrar'/>
-        </div>
+                <Button widthButton="9vw" heightButton="3.3vw" colorButton="green" textButton='Registre-se'/>
+        </div> : null}
+        
 
     </Container>)
 }   

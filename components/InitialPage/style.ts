@@ -16,7 +16,7 @@ export const About = styled.div `
     align-items: center;
     justify-content: center;
 `
-export const Social = styled.div `
+export const GreenBackground = styled.div `
     width: 100%;
     height: 30vw;
     background-color: green;

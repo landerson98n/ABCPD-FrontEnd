@@ -1,8 +1,8 @@
 'use client'
-import { Hero } from "@/components"
+import { Register } from "@/components"
 
 export default function Home() {
   return (
-    <Hero/>
+    <Register/>
   )
 }
