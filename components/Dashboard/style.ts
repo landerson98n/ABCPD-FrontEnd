@@ -30,7 +30,7 @@ export const Header = styled.div `
     justify-content: end;
 `
 
-export const Menu = styled.div `
+export const Menu = styled(motion.div) `
     width: 20%;
     height: 100%;
     background-color: green;

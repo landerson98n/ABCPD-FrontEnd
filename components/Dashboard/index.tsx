@@ -1,4 +1,4 @@
-import { Home, animal, animalBlue, arrowLeft, comunic, done, logo2Branca, logoBranca, user, waiting } from '@/assets'
+import { Home, animal, animalBlue, arrowLeft, comunic, done, hamb, logo2Branca, logoBranca, user, waiting } from '@/assets'
 import {
     Container,
     Menu,
@@ -24,36 +24,48 @@ export function Dashboard(){
     const [animalBasePage, setAnimalBasePage] = useState(false)
     const [comunicCoberturaPage, setComunicCoberturaPage] = useState(false)
     const [comunicNascPage, setComunicNascPage] = useState(false)
-
+    const [menu, setMenu] = useState(true)
     return (
     <Container>
        
-        <Menu>
-            <div style={{paddingTop:'5vw' ,width:'100%', display:'flex', justifyContent:'center', alignItems:'center'}}>
-                <div style={{ width:'4vw'}}>
-                    <Image src={logo2Branca} alt="Logo" layout='responsive' objectFit='contain' />
-                </div>
+        <Menu 
+             animate={{width:menu? '20%' : '5%'}} 
+             transition={{duration:0.5}}
+        >
+             <motion.div transition={{duration:0.5}} animate={{x:menu?'13vw':'1.5vw'}}  onClick={()=>{setMenu(!menu)}} style={{width:'100%', display:'flex', marginTop:'1vw'}}>
+                    <div style={{ width:'2vw'}}>
+                        <Image src={hamb} alt="Logo" layout='responsive' objectFit='contain' />
+                    </div>
+            </motion.div>
+            <motion.div transition={{duration:1}} animate={{x:menu?'0vw':'-20vw', opacity:menu?1:0}} style={{display:'flex',width:'96%', flexDirection:'column', justifyContent:'center'}}>
+                <div style={{paddingTop:'3vw' ,width:'100%', display:'flex', justifyContent:'center', alignItems:'center'}}>
+                    <div style={{ width:'4vw'}}>
+                        <Image src={logo2Branca} alt="Logo" layout='responsive' objectFit='contain' />
+                    </div>
 
-                <div style={{ width:'10vw'}}>
-                    <Image src={logoBranca} alt="Logo" layout='responsive' objectFit='contain' />
+                    <div style={{ width:'10vw'}}>
+                        <Image src={logoBranca} alt="Logo" layout='responsive' objectFit='contain' />
+                    </div>
                 </div>
-            </div>
-            <div style={{height:'20vw',display:'flex', justifyContent:'space-between', flexDirection:'column', marginTop:'3vw'}}>
-                <Button widthButton="16vw" widthImage='1.5vw' src={Home} heightButton="3.3vw" onClick={()=>{setInitialPage(true), setAnimalPage(false), setComunicPage(false),setAnimalBasePage(false), setComunicCoberturaPage(false), setComunicNascPage(false)}} colorButton={initialPage?"#032759":'green'} textButton="Pagina Inicial"/>
-                <Button widthButton="16vw" widthImage='1.5vw' src={animal} heightButton="3.3vw" onClick={()=>{setAnimalPage(true), setInitialPage(false), setComunicPage(false),setAnimalBasePage(false), setComunicCoberturaPage(false), setComunicNascPage(false)}} colorButton={animalPage?"#032759":'green'}  textButton="Animais"/>
-                <Button widthButton="16vw" widthImage='1.5vw' src={comunic} heightButton="3.3vw" onClick={()=>{setAnimalPage(false), setInitialPage(false), setComunicPage(true),setAnimalBasePage(false), setComunicCoberturaPage(false), setComunicNascPage(false)}}  colorButton={comunicPage?"#032759":'green'} textButton="Comunicações "/>
-                <DropdownMenu
-                    initial={{opacity:0}}
-                    animate={{y: comunicPage ? 0 : -50, opacity: comunicPage ? 1 : 0}} 
-                    transition={{duration:0.5}}
-                    style={{pointerEvents:`${comunicPage? 'auto': 'none'}`}}
-                >                                                               
-                    <Button marginRightImage='0.6vw' marginLeftImage={'0.6vw'} textSize='0.9vw' textColor={animalBasePage?'white':"#032759"} widthButton="100%" widthImage='0.5vw' src={arrowLeft} heightButton="3.3vw" onClick={()=>{setAnimalBasePage(true), setComunicCoberturaPage(false), setComunicNascPage(false), setInitialPage(false), setAnimalPage(false)}} colorButton={animalBasePage?"#032759":'white'} textButton="Registrar Animais Base"/>
-                    <Button marginRightImage='0.6vw' marginLeftImage={'0.6vw'} textSize='0.9vw' textColor={comunicCoberturaPage?'white':"#032759"} widthButton="100%" widthImage='0.5vw' src={arrowLeft} heightButton="3.3vw" onClick={()=>{setAnimalBasePage(false), setComunicCoberturaPage(true), setComunicNascPage(false),setInitialPage(false), setAnimalPage(false)}} colorButton={comunicCoberturaPage?"#032759":'white'}  textButton="Comunicações de Cobertura"/>
-                    <Button marginRightImage='0.6vw' marginLeftImage={'0.6vw'} textSize='0.9vw' textColor={comunicNascPage?'white':"#032759"} widthButton="100%" widthImage='0.5vw' src={arrowLeft} heightButton="3.3vw" onClick={()=>{setAnimalBasePage(false), setComunicCoberturaPage(false), setComunicNascPage(true),setInitialPage(false), setAnimalPage(false)}} colorButton={comunicNascPage?"#032759":'white'}  textButton="Comunicações de Nascimento"/>
+                
+                <div style={{height:'20vw',display:'flex', justifyContent:'space-between', flexDirection:'column', marginTop:'3vw'}}>
+                    <Button widthButton="16vw" widthImage='1.5vw' src={Home} heightButton="3.3vw" onClick={()=>{setInitialPage(true), setAnimalPage(false), setComunicPage(false),setAnimalBasePage(false), setComunicCoberturaPage(false), setComunicNascPage(false)}} colorButton={initialPage?"#032759":'green'} textButton="Pagina Inicial"/>
+                    <Button widthButton="16vw" widthImage='1.5vw' src={animal} heightButton="3.3vw" onClick={()=>{setAnimalPage(true), setInitialPage(false), setComunicPage(false),setAnimalBasePage(false), setComunicCoberturaPage(false), setComunicNascPage(false)}} colorButton={animalPage?"#032759":'green'}  textButton="Animais"/>
+                    <Button widthButton="16vw" widthImage='1.5vw' src={comunic} heightButton="3.3vw" onClick={()=>{setAnimalPage(false), setInitialPage(false), setComunicPage(true),setAnimalBasePage(false), setComunicCoberturaPage(false), setComunicNascPage(false)}}  colorButton={comunicPage?"#032759":'green'} textButton="Comunicações "/>
+                    <DropdownMenu
+                        initial={{opacity:0}}
+                        animate={{y: comunicPage ? 0 : -50, opacity: comunicPage ? 1 : 0}} 
+                        transition={{duration:0.5}}
+                        style={{pointerEvents:`${comunicPage? 'auto': 'none'}`}}
+                    >                                                               
+                        <Button marginRightImage='0.6vw' marginLeftImage={'0.6vw'} textSize='0.9vw' textColor={animalBasePage?'white':"#032759"} widthButton="100%" widthImage='0.5vw' src={arrowLeft} heightButton="3.3vw" onClick={()=>{setAnimalBasePage(true), setComunicCoberturaPage(false), setComunicNascPage(false), setInitialPage(false), setAnimalPage(false)}} colorButton={animalBasePage?"#032759":'white'} textButton="Registrar Animais Base"/>
+                        <Button marginRightImage='0.6vw' marginLeftImage={'0.6vw'} textSize='0.9vw' textColor={comunicCoberturaPage?'white':"#032759"} widthButton="100%" widthImage='0.5vw' src={arrowLeft} heightButton="3.3vw" onClick={()=>{setAnimalBasePage(false), setComunicCoberturaPage(true), setComunicNascPage(false),setInitialPage(false), setAnimalPage(false)}} colorButton={comunicCoberturaPage?"#032759":'white'}  textButton="Comunicações de Cobertura"/>
+                        <Button marginRightImage='0.6vw' marginLeftImage={'0.6vw'} textSize='0.9vw' textColor={comunicNascPage?'white':"#032759"} widthButton="100%" widthImage='0.5vw' src={arrowLeft} heightButton="3.3vw" onClick={()=>{setAnimalBasePage(false), setComunicCoberturaPage(false), setComunicNascPage(true),setInitialPage(false), setAnimalPage(false)}} colorButton={comunicNascPage?"#032759":'white'}  textButton="Comunicações de Nascimento"/>
 
-                </DropdownMenu>
-            </div>
+                    </DropdownMenu>
+                </div>
+            </motion.div>
+           
             
         </Menu>
 

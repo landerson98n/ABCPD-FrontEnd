@@ -20,5 +20,5 @@ import animalBlue from './animalBlue.svg'
 import done from './done.svg'
 import waiting from './waiting.svg'
 import arrowLeft from './Shape.svg'
-
-export {arrowLeft, done,waiting,animalBlue,user, Home,animal,comunic,boleto,card,pix, cartao, social,gado, logo, logo2, fundoLogin,touros,fundo2, vaca, logoBranca, logo2Branca}
+import hamb from './hamburguer.svg'
+export {hamb, arrowLeft, done,waiting,animalBlue,user, Home,animal,comunic,boleto,card,pix, cartao, social,gado, logo, logo2, fundoLogin,touros,fundo2, vaca, logoBranca, logo2Branca}
