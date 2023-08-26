@@ -1,8 +1,8 @@
 'use client'
-import { Register } from "@/components"
+import { Dashboard } from "@/components"
 
 export default function Home() {
   return (
-    <Register/>
+    <Dashboard/>
   )
 }

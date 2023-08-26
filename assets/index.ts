@@ -12,5 +12,13 @@ import cartao from './cartao.svg'
 import pix from './pix.svg'
 import card from './card.svg'
 import boleto from './boleto.png'
+import Home from './Home.svg'
+import animal from './animal.svg'
+import comunic from './comunic.svg'
+import user from './user.svg'
+import animalBlue from './animalBlue.svg'
+import done from './done.svg'
+import waiting from './waiting.svg'
+import arrowLeft from './Shape.svg'
 
-export {boleto,card,pix, cartao, social,gado, logo, logo2, fundoLogin,touros,fundo2, vaca, logoBranca, logo2Branca}
+export {arrowLeft, done,waiting,animalBlue,user, Home,animal,comunic,boleto,card,pix, cartao, social,gado, logo, logo2, fundoLogin,touros,fundo2, vaca, logoBranca, logo2Branca}

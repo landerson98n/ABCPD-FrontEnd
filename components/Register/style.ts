@@ -115,7 +115,7 @@ export const GrayBackground = styled.div `
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0.1vw 0.1vw 0.6vw black;
+    box-shadow: 0.1vw 0.1vw 0.6vw #D6D6D6;
     border-bottom-left-radius: 0.5vw;
     border-bottom-right-radius: 0.5vw;
 `

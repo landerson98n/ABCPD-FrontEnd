@@ -10,5 +10,5 @@ export const Container = styled.div `
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
-    box-shadow: 0.1vw 0.1vw 0.6vw black;
+    box-shadow: 0.1vw 0.1vw 0.6vw #D6D6D6;
 `
