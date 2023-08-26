@@ -29,15 +29,16 @@ export function Dashboard(){
     <Container>
        
         <Menu 
+             initial={{width:'20%'}}
              animate={{width:menu? '20%' : '5%'}} 
              transition={{duration:0.5}}
         >
-             <motion.div transition={{duration:0.5}} animate={{x:menu?'13vw':'1.5vw'}}  onClick={()=>{setMenu(!menu)}} style={{width:'100%', display:'flex', marginTop:'1vw'}}>
+             <motion.div initial={{x:'13vw'}} transition={{duration:0.5}} animate={{x:menu?'13vw':'1.5vw'}}  onClick={()=>{setMenu(!menu)}} style={{width:'100%', display:'flex', marginTop:'1vw'}}>
                     <div style={{ width:'2vw'}}>
                         <Image src={hamb} alt="Logo" layout='responsive' objectFit='contain' />
                     </div>
             </motion.div>
-            <motion.div transition={{duration:1}} animate={{x:menu?'0vw':'-20vw', opacity:menu?1:0}} style={{display:'flex',width:'96%', flexDirection:'column', justifyContent:'center'}}>
+            <motion.div initial={{x:'0vw'}} transition={{duration:1}} animate={{x:menu?'0vw':'-20vw', opacity:menu?1:0}} style={{display:'flex',width:'96%', flexDirection:'column', justifyContent:'center'}}>
                 <div style={{paddingTop:'3vw' ,width:'100%', display:'flex', justifyContent:'center', alignItems:'center'}}>
                     <div style={{ width:'4vw'}}>
                         <Image src={logo2Branca} alt="Logo" layout='responsive' objectFit='contain' />
