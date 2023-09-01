@@ -8,7 +8,11 @@ import {
     Table,
     TableHeader,
     TableContent,
-    DropdownMenu
+    DropdownMenu,
+    RegistroAnimalBase,
+    ComunicCobertura,
+    InputPlace,
+    ComunicNascimento
 } from './style'
 import Image from "next/image";
 import { Button } from '../Button';
@@ -16,6 +20,7 @@ import { Text } from '../Text';
 import { InputText } from '../InputText';
 import { useState } from 'react';
 import { motion } from "framer-motion"
+import { SelectBox } from '../SelectBox';
 
 export function Dashboard(){
     const [animalPage, setAnimalPage] = useState(false)
@@ -35,17 +40,18 @@ export function Dashboard(){
         >
              <motion.div initial={{x:'13vw'}} transition={{duration:0.5}} animate={{x:menu?'13vw':'1.5vw'}}  onClick={()=>{setMenu(!menu)}} style={{width:'100%', display:'flex', marginTop:'1vw'}}>
                     <div style={{ width:'2vw'}}>
-                        <Image src={hamb} alt="Logo" layout='responsive' objectFit='contain' />
+                        <Image src={hamb} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                     </div>
             </motion.div>
-            <motion.div initial={{x:'0vw'}} transition={{duration:1}} animate={{x:menu?'0vw':'-20vw', opacity:menu?1:0}} style={{display:'flex',width:'96%', flexDirection:'column', justifyContent:'center'}}>
+
+            <motion.div initial={{x:'0vw'}} transition={{duration:0.7}} animate={{x:menu?'0vw':'-20vw', opacity:menu?1:0}} style={{display:menu?'flex':'none',width:'96%', flexDirection:'column', justifyContent:'center'}}>
                 <div style={{paddingTop:'3vw' ,width:'100%', display:'flex', justifyContent:'center', alignItems:'center'}}>
                     <div style={{ width:'4vw'}}>
-                        <Image src={logo2Branca} alt="Logo" layout='responsive' objectFit='contain' />
+                        <Image src={logo2Branca} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                     </div>
 
                     <div style={{ width:'10vw'}}>
-                        <Image src={logoBranca} alt="Logo" layout='responsive' objectFit='contain' />
+                        <Image src={logoBranca} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                     </div>
                 </div>
                 
@@ -71,10 +77,11 @@ export function Dashboard(){
         </Menu>
 
         <Content>
+            
             <Header>
                 <div style={{marginRight:'3vw', display:'flex'}}>
                     <div style={{width:'4vw'}}>
-                        <Image src={user} alt="Logo" layout='responsive' objectFit='contain' />
+                        <Image src={user} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                     </div>
                     <Text fontFamily="pop" size={"1.5vw"} text="João da Silva Santos" color="black" fontWeight="600"/>
                 </div>
@@ -96,7 +103,7 @@ export function Dashboard(){
                 style={{display:`${animalPage? 'block': 'none'}`,pointerEvents:`${animalPage? 'auto': 'none'}`}}
             >
                 <div style={{width:'4vw'}}>
-                    <Image src={animalBlue} alt="Logo" layout='responsive' objectFit='contain' />
+                    <Image src={animalBlue} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                 </div>
                 <Text fontFamily="pop" size={"1.5vw"} text="Todos os Animais do Criador" color="black" fontWeight="600"/>
 
@@ -186,6 +193,154 @@ export function Dashboard(){
                 </Table>
             </Animals>
 
+            <RegistroAnimalBase
+                initial={{opacity:0}}
+                animate={{y: animalBasePage ? 0 : -50, opacity: animalBasePage ? 1 : 0}} 
+                transition={{duration:0.5}}
+                style={{display:`${animalBasePage? 'flex': 'none'}`,pointerEvents:`${animalBasePage? 'auto': 'none'}`}}
+            > 
+                <div style={{width:'10vw'}}>
+                    <Image src={animalBlue} alt='logoAnimal' style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}/>
+                </div>
+                <Text text='Solicitação de Registro de Animais Base | ABCPD' fontFamily='pop' fontWeight='700' size='2vw' color='#032759' />
+                <Text text='Técnico' fontFamily='rob' fontWeight='400' size='2vw' color='#032759' />
+                <SelectBox width='31.5vw'/>
+
+                <Text text='Quantidade de Animais Base' fontFamily='rob' fontWeight='400' size='2vw' color='#032759' />
+                <InputText width='30vw' type='number'/>
+                <div style={{display:'flex', marginTop:'1vw', justifyContent:'space-between', width:'28%', marginLeft:'10vw'}}>
+                    <Button colorButton='#032759' heightButton='2vw'  textButton='← Voltar' widthButton='7vw' textColor='white'/>
+                    <Button colorButton='green' heightButton='2vw' textButton='Criar Solicitação' widthButton='13vw' textColor='white'/>
+                </div>
+            </RegistroAnimalBase>
+
+            <ComunicCobertura
+                initial={{opacity:0}}
+                animate={{y: comunicCoberturaPage ? 0 : -50, opacity: comunicCoberturaPage ? 1 : 0}} 
+                transition={{duration:0.5}}
+                style={{display:`${comunicCoberturaPage? 'flex': 'none'}`,pointerEvents:`${comunicCoberturaPage? 'auto': 'none'}`}}
+            >
+            <div style={{width:'10vw'}}>
+                <Image src={animalBlue} alt='logoAnimal' style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}/>
+            </div>
+            <Text text='Comunicação de Cobertura | ABCPD' fontFamily='pop' fontWeight='700' size='1.8vw' color='#032759' />
+            <InputPlace>
+                <Text fontFamily="pop" size={"1.5vw"} text="Nome  da Cobertura" color="black" fontWeight="300"/>
+                <InputText border="solid 0.2vw black"/>
+            </InputPlace>
+
+            <InputPlace>
+                <Text fontFamily="pop" size={"1.5vw"} text="Fazenda de Cobertura" color="black" fontWeight="300"/>
+                    <InputText border="solid 0.2vw black"/>
+                </InputPlace>
+
+            <InputPlace>
+                <Text fontFamily="pop" size={"1.5vw"} text="Animal Reprodutor" color="black" fontWeight="300"/>
+                <InputText border="solid 0.2vw black"/>
+            </InputPlace>
+
+            <InputPlace>
+                <Text fontFamily="pop" size={"1.5vw"} text="Animal Matriz" color="black" fontWeight="300"/>
+                <InputText border="solid 0.2vw black"/>
+            </InputPlace>
+
+            <InputPlace>
+                <Text fontFamily="pop" size={"1.5vw"} text="Tipo de Cobertura" color="black" fontWeight="300"/>
+                <InputText border="solid 0.2vw black"/>
+            </InputPlace>
+
+            <InputPlace>
+                <Text fontFamily="pop" size={"1.5vw"} text="Data de Cobertura" color="black" fontWeight="300"/>
+                <InputText border="solid 0.2vw black"/>
+            </InputPlace>
+
+            <InputPlace>
+                <Text fontFamily="pop" size={"1.5vw"} text="Observações" color="black" fontWeight="300"/>
+                <InputText border="solid 0.2vw black"/>
+            </InputPlace>
+
+            <div style={{display:'flex', marginTop:'1vw', justifyContent:'space-between', width:'28%', marginLeft:'34vw', marginBottom:'10vw'}}>
+                    <Button colorButton='#032759' heightButton='2vw'  textButton='← Voltar' widthButton='7vw' textColor='white'/>
+                    <Button colorButton='green' heightButton='2vw' textButton='Fazer pagamento' widthButton='13vw' textColor='white'/>
+            </div>
+            </ComunicCobertura>
+
+
+            <ComunicNascimento
+                initial={{opacity:0}}
+                animate={{y: comunicNascPage ? 0 : -50, opacity: comunicNascPage ? 1 : 0}} 
+                transition={{duration:0.5}}
+                style={{display:`${comunicNascPage? 'block': 'none'}`,pointerEvents:`${comunicNascPage ? 'auto': 'none'}`}}
+            >
+                <div style={{width:'4vw'}}>
+                    <Image src={animalBlue} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
+                </div>
+                <Text fontFamily="pop" size={"1.5vw"} text="Todos os Animais do Criador" color="black" fontWeight="600"/>
+
+                <div style={{width:'30%'}}>
+                    <InputText fontSize='1.2vw' placeholder="Buscar" height="3vw" border='solid 1px rgba(103, 97, 97, 0.5)' borderRight='solid 1px rgba(103, 97, 97, 0.5)' borderLeft='solid 1px rgba(103, 97, 97, 0.5)' borderTop='solid 1px rgba(103, 97, 97, 0.5)' borderColor='rgba(103, 97, 97, 0.5)'/>
+                </div>
+               
+
+                <Table>
+                    <TableHeader>
+                        <th>
+                            <Text textAlign='center' fontFamily="rob" size={"1.3vw"} text="Data da Comunicação" color="black" fontWeight="400"/>
+                        </th>
+                        <th>
+                            <Text textAlign='center' fontFamily="rob" size={"1.3vw"} text="Reprodutor" color="black" fontWeight="400"/>
+
+                        </th>
+                        <th>
+                        <Text textAlign='center' fontFamily="rob" size={"1.3vw"} text="Matriz" color="black" fontWeight="400"/>
+
+                        </th>
+                        <th>
+                        <Text textAlign='center'  fontFamily="rob" size={"1.3vw"} text="Tipo de Cobertura" color="black" fontWeight="400"/>
+
+                        </th>
+                        <th>
+                        <Text  textAlign='center' fontFamily="rob" size={"1.1vw"} text="Status" color="black" fontWeight="400"/>
+
+                        </th>
+                        <th>
+                        <Text textAlign='center' fontFamily="rob" size={"1.1vw"} text="Opções" color="black" fontWeight="400"/>
+                        </th>
+                    </TableHeader>
+
+                    <TableContent>
+                        <td>
+                        <Text textAlign='center' fontFamily="rob" size={"1vw"} text="15 de Março de 2023 " color="black" fontWeight="400"/>
+
+                        </td>
+                        <td>
+                        <Text textAlign='center' fontFamily="rob" size={"1vw"} text="Benedito" color="black" fontWeight="400"/>
+            
+                        </td>
+                        <td>
+                        <Text  textAlign='center' fontFamily="rob" size={"1vw"} text="Angus" color="black" fontWeight="400"/>
+
+                        </td>
+                        <td>
+                        <Text textAlign='center' fontFamily="rob" size={"1vw"} text="JMonta Natural" color="black" fontWeight="400"/>
+
+                        </td>
+                        <td>
+                        <Text textAlign='center' fontFamily="rob" size={"1vw"} src={done} widthImage='1.5vw' text="Registrado" color="green" fontWeight="400"/>
+
+                        </td>
+                        <td>
+                            <Text textAlign='center' fontFamily="rob" size={"1vw"} src={waiting} widthImage='1.5vw' text="Em análise" color="black" fontWeight="400"/>
+                        </td>
+                    </TableContent> 
+                    
+                </Table>
+
+                <div style={{display:'flex', marginTop:'15vw', justifyContent:'space-between', width:'30%', marginLeft:'54vw'}}>
+                    <Button colorButton='#032759' heightButton='2vw'  textButton='← Voltar' widthButton='7vw' textColor='white'/>
+                    <Button colorButton='green' heightButton='2vw' textButton='Comunicar Nascimento' widthButton='15vw' textColor='white'/>
+                </div>
+            </ComunicNascimento>
         </Content>
 
     </Container>

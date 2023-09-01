@@ -16,11 +16,11 @@ export function Login(){
        <Container>
             <div style={{width:'100%', display:'flex', justifyContent:'center', flexDirection:'column', alignItems:'center'}}>
                 <div style={{ width:'4vw', height:'3vw'}}>
-                    <Image src={logo} alt="Logo" layout='responsive' objectFit='contain' />
+                    <Image src={logo} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                 </div>
 
                 <div style={{ width:'12vw', height:'6vw'}}>
-                    <Image src={logo2} alt="Logo" layout='responsive' objectFit='contain' />
+                    <Image src={logo2} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                 </div>
             </div>
 

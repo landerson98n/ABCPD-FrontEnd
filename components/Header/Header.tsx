@@ -16,11 +16,11 @@ export function Header(props: HeaderProps){
     <Container>
         <div style={{width:'16vw',paddingLeft:'4vw',display:'flex', justifyContent:'center', alignItems:'center'}}>
             <div style={{ width:'4vw', height:'3vw'}}>
-                <Image src={logo} alt="Logo" layout='responsive' objectFit='contain' />
+                <Image src={logo} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
             </div>
 
             <div style={{ width:'12vw', height:'4vw'}}>
-                <Image src={logo2} alt="Logo" layout='responsive' objectFit='contain' />
+                <Image src={logo2} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
             </div>
         </div>
            

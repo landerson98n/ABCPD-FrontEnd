@@ -378,13 +378,13 @@ export function Register(){
                                     <InputPair style={{width:'72%'}}>
                                         <InputText width="2vw" type="radio"/>
                                         <div style={{width:'5vw'}}>
-                                            <Image src={cartao} alt="cartao" layout='responsive' objectFit='contain' />
+                                            <Image src={cartao} alt="cartao" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                                         </div>
                                         <Text fontFamily="pop" size={"1.4vw"} text="Cartão Credito/Debito" color="black" fontWeight="600"/>
                                     </InputPair>
 
                                     <div style={{width:'25vw', marginTop:'2vw', marginLeft:'5vw'}}>
-                                        <Image src={card} alt="cartao" layout='responsive' objectFit='contain' />
+                                        <Image src={card} alt="cartao" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                                     </div>
 
                                     <Title style={{marginLeft:'5vw'}}>
@@ -425,11 +425,11 @@ export function Register(){
                                         <InputPair style={{alignItems:'center'}}>
                                             <div style={{width:'20%', display:'flex', justifyContent:'center', flexDirection:'column', alignItems:'center'}}>
                                                 <div style={{ width:'3vw'}}>
-                                                    <Image src={logo} alt="Logo" layout='responsive' objectFit='contain' />
+                                                    <Image src={logo} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                                                 </div>
 
                                                 <div style={{ width:'7vw'}}>
-                                                    <Image src={logo2} alt="Logo" layout='responsive' objectFit='contain' />
+                                                    <Image src={logo2} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                                                 </div>
                                             </div> 
 
@@ -459,7 +459,7 @@ export function Register(){
                             <InputPair style={{width:'20.5%'}}>
                                 <InputText width="2vw" type="radio"/>
                                 <div style={{width:'5vw'}}>
-                                    <Image src={pix} alt="pix" layout='responsive' objectFit='contain' />
+                                    <Image src={pix} alt="pix" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
                                 </div>
                                 <Text fontFamily="pop" size={"2vw"} text="PIX" color="black" fontWeight="600"/>
                             </InputPair>
@@ -467,7 +467,7 @@ export function Register(){
                             <InputPair style={{width:'24.5%'}}>
                                 <InputText width="2vw" type="radio"/>
                                 <div style={{width:'5vw'}}>
-                                    <Image src={boleto} alt="boleto" layout='responsive' objectFit='contain' />
+                                    <Image src={boleto} alt="boleto" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  />
 
                                 </div>
                                 <Text fontFamily="pop" size={"2vw"} text="Boleto" color="black" fontWeight="600"/>

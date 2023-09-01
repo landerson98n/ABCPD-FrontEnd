@@ -25,7 +25,7 @@ export function Text(props: TextProps){
         <>  
             {src? <div style={{width:'100%',display:'flex', alignItems:'center', justifyContent:'center'}}>
                 <div style={{width:`${widthImage}`, marginTop:'0.3vw'}}>
-                    <Image src={src} alt="Logo" layout='responsive' objectFit='contain' /> 
+                    <Image src={src} alt="Logo" style={{ width: '100%', height: 'auto' ,objectFit: 'cover'}}  /> 
                 </div>
                 <h1 style={{fontSize:`${size}`, color, fontWeight, textAlign:`${textAlign ? textAlign : 'justify'}`}} className={fontFamily == 'pop' ? poppins.className : roboto.className}>{text}</h1>
             </div> :   <h1 style={{fontSize:`${size}`, color, fontWeight, textAlign:`${textAlign ? textAlign : 'justify'}`}} className={fontFamily == 'pop' ? poppins.className : roboto.className}>{text}</h1>

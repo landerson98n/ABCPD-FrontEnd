@@ -11,6 +11,30 @@ export const Container = styled.div `
     overflow-y: hidden;
     display: flex;
 `
+
+export const RegistroAnimalBase = styled(motion.div) `
+    width: 90%;
+    height: 90%;
+    background-color: white;
+    margin-top: 2vw;
+    flex-direction: column;
+    align-items: center;
+`
+export const ComunicCobertura = styled(motion.div) `
+    width: 90%;
+    height: 90%;
+    background-color: white;
+    margin-top: 2vw;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+`
+
+export const InputPlace = styled.div `
+    width:70%;
+`
+
+
 export const Content = styled.div `
     width: 100%;
     display: flex;
@@ -45,6 +69,14 @@ export const Animals = styled(motion.div) `
     background-color: white;
     margin-top: 2vw;
 `
+export const ComunicNascimento = styled(motion.div) `
+    width: 90%;
+    height: 90%;
+    background-color: white;
+    margin-top: 2vw;
+`
+
+
 export const Table = styled.table `
     width: 100%;
     height: 20%;
