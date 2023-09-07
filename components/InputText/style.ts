@@ -11,4 +11,5 @@ export const Input = styled.input `
     font-size: 1.7vw;
     padding-left: 1vw;
     outline: none;
+    display: flex;
 `

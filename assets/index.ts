@@ -21,4 +21,10 @@ import done from './done.svg'
 import waiting from './waiting.svg'
 import arrowLeft from './Shape.svg'
 import hamb from './hamburguer.svg'
-export {hamb, arrowLeft, done,waiting,animalBlue,user, Home,animal,comunic,boleto,card,pix, cartao, social,gado, logo, logo2, fundoLogin,touros,fundo2, vaca, logoBranca, logo2Branca}
+import search from './search.svg'
+import seta from './seta.svg'
+import boi from './boiExample.svg'
+import add from './add.svg'
+import group from './group.svg'
+
+export {group,add,boi,seta,search,hamb, arrowLeft, done,waiting,animalBlue,user, Home,animal,comunic,boleto,card,pix, cartao, social,gado, logo, logo2, fundoLogin,touros,fundo2, vaca, logoBranca, logo2Branca}

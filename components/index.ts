@@ -1,6 +1,7 @@
 import { InitialPage } from "./InitialPage";
 import { Login } from "./Login";
 import { Register } from "./Register";
-import { Dashboard } from "./Dashboard"; 
-
-export {InitialPage, Login,Register, Dashboard}
+import { CriadorDashboard } from "./CriadorDashboard"; 
+import { TecnicoDashboard } from "./TecnicoDashboard";
+import { SuperintendenteDashboard } from "./SuperintendenteDashboard";
+export {InitialPage, Login,Register, CriadorDashboard, TecnicoDashboard, SuperintendenteDashboard}

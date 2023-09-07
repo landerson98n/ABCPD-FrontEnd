@@ -8,7 +8,7 @@ export const Select = styled.select `
     height: 4vw;
     background-color: white;
     border-radius: 0.5vw;
-    border-color: black;
+    border: solid 1px black;
     font-size: 1.7vw;
     padding-left: 1vw;
 `

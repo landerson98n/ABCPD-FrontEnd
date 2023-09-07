@@ -18,20 +18,17 @@ export const RegistroAnimalBase = styled(motion.div) `
     background-color: white;
     margin-top: 2vw;
     flex-direction: column;
-    align-items: center;
+    align-items: start;
 `
-export const ComunicCobertura = styled(motion.div) `
+export const RGDTecnico = styled(motion.div) `
     width: 90%;
     height: 90%;
     background-color: white;
     margin-top: 2vw;
-    flex-direction: column;
-    align-items: center;
-    overflow-y: scroll;
 `
 
 export const InputPlace = styled.div `
-    width:70%;
+    width:90%;
 `
 
 
@@ -76,6 +73,33 @@ export const ComunicNascimento = styled(motion.div) `
     margin-top: 2vw;
 `
 
+export const VerComunicNascimento = styled(motion.div) `
+    width: 90%;
+    height: 90%;
+    background-color: white;
+    margin-top: 2vw;
+    flex-direction: column;
+    align-items: start;
+    overflow-y: scroll;
+`
+
+export const VerAnimals = styled(motion.div) `
+    width: 90%;
+    height: 90%;
+    background-color: white;
+    margin-top: 2vw;
+    flex-direction: column;
+    align-items: start;
+    overflow-y: scroll;
+    overflow-x: hidden;
+`
+
+export const InputPair = styled.div `
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+`
 
 export const Table = styled.table `
     width: 100%;
