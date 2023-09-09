@@ -1,8 +1,7 @@
 'use client'
-import {Login ,TecnicoDashboard, CriadorDashboard, SuperintendenteDashboard, InitialPage } from "@/components"
+
+import InitialPage from '@/components/InitialPage'
 
 export default function Home() {
-  return (
-    <InitialPage/>
-  )
+  return <InitialPage />
 }

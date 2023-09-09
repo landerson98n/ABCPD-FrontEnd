@@ -1,15 +1,18 @@
 import React from 'react'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 
 import { logo, logo2 } from '@/assets'
 import { Container } from './style'
 import { Button } from '../Button'
 import { Poppins } from 'next/font/google'
 import { InputText } from '../InputText'
+import axios from 'axios'
+import { LoginAPI } from '@/actions/loginApi'
+import {useForm} from 'react-hook-form'
 
 const poppins = Poppins({ weight: ['300'], subsets: ['latin'] })
 
-export function Login() {
+export default function Login() {
   const initialValues = {
     email: '',
     senha: '',
@@ -17,17 +20,37 @@ export function Login() {
 
   const [formValues, setFormValues] = React.useState(initialValues)
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target
     setFormValues({ ...formValues, [name]: value })
   }
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault()
+    const data = {
+      email: formValues.email,
+      senha: formValues.senha,
+    }
 
-    // Aqui você pode acessar os valores de formValues.email e formValues.senha
-    console.log('Email:', formValues.email)
-    console.log('Senha:', formValues.senha)
+    try {
+      const response = await LoginAPI(data)
+      const token = response.acessToken
+      const pessoa = response.pessoa
+
+      if (pessoa === 'Criador') {
+        window.location.assign(`/CriadorPage/${token}`)
+      }
+
+      if (pessoa === 'Tecnico') {
+        window.location.assign(`/TecnicoPage/${token}`)
+      }
+
+      if (pessoa === 'Superintendente') {
+        window.location.assign(`/SuperintendentePage/${token}`)
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   return (
@@ -59,6 +82,7 @@ export function Login() {
       </div>
 
       <form
+        onSubmit={handleSubmit}
         style={{
           marginTop: '2vw',
           height: '20vw',

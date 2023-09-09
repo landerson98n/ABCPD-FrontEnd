@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text } from '../Text'
 import {
   Container,
@@ -18,19 +18,271 @@ import {
   TextBox,
   Payment,
   CreditCard,
+  Input,
 } from './style'
 import { Header } from '../Header/Header'
 import { Button } from '../Button'
-import { InputText } from '../InputText'
 import { WhiteBackground } from '../WhiteBackground'
 import { boleto, card, cartao, logo, logo2, pix } from '@/assets'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
+import * as z from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { CriarCriador } from '@/actions/criadorApi'
+import { CriarFazenda } from '@/actions/fazendaApi'
 
 export function Register() {
   const [pageOneX, setPageOneX] = useState(false)
   const [pageTwoX, setPageTwoX] = useState(false)
   const [pageThreeX, setPageThreeX] = useState(false)
   const [paymentX, setPaymentX] = useState(false)
+
+  useEffect(() => {
+    setSchema(getSchema())
+  }, [pageOneX, pageTwoX, pageThreeX])
+
+  const [schema, setSchema] = useState<any>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    criteriaMode: 'all',
+    mode: 'all',
+    resolver: zodResolver(schema),
+  })
+
+  const [formValues, setFormValues] = React.useState(schema)
+
+  function getSchema() {
+    if (!pageOneX) {
+      return z
+        .object({
+          nomeCompleto: z
+            .string()
+            .min(1, 'Nome completo é um campo obrigatório'),
+          email: z
+            .string({
+              errorMap: () => {
+                return { message: 'Email não é válido' }
+              },
+            })
+            .min(1, 'Email é obrigatório')
+            .email(),
+          senha: z
+            .string({
+              errorMap: () => {
+                return { message: 'Senha não é válida' }
+              },
+            })
+            .min(1, 'Senha é um campo obrigatório'),
+          confirmarSenha: z
+            .string({
+              errorMap: () => {
+                return { message: 'Confirmação de senha não é válida' }
+              },
+            })
+            .min(1, 'Senha é um campo obrigatório'),
+        })
+        .refine((fields) => fields.senha === fields.confirmarSenha, {
+          path: ['confirmarSenha'],
+          message: 'As senhas precisam ser iguais',
+        })
+    }
+    if (!pageTwoX) {
+      return z
+        .object({
+          cpf: z.string().min(1, 'CPF é um campo obrigatório'),
+          rg: z.string().min(1, 'RG é um campo obrigatório'),
+          nomeRua: z.string().min(1, 'Rua é um campo obrigatório'),
+
+          nomeBairro: z
+            .string({
+              errorMap: () => {
+                return { message: 'Bairro não é válido' }
+              },
+            })
+            .min(1, 'Bairro é um campo obrigatório'),
+
+          nomeCidade: z.string().min(1, 'Cidade é um campo obrigatório'),
+          nomeEstado: z.string().min(1, 'Estado é um campo obrigatório'),
+          cep: z.string().min(1, 'CEP é um campo obrigatório'),
+          telefone: z.string().min(1, 'Telefone é um campo obrigatório'),
+          numeroCasa: z
+            .string()
+            .min(1, 'Numero da casa é um campo obrigatório'),
+        })
+        .refine((fields) => validarCPF(fields.cpf) === true, {
+          path: ['cpf'],
+          message: 'CPF Inválido',
+        })
+    }
+    if (!pageThreeX) {
+      return z.object({
+        nomeFazenda: z.string().min(1, 'Nome fazenda é um campo obrigatório'),
+        telefoneFazenda: z.string().min(1, 'Telefone é um campo obrigatório'),
+        areaFazenda: z.string().min(1, 'Area é um campo obrigatório'),
+        municipioFazenda: z.string().min(1, 'Municipio é um campo obrigatório'),
+        rebanho: z
+          .string({
+            errorMap: () => {
+              return {
+                message:
+                  'Rebanho é um campo obrigatório e deve conter 3 letras',
+              }
+            },
+          })
+          .min(3, 'Rebanho é um campo obrigatório e deve conter 3 letras')
+          .max(3),
+        comoChegar: z.string(),
+        outrasEspecies: z.string(),
+        observacoes: z.string(),
+        femeas04Fazenda: z.number(),
+        femeas1224Fazenda: z.number(),
+        femeas2436Fazenda: z.number(),
+        femeas36Fazenda: z.number(),
+        femeas412Fazenda: z.number(),
+        macho04Fazenda: z.number(),
+        macho1224Fazenda: z.number(),
+        macho2436Fazenda: z.number(),
+        macho36Fazenda: z.number(),
+        macho412Fazenda: z.number(),
+      })
+    }
+    return z.object({})
+  }
+  function validarCPF(cpf: string): boolean {
+    // Removendo pontos e traços para obter apenas os dígitos
+    const cpfLimpo = cpf.replace(/[.-]/g, '')
+
+    // Verificando o formato do CPF (11 dígitos)
+    const regexCPF = /^[0-9]{11}$/
+    if (!regexCPF.test(cpfLimpo)) {
+      return false
+    }
+
+    // Verificando dígitos repetidos (uma característica de CPF inválido)
+    const digitosRepetidos = /^(.)\1+$/
+    if (digitosRepetidos.test(cpfLimpo)) {
+      return false
+    }
+
+    // Aplicando a fórmula de verificação do dígito
+    const digitos = cpfLimpo.split('').map(Number)
+
+    let soma = 0
+    let peso = 10
+
+    for (let i = 0; i < 9; i++) {
+      soma += digitos[i] * peso
+      peso--
+    }
+
+    let resto = soma % 11
+    const digitoVerificador1 = resto < 2 ? 0 : 11 - resto
+
+    if (digitoVerificador1 !== digitos[9]) {
+      return false
+    }
+
+    soma = 0
+    peso = 11
+
+    for (let i = 0; i < 10; i++) {
+      soma += digitos[i] * peso
+      peso--
+    }
+
+    resto = soma % 11
+    const digitoVerificador2 = resto < 2 ? 0 : 11 - resto
+
+    return digitoVerificador2 === digitos[10]
+  }
+
+  const handle = (data) => {
+    setFormValues({ ...formValues, ...data })
+    if (Object.keys(errors).length === 0) {
+      setPageOneX(!pageOneX)
+    }
+  }
+
+  const handle2 = (data) => {
+    setFormValues({ ...formValues, ...data })
+    if (Object.keys(errors).length === 0) {
+      setPageTwoX(!pageTwoX)
+    }
+  }
+
+  const handle3 = (data) => {
+    setFormValues({ ...formValues, ...data })
+    Enviar()
+  }
+
+  const Enviar = async () => {
+    const palavras = formValues.nomeCompleto.split(' ')
+
+    const UserData = {
+      dateJoined: new Date(Date.now()).toISOString(),
+      nomePrimeiro: palavras[0],
+      nomeUltimo: palavras[palavras.length - 1],
+      email: formValues.email,
+      cpf: formValues.cpf,
+      username: palavras[0],
+      senha: formValues.senha,
+      telefone: formValues.telefone,
+      ultimaConexao: new Date(Date.now()).toISOString(),
+    }
+    const CriadorData = {
+      cep: formValues.cep,
+      nomeBairro: formValues.nomeBairro,
+      nomeCidade: formValues.nomeCidade,
+      nomeCompleto: formValues.nomeCompleto,
+      nomeEstado: formValues.nomeEstado,
+      nomeRua: formValues.nomeRua,
+      rg: formValues.rg,
+      numeroCasa: formValues.numeroCasa,
+    }
+
+    const response = await CriarCriador({ ...CriadorData, ...UserData })
+    alert(response?.message)
+
+    if (!response.message) {
+      const FazendaData = {
+        criadorFazenda: response?.id,
+        areaFazenda: formValues.areaFazenda,
+        atualizacoes: '',
+        comoChegar: formValues.comoChegar,
+        dataDocumentacao: new Date(Date.now()).toISOString(),
+        femeas04Fazenda: parseInt(formValues.femeas04Fazenda),
+        femeas1224Fazenda: parseInt(formValues.femeas1224Fazenda),
+        femeas2436Fazenda: parseInt(formValues.femeas2436Fazenda),
+        femeas36Fazenda: parseInt(formValues.femeas36Fazenda),
+        femeas412Fazenda: parseInt(formValues.femeas412Fazenda),
+        macho04Fazenda: parseInt(formValues.macho04Fazenda),
+        macho1224Fazenda: parseInt(formValues.macho1224Fazenda),
+        macho2436Fazenda: parseInt(formValues.macho2436Fazenda),
+        macho36Fazenda: parseInt(formValues.macho36Fazenda),
+        macho412Fazenda: parseInt(formValues.macho412Fazenda),
+        municipioFazenda: formValues.municipioFazenda,
+        nomeFazenda: formValues.nomeFazenda,
+        observacoes: formValues.observacoes,
+        outrasEspecies: formValues.outrasEspecies,
+        proponente1: formValues.proponente1,
+        proponente2: formValues.proponente2,
+        proponente3: formValues.proponente3,
+        telefoneFazenda: formValues.telefoneFazenda,
+        fazendaCadastrada: false,
+      }
+
+      console.log(FazendaData)
+      const responseFazenda = await CriarFazenda(FazendaData)
+      alert(responseFazenda?.message)
+
+      if (!responseFazenda.message) {
+        setPaymentX(!paymentX)
+      }
+    }
+  }
 
   return (
     <Container
@@ -46,6 +298,7 @@ export function Register() {
       <ScreenOne
         animate={{ x: pageOneX ? -1400 : 0 }}
         transition={{ duration: 1 }}
+        onSubmit={handleSubmit(handle)}
       >
         <RegisterPainel>
           <WhiteBackground width="80%" height="45vw">
@@ -55,6 +308,9 @@ export function Register() {
                 heightButton="3vw"
                 colorButton="black"
                 textButton="←  Voltar"
+                onClick={() => {
+                  window.location.assign('/')
+                }}
               />
 
               <Title>
@@ -77,7 +333,11 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" />
+                    <Input
+                      {...register('nomeCompleto', { required: true })}
+                      type="text"
+                      name="nomeCompleto"
+                    />
                   </InputPlace>
                   <InputPlace>
                     <Text
@@ -87,7 +347,11 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="email" />
+                    <Input
+                      {...register('email', { required: true })}
+                      type="email"
+                      name="email"
+                    />
                   </InputPlace>
                 </InputPair>
 
@@ -100,7 +364,12 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="password" />
+                    <Input
+                      {...register('senha', { required: true })}
+                      placeholder=""
+                      type="password"
+                      name="senha"
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -111,7 +380,11 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="password" />
+                    <Input
+                      placeholder=""
+                      {...register('confirmarSenha', { required: true })}
+                      type="password"
+                    />
                   </InputPlace>
                 </InputPair>
               </InputData>
@@ -123,8 +396,13 @@ export function Register() {
           <GrayBackground>
             <Button
               onClick={() => {
-                setPageOneX(!pageOneX)
+                for (const componente in errors) {
+                  const mensagem = errors[componente]
+                  alert(mensagem?.message)
+                }
+                setSchema(getSchema())
               }}
+              type="submit"
               widthButton="80%"
               heightButton="6vw"
               colorButton="green"
@@ -138,6 +416,7 @@ export function Register() {
         initial={{ x: 1400 }}
         animate={{ x: pageTwoX ? -1400 : pageOneX ? 0 : 1400 }}
         transition={{ duration: 1 }}
+        onSubmit={handleSubmit(handle2)}
       >
         <RegisterPainel>
           <WhiteBackground width="80%" height="60vw">
@@ -145,11 +424,13 @@ export function Register() {
               <Button
                 onClick={() => {
                   setPageOneX(!pageOneX)
+                  setSchema(getSchema())
                 }}
                 widthButton="10%"
                 heightButton="3vw"
                 colorButton="black"
                 textButton="←  Voltar"
+                type="button"
               />
 
               <Title>
@@ -181,7 +462,10 @@ export function Register() {
                         fontWeight="300"
                       />
                     </TitleContent>
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('cpf', { required: true })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -201,7 +485,10 @@ export function Register() {
                         fontWeight="300"
                       />
                     </TitleContent>
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('rg', { required: true })}
+                    />
                   </InputPlace>
                 </InputPair>
 
@@ -214,7 +501,10 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('nomeRua', { required: true })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -225,7 +515,10 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('nomeBairro', { required: true })}
+                    />
                   </InputPlace>
                 </InputPair>
 
@@ -238,7 +531,10 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('nomeCidade', { required: true })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -249,7 +545,10 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('nomeEstado', { required: true })}
+                    />
                   </InputPlace>
                 </InputPair>
 
@@ -271,7 +570,10 @@ export function Register() {
                         fontWeight="300"
                       />
                     </TitleContent>
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('cep', { required: true })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -291,7 +593,35 @@ export function Register() {
                         fontWeight="300"
                       />
                     </TitleContent>
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('telefone', { required: true })}
+                    />
+                  </InputPlace>
+                </InputPair>
+
+                <InputPair>
+                  <InputPlace>
+                    <TitleContent style={{ width: '70%' }}>
+                      <Text
+                        fontFamily="pop"
+                        size={'1.5vw'}
+                        text="Numero da casa"
+                        color="black"
+                        fontWeight="300"
+                      />
+                      <Text
+                        fontFamily="pop"
+                        size={'1vw'}
+                        text="(Somente números)"
+                        color="gray"
+                        fontWeight="300"
+                      />
+                    </TitleContent>
+                    <Input
+                      placeholder=""
+                      {...register('numeroCasa', { required: true })}
+                    />
                   </InputPlace>
                 </InputPair>
               </InputData>
@@ -303,7 +633,10 @@ export function Register() {
           <GrayBackground>
             <Button
               onClick={() => {
-                setPageTwoX(!pageTwoX)
+                for (const componente in errors) {
+                  const mensagem = errors[componente]
+                  alert(mensagem.message)
+                }
               }}
               widthButton="80%"
               heightButton="6vw"
@@ -318,6 +651,7 @@ export function Register() {
         initial={{ x: 1400 }}
         animate={{ x: pageThreeX ? -1400 : pageTwoX ? 0 : 1400 }}
         transition={{ duration: 1 }}
+        onSubmit={handleSubmit(handle3)}
       >
         <RegisterPainel>
           <WhiteBackground width="80%" height="200vw">
@@ -330,6 +664,7 @@ export function Register() {
                 heightButton="3vw"
                 colorButton="black"
                 textButton="←  Voltar"
+                type="button"
               />
 
               <Title>
@@ -354,7 +689,10 @@ export function Register() {
                         fontWeight="300"
                       />
                     </TitleContent>
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('nomeFazenda', { required: true })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -374,7 +712,10 @@ export function Register() {
                         fontWeight="300"
                       />
                     </TitleContent>
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('telefoneFazenda', { required: true })}
+                    />
                   </InputPlace>
                 </InputPair>
 
@@ -387,7 +728,10 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" />
+                    <Input
+                      placeholder=""
+                      {...register('areaFazenda', { required: true })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -398,7 +742,11 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" />
+                    <Input
+                      type="text"
+                      placeholder=""
+                      {...register('municipioFazenda', { required: true })}
+                    />
                   </InputPlace>
                 </InputPair>
               </InputData>
@@ -423,7 +771,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('macho04Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -434,7 +789,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('macho412Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
                 </InputPair>
 
@@ -447,7 +809,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('macho1224Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -458,7 +827,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('macho2436Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
                 </InputPair>
 
@@ -471,7 +847,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('macho36Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -482,31 +865,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
-                  </InputPlace>
-                </InputPair>
-
-                <InputPair>
-                  <InputPlace>
-                    <Text
-                      fontFamily="pop"
-                      size={'1.5vw'}
-                      text="Bois de 37 a + Meses"
-                      color="black"
-                      fontWeight="300"
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('femeas04Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
                     />
-                    <InputText placeholder="" type="number" />
-                  </InputPlace>
-
-                  <InputPlace>
-                    <Text
-                      fontFamily="pop"
-                      size={'1.5vw'}
-                      text="Vacas de 0 a 4 Meses"
-                      color="black"
-                      fontWeight="300"
-                    />
-                    <InputText placeholder="" type="number" />
                   </InputPlace>
                 </InputPair>
 
@@ -519,7 +885,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('femeas412Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -530,7 +903,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('femeas1224Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
                 </InputPair>
 
@@ -543,7 +923,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('femeas2436Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
 
                   <InputPlace>
@@ -554,7 +941,14 @@ export function Register() {
                       color="black"
                       fontWeight="300"
                     />
-                    <InputText placeholder="" type="number" />
+                    <Input
+                      placeholder=""
+                      type="number"
+                      {...register('femeas36Fazenda', {
+                        required: true,
+                        valueAsNumber: true,
+                      })}
+                    />
                   </InputPlace>
                 </InputPair>
               </InputData>
@@ -562,7 +956,7 @@ export function Register() {
                 <Text
                   fontFamily="pop"
                   size={'2vw'}
-                  text="Marca"
+                  text="Rebanhos"
                   color="black"
                   fontWeight="600"
                 />
@@ -572,11 +966,14 @@ export function Register() {
                 <Text
                   fontFamily="pop"
                   size={'1.5vw'}
-                  text="Marca"
+                  text="Rebanho"
                   color="black"
                   fontWeight="300"
                 />
-                <InputText placeholder="" />
+                <Input
+                  placeholder=""
+                  {...register('rebanho', { required: true })}
+                />
               </InputPlace>
 
               <Title>
@@ -588,7 +985,7 @@ export function Register() {
                   fontWeight="600"
                 />
               </Title>
-              <TextBox />
+              <TextBox {...register('comoChegar')} />
 
               <Title>
                 <Text
@@ -599,7 +996,7 @@ export function Register() {
                   fontWeight="600"
                 />
               </Title>
-              <TextBox />
+              <TextBox {...register('outrasEspecies')} />
 
               <Title>
                 <Text
@@ -610,14 +1007,7 @@ export function Register() {
                   fontWeight="600"
                 />
               </Title>
-              <TextBox />
-
-              <Button
-                widthButton="30%"
-                heightButton="3vw"
-                colorButton="#032759"
-                textButton="+ Adicionar outra fazenda"
-              />
+              <TextBox {...register('observacoes')} />
             </Content>
           </WhiteBackground>
         </RegisterPainel>
@@ -626,7 +1016,11 @@ export function Register() {
           <GrayBackground>
             <Button
               onClick={() => {
-                setPageThreeX(!pageThreeX)
+                for (const componente in errors) {
+                  const mensagem = errors[componente]
+                  alert(mensagem.message)
+                }
+                console.log(errors)
               }}
               widthButton="80%"
               heightButton="6vw"
@@ -678,7 +1072,7 @@ export function Register() {
                 <CreditCard>
                   <div>
                     <InputPair style={{ width: '72%' }}>
-                      <InputText width="2vw" type="radio" />
+                      <Input width="2vw" type="radio" />
                       <div style={{ width: '5vw' }}>
                         <Image
                           src={cartao}
@@ -736,7 +1130,7 @@ export function Register() {
                           color="black"
                           fontWeight="300"
                         />
-                        <InputText
+                        <Input
                           borderLeft="none"
                           borderRight="none"
                           borderTop="none"
@@ -752,7 +1146,7 @@ export function Register() {
                           color="black"
                           fontWeight="300"
                         />
-                        <InputText
+                        <Input
                           borderLeft="none"
                           borderRight="none"
                           borderTop="none"
@@ -771,7 +1165,7 @@ export function Register() {
                               fontWeight="300"
                             />
                           </TitleContent>
-                          <InputText
+                          <Input
                             borderLeft="none"
                             borderRight="none"
                             borderTop="none"
@@ -789,7 +1183,7 @@ export function Register() {
                               fontWeight="300"
                             />
                           </TitleContent>
-                          <InputText
+                          <Input
                             borderLeft="none"
                             borderRight="none"
                             borderTop="none"
@@ -897,7 +1291,7 @@ export function Register() {
                 </CreditCard>
 
                 <InputPair style={{ width: '20.5%' }}>
-                  <InputText width="2vw" type="radio" />
+                  <Input width="2vw" type="radio" />
                   <div style={{ width: '5vw' }}>
                     <Image
                       src={pix}
@@ -919,7 +1313,7 @@ export function Register() {
                 </InputPair>
 
                 <InputPair style={{ width: '24.5%' }}>
-                  <InputText width="2vw" type="radio" />
+                  <Input width="2vw" type="radio" />
                   <div style={{ width: '5vw' }}>
                     <Image
                       src={boleto}

@@ -1,6 +1,6 @@
 import React, { ButtonHTMLAttributes } from 'react'
 import { Text } from '../Text'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 
 import { Container } from './style'
 
@@ -22,7 +22,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button(props: ButtonProps) {
   const {
-    type,
     marginTopImage,
     radius,
     marginRightImage,
@@ -51,6 +50,7 @@ export function Button(props: ButtonProps) {
         backgroundColor: `${colorButton}`,
         cursor: 'pointer',
         justifyContent: `${src && textButton ? 'start' : 'center'}`,
+        border: 'none',
       }}
     >
       {src ? (
@@ -72,7 +72,7 @@ export function Button(props: ButtonProps) {
       {textButton ? (
         <Text
           fontFamily="pop"
-          size={textSize || '1.2vw'}
+          size={textSize || '1.1vw'}
           text={textButton}
           color={textColor || 'white'}
           fontWeight="300"
