@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Image from 'next/legacy/image'
 
 import { logo, logo2 } from '@/assets'
-import { Container } from './style'
+import { Container, InputText } from './style'
 import { Button } from '../Button'
 import { Poppins } from 'next/font/google'
-import { InputText } from '../InputText'
-import axios from 'axios'
 import { LoginAPI } from '@/actions/loginApi'
-import {useForm} from 'react-hook-form'
+import { useForm } from 'react-hook-form'
+import { AlertContext } from '@/context/AlertContextProvider'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import errorMap from 'zod/locales/en.js'
 
 const poppins = Poppins({ weight: ['300'], subsets: ['latin'] })
 
@@ -19,14 +21,38 @@ export default function Login() {
   }
 
   const [formValues, setFormValues] = React.useState(initialValues)
-
+  const { alert } = useContext(AlertContext)
   const handleInputChange = (e: any) => {
     const { name, value } = e.target
     setFormValues({ ...formValues, [name]: value })
   }
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
+  const schema = z.object({
+    email: z
+      .string({
+        errorMap: () => {
+          return {
+            message: 'Email inválido',
+          }
+        },
+      })
+      .email()
+      .nonempty('Email não preenchido'),
+    senha: z.string().nonempty('Senha não preenchida'),
+  })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    criteriaMode: 'all',
+    mode: 'all',
+    resolver: zodResolver(schema),
+  })
+
+  const Enviar = async (dataForm: any) => {
+    setFormValues({ ...formValues, ...dataForm })
     const data = {
       email: formValues.email,
       senha: formValues.senha,
@@ -49,7 +75,7 @@ export default function Login() {
         window.location.assign(`/SuperintendentePage/${token}`)
       }
     } catch (e) {
-      console.log(e)
+      alert(e)
     }
   }
 
@@ -82,7 +108,7 @@ export default function Login() {
       </div>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(Enviar)}
         style={{
           marginTop: '2vw',
           height: '20vw',
@@ -93,13 +119,16 @@ export default function Login() {
         }}
       >
         <InputText
+          {...register('email', { required: true })}
           placeholder="E-mail"
           value={formValues.email}
           onChange={handleInputChange}
           name="email"
+          type="email"
         />
         <InputText
           placeholder="Senha"
+          {...register('senha', { required: true })}
           value={formValues.senha}
           onChange={handleInputChange}
           name="senha"
@@ -119,6 +148,13 @@ export default function Login() {
           Esqueceu a senha?
         </a>
         <Button
+          onClick={() => {
+            for (const componente in errors) {
+              const mensagem = errors[componente]
+              alert(mensagem?.message)
+            }
+            console.log(errors)
+          }}
           type="submit"
           widthButton="20vw"
           heightButton="3.3vw"

@@ -2,6 +2,7 @@
 
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
+import InputMask from 'react-input-mask'
 
 export const Container = styled.div`
   width: 100%;
@@ -53,7 +54,7 @@ export const Input = styled.input`
   height: 4vw;
   background-color: white;
   border-radius: 0.5vw;
-  font-size: 1.7vw;
+  font-size: 1.3vw;
   padding-left: 1vw;
   outline: none;
   display: flex;
@@ -88,7 +89,6 @@ export const ScreenTwo = styled(motion.form)`
   width: 100%;
   margin-top: -15vw;
   position: absolute;
-
 `
 
 export const ScreenThree = styled(motion.form)`
@@ -132,6 +132,6 @@ export const Payment = styled(motion.div)`
 `
 export const CreditCard = styled.div`
   width: 100%;
-  margin-bottom: 5vw;
+  margin-bottom: 1vw;
   display: flex;
 `

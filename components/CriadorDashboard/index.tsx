@@ -41,21 +41,81 @@ import Image from 'next/legacy/image'
 import { Button } from '../Button'
 import { Text } from '../Text'
 import { InputText } from '../InputText'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { SelectBox } from '../SelectBox'
 import * as z from 'zod'
 import AnimalDTO from '@/utils/AnimalDTO'
 import TecnicoDTO from '@/utils/TecnicoDTO'
-import { dataAnimal } from '@/actions/criadorApi'
-import { allTecnicos } from '@/actions/tecnicoApi'
 import { ComunicarCobertura } from '@/actions/coberturaApi'
 import jsonWebTokenService from 'jsonwebtoken'
-import { getFazendaCriador } from '@/actions/fazendaApi'
 import FazendaDTO from '@/utils/FazendaDTO'
-import { ErrorPanel } from '../ErrorPanel'
+import { AlertContext } from '@/context/AlertContextProvider'
+import { useQuery } from 'react-query'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { Checkbox } from '@mui/material'
 
 export function CriadorDashboard(data: { token: string }) {
+  const decodedJwt = jsonWebTokenService.decode(data.token)
+
+  const {
+    isLoading: isLoadingFazendas,
+    error: errorFazendas,
+    data: fazendas,
+  } = useQuery('fazendas', async () =>
+    fetch(
+      `http://localhost:3001/fazenda/get-fazendas-criador/${decodedJwt?.sub}`,
+      {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+        method: 'GET',
+      },
+    ).then((res) => res.json()),
+  )
+
+  const {
+    isLoading: isLoadingTecnicos,
+    error: errorTecnico,
+    data: tecnicos,
+  } = useQuery('tecnicos', async () =>
+    fetch('http://localhost:3001/tecnico/get-tecnicos', {
+      headers: {
+        Authorization: `Bearer ${data.token}`,
+      },
+      method: 'GET',
+    }).then((res) => res.json()),
+  )
+
+  const {
+    isLoading: isLoadingAnimais,
+    error: errorAnimais,
+    data: animaisCriador,
+  } = useQuery('animais', async () =>
+    fetch('http://localhost:3001/animal/get-animal-criador', {
+      headers: {
+        Authorization: `Bearer ${data.token}`,
+      },
+      method: 'GET',
+    }).then((res) => res.json()),
+  )
+
+  const schema = z.object({
+    nomeCobertura: z.string().nonempty('Este campo não pode ficar vazio'),
+    observacoes: z.enum(['Monta natural', 'Inseminação Artificial']),
+    dataCobertura: z.string().nonempty(),
+  })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    criteriaMode: 'all',
+    mode: 'all',
+    resolver: zodResolver(schema),
+  })
+
   const [animalPage, setAnimalPage] = useState(false)
   const [verAnimalPage, setVerAnimalPage] = useState(false)
   const [initialPage, setInitialPage] = useState(true)
@@ -64,26 +124,22 @@ export function CriadorDashboard(data: { token: string }) {
   const [comunicCoberturaPage, setComunicCoberturaPage] = useState(false)
   const [comunicNascPage, setComunicNascPage] = useState(false)
   const [verComunicNascPage, setVerComunicNascPage] = useState(false)
-  const [animaisCriador, setAnimaisCriador] = useState([])
-  const [tecnicos, setTecnicos] = useState([])
-  const [fazendas, setFazendas] = useState([])
   const [menu, setMenu] = useState(true)
-  const decodedJwt = jsonWebTokenService.decode(data.token)
-  const [opcaoSelecionada, setOpcaoSelecionada] = useState({})
 
+  const [opcaoSelecionada, setOpcaoSelecionada] = useState({})
+  const { alert } = useContext(AlertContext)
   const initialComunicacaoCobertura = {
-    comprovantePagamento: '',
     nomeCobertura: '',
     observacoes: '',
-    statusCobertura: '',
     tipoCobertura: '',
+    dataCobertura: '',
   }
   const fieldDisplayNames = {
-    comprovantePagamento: 'Comprovante de Pagamento',
     nomeCobertura: 'Nome da Cobertura',
     observacoes: 'Observações',
     statusCobertura: 'Status da Cobertura',
     tipoCobertura: 'Tipo de Cobertura',
+    dataCobertura: 'Data da Cobertura',
   }
   const fieldNames = Object.keys(initialComunicacaoCobertura)
   const [comunicacaoCobertura, setComunicacaoCobertura] = useState(
@@ -98,19 +154,20 @@ export function CriadorDashboard(data: { token: string }) {
     e.preventDefault()
 
     const dataCobertura = {
-      criadorCobertura: decodedJwt.sub,
-      fazendaCobertura: opcaoSelecionada.id,
-      comprovantePagamento: comunicacaoCobertura.comprovantePagamento,
+      criadorCobertura: decodedJwt?.sub,
+      fazendaCobertura: opcaoSelecionada?.id,
       nomeCobertura: comunicacaoCobertura.nomeCobertura,
       observacoes: comunicacaoCobertura.observacoes,
-      statusCobertura: comunicacaoCobertura.statusCobertura,
+      statusCobertura: '',
       tipoCobertura: comunicacaoCobertura.tipoCobertura,
       finalizadoCobertura: false,
+      pago: false,
     }
 
     try {
       const response = ComunicarCobertura(dataCobertura, data.token)
       window.location.assign(`/CriadorPage/${data.token}`)
+      alert('Cobertura realizada com sucessor', 'success')
     } catch (e) {
       console.log(e)
     }
@@ -124,48 +181,24 @@ export function CriadorDashboard(data: { token: string }) {
     })
   }
 
-  useEffect(() => {
-    async function getAnimais() {
-      if (animaisCriador.length == 0) {
-        const animais = await dataAnimal(data.token)
-        if (animais.statusCode != 404) {
-          setAnimaisCriador(animais)
-        }
-      }
-    }
-
-    async function getTecnicos() {
-      if (tecnicos.length == 0) {
-        const tecnicosData = await allTecnicos(data.token)
-        if (tecnicosData.statusCode != 404) {
-          setTecnicos(tecnicosData)
-        }
-      }
-    }
-
-    async function getFazendas() {
-      if (fazendas.length == 0) {
-        const fazendasData = await getFazendaCriador(data.token, decodedJwt.sub)
-
-        if (fazendasData.statusCode != 404) {
-          setFazendas(fazendasData)
-        }
-      }
-    }
-    getFazendas()
-    getAnimais()
-    getTecnicos()
-  }, [])
+  if (isLoadingAnimais || isLoadingFazendas || isLoadingTecnicos) {
+    return <div>Loading...</div>
+  }
+  if (errorAnimais || errorTecnico || errorFazendas) {
+    return (
+      <div>
+        {(errorAnimais.message, errorTecnico.message, errorFazendas.message)}
+      </div>
+    )
+  }
 
   return (
     <Container>
-      
       <Menu
         initial={{ width: '20%' }}
         animate={{ width: menu ? '20%' : '5%' }}
         transition={{ duration: 0.5 }}
       >
-        
         <motion.div
           initial={{ x: '13vw' }}
           transition={{ duration: 0.5 }}
@@ -965,6 +998,7 @@ export function CriadorDashboard(data: { token: string }) {
             display: `${comunicCoberturaPage ? 'flex' : 'none'}`,
             pointerEvents: `${comunicCoberturaPage ? 'auto' : 'none'}`,
           }}
+          onSubmit={handleSubmit(handleSubmitCobertura)}
         >
           <div style={{ width: '10vw' }}>
             <Image
@@ -1008,6 +1042,7 @@ export function CriadorDashboard(data: { token: string }) {
                     fontWeight="300"
                   />
                   <InputText
+                    {...register(fieldName)}
                     type="text"
                     name={fieldName}
                     value={comunicacaoCobertura[fieldName]}
@@ -1016,6 +1051,32 @@ export function CriadorDashboard(data: { token: string }) {
                 </InputPlace>
               </div>
             ))}
+            <InputPlace>
+              <Text
+                fontFamily="pop"
+                size={'1.5vw'}
+                text={'Animal Reprodutor'}
+                color="black"
+                fontWeight="300"
+              />
+              <SelectBox
+                {...register('animalReprodutor')}
+                name={'animalReprodutor'}
+                value={''}
+                onChange={handleInputChangeCobertura}
+              >
+                {animaisCriador.map((data: AnimalDTO) => {
+                  if (data.sexo == 'MA') {
+                    return <option key={data.id}>{data.nomeFazenda}</option>
+                  }
+                })}
+              </SelectBox>
+              {animaisCriador.map((data: AnimalDTO) => {
+                if (data.sexo == 'FE') {
+                  return <Checkbox key={data.id} label={data.name} />
+                }
+              })}
+            </InputPlace>
           </div>
 
           <div
@@ -1041,9 +1102,8 @@ export function CriadorDashboard(data: { token: string }) {
               textButton="Fazer pagamento"
               widthButton="13vw"
               textColor="white"
-              onClick={() => {
-                handleSubmitCobertura
-              }}
+              type="submit"
+              onClick={() => {}}
             />
           </div>
         </ComunicCobertura>

@@ -3,8 +3,6 @@ type ComunicacaoCoberturaDto = {
 
   fazendaCobertura: string
 
-  comprovantePagamento: string
-
   finalizadoCobertura: boolean
 
   nomeCobertura: string

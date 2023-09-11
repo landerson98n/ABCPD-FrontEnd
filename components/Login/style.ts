@@ -12,3 +12,13 @@ export const Container = styled.div`
   border-radius: 0.8vw;
   padding: 3vw;
 `
+export const InputText = styled.input`
+  width: 100%;
+  height: 4vw;
+  background-color: white;
+  border-radius: 0.5vw;
+  font-size: 1.7vw;
+  padding-left: 1vw;
+  outline: none;
+  display: flex;
+`

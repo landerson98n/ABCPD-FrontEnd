@@ -19,7 +19,7 @@ export const RegistroAnimalBase = styled(motion.div)`
   flex-direction: column;
   align-items: center;
 `
-export const ComunicCobertura = styled(motion.div)`
+export const ComunicCobertura = styled(motion.form)`
   width: 90%;
   height: 90%;
   background-color: white;

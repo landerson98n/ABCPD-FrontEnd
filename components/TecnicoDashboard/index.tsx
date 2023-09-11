@@ -33,17 +33,19 @@ import {
   VerComunicNascimento,
   VerAnimals,
   InputPair,
+  InputText,
 } from './style'
 import Image from 'next/legacy/image'
 import { Button } from '../Button'
 import { Text } from '../Text'
-import { InputText } from '../InputText'
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { SelectBox } from '../SelectBox'
 import axios from 'axios'
 import CriadorDTO from '@/utils/CriadorDTO'
-
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
 export function TecnicoDashboard(data: { token: string }) {
   const [animalPage, setAnimalPage] = useState(false)
   const [verAnimalPage, setVerAnimalPage] = useState(false)
@@ -80,6 +82,50 @@ export function TecnicoDashboard(data: { token: string }) {
 
     getCriadores()
   }, [])
+
+  const animalSchema = z.object({
+    fazenda: z.string().min(1, 'Fazenda é um campo obrigatório'),
+    mae: z.string().optional(),
+    pai: z.string().optional(),
+    rebanho: z.string().min(1, 'Rebanho é um campo obrigatório'),
+    dataAvalicacao: z
+      .string()
+      .min(1, 'Data de Avaliação é um campo obrigatório'),
+    composicaoGenetica: z
+      .string()
+      .min(1, 'Composição Genética é um campo obrigatório'),
+    dataNascimentoAnimal: z
+      .string()
+      .min(1, 'Data de Nascimento do Animal é um campo obrigatório'),
+    image01: z.string().min(1, 'Imagem 01 é um campo obrigatório'),
+    image02: z.string().min(1, 'Imagem 02 é um campo obrigatório'),
+    image03: z.string().min(1, 'Imagem 03 é um campo obrigatório'),
+    image04: z.string().min(1, 'Imagem 04 é um campo obrigatório'),
+    nomeAnimal: z.string().min(1, 'Nome do Animal é um campo obrigatório'),
+    pelagemAnimal: z
+      .string()
+      .min(1, 'Pelagem do Animal é um campo obrigatório'),
+    racaAnimalMatriz: z
+      .string()
+      .min(1, 'Raça do Animal Matriz é um campo obrigatório'),
+    registro: z.string().min(1, 'Registro é um campo obrigatório'),
+    registroGeral: z.string().min(1, 'Registro Geral é um campo obrigatório'),
+    sexoAnimal: z.string().min(1, 'Sexo do Animal é um campo obrigatório'),
+  })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    criteriaMode: 'all',
+    mode: 'all',
+    resolver: zodResolver(animalSchema),
+  })
+
+  function send(data) {
+    console.log(data)
+  }
 
   return (
     <Container>
@@ -905,6 +951,7 @@ export function TecnicoDashboard(data: { token: string }) {
             display: `${verAnimalPage ? 'flex' : 'none'}`,
             pointerEvents: `${verAnimalPage ? 'auto' : 'none'}`,
           }}
+          onSubmit={handleSubmit(send)}
         >
           <div style={{ width: '10vw' }}>
             <Image
@@ -930,7 +977,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText width="30vw" border="solid 0.2vw black" />
+              <InputText width="30vw" {...register('nomeAnimal')} />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -941,7 +988,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <SelectBox border="solid 0.2vw black" />
+              <SelectBox {...register('mae')} />
             </InputPlace>
           </InputPair>
 
@@ -954,7 +1001,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <SelectBox border="solid 0.2vw black" />
+              <SelectBox {...register('pai')} />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -965,7 +1012,10 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <SelectBox border="solid 0.2vw black" />
+              <SelectBox {...register('sexoAnimal')}>
+                <option>Macho</option>
+                <option>Fêmea</option>
+              </SelectBox>
             </InputPlace>
           </InputPair>
 
@@ -978,7 +1028,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <SelectBox border="solid 0.2vw black" />
+              <SelectBox {...register('registro')} />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -989,7 +1039,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <SelectBox border="solid 0.2vw black" />
+              <SelectBox {...register('fazenda')} />
             </InputPlace>
           </InputPair>
 
@@ -998,22 +1048,11 @@ export function TecnicoDashboard(data: { token: string }) {
               <Text
                 fontFamily="pop"
                 size={'1.5vw'}
-                text="Mês Da Avaliação"
+                text="Data Da Avaliação"
                 color="black"
                 fontWeight="300"
               />
-              <SelectBox border="solid 0.2vw black" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Ano Da Avaliação"
-                color="black"
-                fontWeight="300"
-              />
-              <SelectBox border="solid 0.2vw black" />
+              <InputText {...register('dataAvalicacao')} type="date" />
             </InputPlace>
           </InputPair>
 
@@ -1026,7 +1065,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText width="30vw" border="solid 0.2vw black" />
+              <InputText width="30vw" {...register('pelagemAnimal')} />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1037,7 +1076,11 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText width="30vw" type="date" border="solid 0.2vw black" />
+              <InputText
+                width="30vw"
+                type="date"
+                {...register('dataNascimentoAnimal')}
+              />
             </InputPlace>
           </InputPair>
 
@@ -1051,10 +1094,10 @@ export function TecnicoDashboard(data: { token: string }) {
                 fontWeight="300"
               />
               <InputText
-                fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                accept="image/*"
+                {...register('image01')}
               />
             </InputPlace>
 
@@ -1067,10 +1110,9 @@ export function TecnicoDashboard(data: { token: string }) {
                 fontWeight="300"
               />
               <InputText
-                fontSize="1.4vw"
-                height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                accept="image/*"
+                {...register('image02')}
               />
             </InputPlace>
           </InputPair>
@@ -1088,7 +1130,8 @@ export function TecnicoDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                accept="image/*"
+                {...register('image03')}
               />
             </InputPlace>
 
@@ -1104,7 +1147,8 @@ export function TecnicoDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                accept="image/*"
+                {...register('image04')}
               />
             </InputPlace>
           </InputPair>
@@ -1127,6 +1171,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 textButton="← Voltar"
                 widthButton="7vw"
                 textColor="white"
+                type="submit"
               />
               <Button
                 colorButton="green"
@@ -1182,7 +1227,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1193,7 +1238,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1206,7 +1251,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1217,7 +1262,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1230,7 +1275,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1241,7 +1286,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1254,7 +1299,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1265,7 +1310,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1278,7 +1323,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1289,7 +1334,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1312,7 +1357,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1323,7 +1368,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1335,7 +1380,7 @@ export function TecnicoDashboard(data: { token: string }) {
               color="black"
               fontWeight="300"
             />
-            <InputText border="solid 0.2vw black" />
+            <InputText />
           </InputPlace>
 
           <div style={{ marginTop: '2vw' }}>
@@ -1905,7 +1950,7 @@ export function TecnicoDashboard(data: { token: string }) {
               color="black"
               fontWeight="300"
             />
-            <InputText border="solid 0.2vw black" />
+            <InputText />
           </InputPlace>
 
           <InputPair style={{ width: '90%' }}>
@@ -1917,7 +1962,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1928,7 +1973,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1941,7 +1986,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1952,7 +1997,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1965,7 +2010,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1976,7 +2021,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -1989,7 +2034,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText type="date" border="solid 0.2vw black" />
+              <InputText type="date" />
             </InputPlace>
           </InputPair>
 
@@ -2006,7 +2051,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                accept="image/*"
               />
             </InputPlace>
 
@@ -2022,7 +2067,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                accept="image/*"
               />
             </InputPlace>
           </InputPair>
@@ -2040,7 +2085,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                accept="image/*"
               />
             </InputPlace>
 
@@ -2056,7 +2101,7 @@ export function TecnicoDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                accept="image/*"
               />
             </InputPlace>
           </InputPair>

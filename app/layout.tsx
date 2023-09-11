@@ -1,8 +1,13 @@
+'use client'
 import StyledComponentsRegistry from './registry'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { AlertContextProvider } from '@/context/AlertContextProvider'
 export const metadata = {
   title: 'ABCPD',
   description: 'Pagina ABCPD',
 }
+
+const queryClient = new QueryClient()
 
 export default function RootLayout({
   children,
@@ -10,10 +15,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <StyledComponentsRegistry>
-      <html lang="pt-br">
-        <body style={{ margin: 0, overflowX: 'hidden' }}>{children}</body>
-      </html>
-    </StyledComponentsRegistry>
+    <AlertContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <StyledComponentsRegistry>
+          <html lang="pt-br">
+            <body style={{ margin: 0, overflowX: 'hidden' }}>{children}</body>
+          </html>
+        </StyledComponentsRegistry>
+      </QueryClientProvider>
+    </AlertContextProvider>
   )
 }

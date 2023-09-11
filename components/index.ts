@@ -4,6 +4,7 @@ import { Register } from './Register'
 import { CriadorDashboard } from './CriadorDashboard'
 import { TecnicoDashboard } from './TecnicoDashboard'
 import { SuperintendenteDashboard } from './SuperintendenteDashboard'
+import PaymentComponent from './Payment'
 export {
   InitialPage,
   Login,
@@ -11,4 +12,5 @@ export {
   CriadorDashboard,
   TecnicoDashboard,
   SuperintendenteDashboard,
+  PaymentComponent
 }

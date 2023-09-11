@@ -4,6 +4,7 @@ export async function CriarFazenda(data: any) {
     body: JSON.stringify(data),
     headers: { 'Content-type': 'application/json; charset=UTF-8' },
   })
+  console.log(res)
 
   return res.json()
 }
