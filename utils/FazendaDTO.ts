@@ -12,31 +12,33 @@ type FazendaDTO = {
 
   fazendaCadastrada: boolean
 
-  femeas04Fazenda: number
+  femeas04Fazenda: string
 
-  femeas1224Fazenda: number
+  femeas1224Fazenda: string
 
-  femeas2436Fazenda: number
+  femeas2436Fazenda: string
 
-  femeas36Fazenda: number
+  femeas36Fazenda: string
 
-  femeas412Fazenda: number
+  femeas412Fazenda: string
 
-  macho04Fazenda: number
+  macho04Fazenda: string
 
-  macho1224Fazenda: number
+  macho1224Fazenda: string
 
-  macho2436Fazenda: number
+  macho2436Fazenda: string
 
-  macho36Fazenda: number
+  macho36Fazenda: string
 
-  macho412Fazenda: number
+  macho412Fazenda: string
 
-  municipioFazenda: number
+  municipioFazenda: string
 
   nomeFazenda: string
 
   observacoes: string
+
+  rebanho: string
 
   outrasEspecies: string
 

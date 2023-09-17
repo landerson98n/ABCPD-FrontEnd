@@ -11,6 +11,7 @@ import { AlertContext } from '@/context/AlertContextProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import errorMap from 'zod/locales/en.js'
+import { CircularProgress } from '@mui/material'
 
 const poppins = Poppins({ weight: ['300'], subsets: ['latin'] })
 
@@ -21,6 +22,7 @@ export default function Login() {
   }
 
   const [formValues, setFormValues] = React.useState(initialValues)
+  const [loading, setLoading] = React.useState(false)
   const { alert } = useContext(AlertContext)
   const handleInputChange = (e: any) => {
     const { name, value } = e.target
@@ -52,6 +54,7 @@ export default function Login() {
   })
 
   const Enviar = async (dataForm: any) => {
+    setLoading(true)
     setFormValues({ ...formValues, ...dataForm })
     const data = {
       email: formValues.email,
@@ -147,20 +150,24 @@ export default function Login() {
         >
           Esqueceu a senha?
         </a>
-        <Button
-          onClick={() => {
-            for (const componente in errors) {
-              const mensagem = errors[componente]
-              alert(mensagem?.message)
-            }
-            console.log(errors)
-          }}
-          type="submit"
-          widthButton="20vw"
-          heightButton="3.3vw"
-          colorButton="green"
-          textButton="Entrar"
-        />
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <Button
+            onClick={() => {
+              for (const componente in errors) {
+                const mensagem = errors[componente]
+                alert(mensagem?.message)
+              }
+              console.log(errors)
+            }}
+            type="submit"
+            widthButton="20vw"
+            heightButton="3.3vw"
+            colorButton="#9E4B00"
+            textButton="Entrar"
+          />
+        )}
       </form>
     </Container>
   )

@@ -10,6 +10,20 @@ export async function CriarCriador(data: any) {
   return res.json()
 }
 
+export async function getCriadorByUserId(id: string, token: string) {
+  const res = await fetch(
+    `http://localhost:3001/criador/get-criador-user/${id}`,
+    {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  )
+
+  console.log(res)
+
+  return res.json()
+}
+
 export async function dataAnimal(token: string) {
   const response = await fetch(
     'http://localhost:3001/animal/get-animal-criador',

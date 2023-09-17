@@ -4,14 +4,13 @@ export async function CriarFazenda(data: any) {
     body: JSON.stringify(data),
     headers: { 'Content-type': 'application/json; charset=UTF-8' },
   })
-  console.log(res)
 
   return res.json()
 }
 
 export async function getFazendaCriador(token: string, id: string) {
   const response = await fetch(
-    `http://localhost:3001/animal/get-fazendas-criador/${id}`,
+    `http://localhost:3001/fazenda/get-fazendas-criador/${id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -19,6 +18,6 @@ export async function getFazendaCriador(token: string, id: string) {
       method: 'GET',
     },
   )
-  console.log(response)
+
   return response.json()
 }

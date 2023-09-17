@@ -47,8 +47,6 @@ export default function PaymentComponent() {
     )
 
     if (response.invoiceUrl && boletoURL == '') {
-      console.log(response)
-
       setBoletoURL(response.invoiceUrl)
     }
   }
@@ -61,7 +59,7 @@ export default function PaymentComponent() {
             <Button
               widthButton="10%"
               heightButton="3vw"
-              colorButton="black"
+              colorButton="#9E4B00"
               textButton="← "
             />
             <div style={{ marginLeft: '8vw' }}>
@@ -216,7 +214,7 @@ export default function PaymentComponent() {
                 <WhiteBackground
                   alignItems="normal"
                   padding="3vw"
-                  boxShadow="0.1vw 0.1vw 0.6vw black"
+                  boxShadow="0.1vw 0.1vw 0.6vw #9E4B00"
                   width="40%"
                   height="15vw"
                 >
@@ -299,7 +297,7 @@ export default function PaymentComponent() {
                     <Button
                       widthButton="100%"
                       heightButton="3vw"
-                      colorButton="green"
+                      colorButton="#9E4B00"
                       textButton="Confirmar Pagamento"
                     />
                   </div>

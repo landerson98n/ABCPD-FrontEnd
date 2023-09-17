@@ -35,7 +35,7 @@ export function SelectBox(props: SelectProps) {
         height,
         width,
         border,
-        borderColor: `${borderColor ?? 'black'}`,
+        borderColor: `${borderColor ?? '#9E4B00'}`,
         borderTop,
         borderLeft,
         borderRight,

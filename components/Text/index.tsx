@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { TextareaHTMLAttributes } from 'react'
 import { Poppins, Roboto } from 'next/font/google'
 import Image from 'next/legacy/image'
 
@@ -7,7 +7,7 @@ const roboto = Roboto({ weight: ['300'], subsets: ['latin'] })
 
 type TextAlign = 'left' | 'center' | 'right' | 'justify'
 
-interface TextProps {
+interface TextProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   fontFamily: 'pop' | 'rob'
   size: string
   text: string
@@ -28,6 +28,7 @@ export function Text(props: TextProps) {
     textAlign,
     widthImage,
     src,
+    ...rest
   } = props
   return (
     <>

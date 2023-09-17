@@ -15,7 +15,7 @@ export const Container = styled.div`
 export const GreenBackground = styled.div`
   width: 100%;
   height: 30vw;
-  background-color: green;
+  background-color: #9e4b00;
   display: flex;
   align-items: center;
   justify-content: space-between;

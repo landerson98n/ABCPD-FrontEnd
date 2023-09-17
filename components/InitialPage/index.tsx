@@ -35,7 +35,7 @@ export default function InitialPage() {
               fontFamily="pop"
               size={'1.3vw'}
               text={'Entenda Como Fazemos Isso'}
-              color="green"
+              color="black"
               fontWeight="200"
             />
             <Text
@@ -106,7 +106,7 @@ export default function InitialPage() {
               fontFamily="pop"
               size={'1.3vw'}
               text={'Entenda Como Fazemos Isso'}
-              color="green"
+              color="black"
               fontWeight="200"
             />
             <Text
@@ -128,7 +128,7 @@ export default function InitialPage() {
             <Button
               widthButton="20vw"
               heightButton="3.3vw"
-              colorButton="green"
+              colorButton="#9E4B00"
               textButton="Registre-se"
             />
           </div>

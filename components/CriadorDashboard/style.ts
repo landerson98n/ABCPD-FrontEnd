@@ -10,8 +10,27 @@ export const Container = styled.div`
   overflow-y: hidden;
   display: flex;
 `
-
-export const RegistroAnimalBase = styled(motion.div)`
+export const InputText = styled.input`
+  width: 100%;
+  height: 4vw;
+  background-color: white;
+  border: solid 1px #9e4b00;
+  font-size: 1.7vw;
+  padding-left: 1vw;
+  outline: none;
+  display: flex;
+`
+export const Select = styled.select`
+  width: 100%;
+  height: 4vw;
+  background-color: white;
+  border-radius: 0.5vw;
+  border: solid 1px #9e4b00;
+  font-size: 1.7vw;
+  padding-left: 1vw;
+  overflow-y: scroll;
+`
+export const RegistroAnimalBase = styled(motion.form)`
   width: 90%;
   height: 90%;
   background-color: white;
@@ -54,7 +73,7 @@ export const Header = styled.div`
 export const Menu = styled(motion.div)`
   width: 20%;
   height: 100%;
-  background-color: green;
+  background-color: #9e4b00;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -73,7 +92,7 @@ export const ComunicNascimento = styled(motion.div)`
   margin-top: 2vw;
 `
 
-export const VerComunicNascimento = styled(motion.div)`
+export const VerComunicNascimento = styled(motion.form)`
   width: 90%;
   height: 90%;
   background-color: white;

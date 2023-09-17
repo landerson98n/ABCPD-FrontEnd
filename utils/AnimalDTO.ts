@@ -2,8 +2,8 @@ type AnimalDTO = {
   id: string
   criadorAnimal: string
   fazenda: string
-  mae?: string
-  pai?: string
+  mae?: string | null
+  pai?: string | null
   rebanho: string
   dataAvalicacao: string
   composicaoGenetica: string

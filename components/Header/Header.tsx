@@ -87,7 +87,7 @@ export function Header(props: HeaderProps) {
           <Button
             widthButton="9vw"
             heightButton="3.3vw"
-            colorButton="green"
+            colorButton="#9E4B00"
             textButton="Registre-se"
             onClick={() => {
               window.location.assign(`/Register`)

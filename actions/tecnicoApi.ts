@@ -5,6 +5,6 @@ export async function allTecnicos(token: string) {
     },
     method: 'GET',
   })
-  console.log(response)
+
   return response.json()
 }

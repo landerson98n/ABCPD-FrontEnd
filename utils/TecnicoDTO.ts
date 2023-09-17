@@ -12,6 +12,8 @@ type TecnicoDTO = {
   nomeCompleto: string
 
   rg: string
+
+  id: string
 }
 
 export default TecnicoDTO

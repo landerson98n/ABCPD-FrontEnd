@@ -4,7 +4,6 @@ import {
   Home,
   add,
   animal,
-  animalBlue,
   arrowLeft,
   boi,
   comunic,
@@ -16,6 +15,7 @@ import {
   seta,
   user,
   waiting,
+  animalBlue,
 } from '@/assets'
 import {
   Container,
@@ -173,13 +173,13 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setTecnicoRegister(false),
                   setUsersPage(false)
               }}
-              colorButton={initialPage ? '#032759' : 'green'}
+              colorButton={initialPage ? 'black' : '#9E4B00'}
               textButton="Pagina Inicial"
             />
             <Button
               widthButton="16vw"
-              widthImage="1.5vw"
-              src={animal}
+              widthImage="1.8vw"
+              src={logo2Branca}
               heightButton="3.3vw"
               onClick={() => {
                 setAnimalPage(!animalPage),
@@ -200,7 +200,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setTecnicoRegister(false),
                   setUsersPage(false)
               }}
-              colorButton={animalPage ? '#032759' : 'green'}
+              colorButton={animalPage ? 'black' : '#9E4B00'}
               textButton="Animais"
             />
             <Button
@@ -226,7 +226,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setCriadorPage(false),
                   setTecnicoRegister(false)
               }}
-              colorButton={usersPage ? '#032759' : 'green'}
+              colorButton={usersPage ? 'black' : '#9E4B00'}
               textButton="Usuários"
             />
             <Button
@@ -253,7 +253,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setTecnicoRegister(false),
                   setUsersPage(false)
               }}
-              colorButton={comunicPage ? '#032759' : 'green'}
+              colorButton={comunicPage ? 'black' : '#9E4B00'}
               textButton="Comunicações "
             />
             <Button
@@ -273,7 +273,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setVerAnimalPage(false),
                   setVerAnimalRGDPage(false)
               }}
-              colorButton={solicitacao ? '#032759' : 'green'}
+              colorButton={solicitacao ? 'black' : '#9E4B00'}
               textButton="Solicitações "
             />
 
@@ -290,7 +290,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
                 textSize="0.9vw"
-                textColor={animalBasePage ? 'white' : '#032759'}
+                textColor={animalBasePage ? 'white' : 'black'}
                 widthButton="100%"
                 widthImage="0.5vw"
                 src={arrowLeft}
@@ -308,7 +308,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     setVerAnimalPage(false),
                     setVerAnimalRGDPage(false)
                 }}
-                colorButton={animalBasePage ? '#032759' : 'white'}
+                colorButton={animalBasePage ? 'black' : 'white'}
                 textButton="RGD"
               />
             </DropdownMenu>
@@ -326,7 +326,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
                 textSize="0.9vw"
-                textColor={comunicNascPage ? 'white' : '#032759'}
+                textColor={comunicNascPage ? 'white' : 'black'}
                 widthButton="100%"
                 widthImage="0.5vw"
                 src={arrowLeft}
@@ -349,14 +349,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     setTecnicoRegister(false),
                     setUsersPage(false)
                 }}
-                colorButton={comunicNascPage ? '#032759' : 'white'}
+                colorButton={comunicNascPage ? 'black' : 'white'}
                 textButton="Comunicações de Nascimento"
               />
               <Button
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
                 textSize="0.9vw"
-                textColor={comunicCoberPage ? 'white' : '#032759'}
+                textColor={comunicCoberPage ? 'white' : 'black'}
                 widthButton="100%"
                 widthImage="0.5vw"
                 src={arrowLeft}
@@ -374,7 +374,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     setSolicitacao(false),
                     setVerComunicCoberPage(false)
                 }}
-                colorButton={comunicCoberPage ? '#032759' : 'white'}
+                colorButton={comunicCoberPage ? 'black' : 'white'}
                 textButton="Comunicações de Cobertura"
               />
             </DropdownMenu>
@@ -392,7 +392,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
                 textSize="0.9vw"
-                textColor={tecnicoPage ? 'white' : '#032759'}
+                textColor={tecnicoPage ? 'white' : 'black'}
                 widthButton="100%"
                 widthImage="0.5vw"
                 src={arrowLeft}
@@ -413,14 +413,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     setVerAnimalPage(false),
                     setVerAnimalRGDPage(false)
                 }}
-                colorButton={tecnicoPage ? '#032759' : 'white'}
+                colorButton={tecnicoPage ? 'black' : 'white'}
                 textButton="Tecnicos"
               />
               <Button
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
                 textSize="0.9vw"
-                textColor={criadorPage ? 'white' : '#032759'}
+                textColor={criadorPage ? 'white' : 'black'}
                 widthButton="100%"
                 widthImage="0.5vw"
                 src={arrowLeft}
@@ -441,7 +441,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     setVerAnimalPage(false),
                     setVerAnimalRGDPage(false)
                 }}
-                colorButton={criadorPage ? '#032759' : 'white'}
+                colorButton={criadorPage ? 'black' : 'white'}
                 textButton="Criadores"
               />
             </DropdownMenu>
@@ -459,7 +459,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
                 textSize="0.9vw"
-                textColor={animalBasePage ? 'white' : '#032759'}
+                textColor={animalBasePage ? 'white' : 'black'}
                 widthButton="100%"
                 widthImage="0.5vw"
                 src={arrowLeft}
@@ -477,7 +477,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     setVerAnimalPage(false),
                     setVerAnimalRGDPage(false)
                 }}
-                colorButton={animalBasePage ? '#032759' : 'white'}
+                colorButton={animalBasePage ? 'black' : 'white'}
                 textButton="Solicitações Animais Base"
               />
             </DropdownMenu>
@@ -535,7 +535,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '4vw' }}>
             <Image
-              src={animalBlue}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -705,7 +704,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '4vw' }}>
             <Image
-              src={animalBlue}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -888,7 +886,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '4vw' }}>
             <Image
-              src={animalBlue}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -1066,7 +1063,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '10vw' }}>
             <Image
-              src={animalBlue}
               alt="logoAnimal"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -1076,14 +1072,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             fontFamily="pop"
             fontWeight="700"
             size="1.8vw"
-            color="#032759"
+            color="black"
           />
           <Text
             text="Informações"
             fontFamily="rob"
             fontWeight="600"
             size="1.6vw"
-            color="#032759"
+            color="black"
           />
 
           <InputPair style={{ width: '90%' }}>
@@ -1095,7 +1091,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1106,7 +1102,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1119,7 +1115,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1130,7 +1126,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1143,7 +1139,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1154,7 +1150,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1167,7 +1163,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1178,7 +1174,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1191,7 +1187,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1202,7 +1198,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1212,7 +1208,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               fontFamily="rob"
               fontWeight="600"
               size="1.6vw"
-              color="#032759"
+              color="black"
             />
           </div>
 
@@ -1225,7 +1221,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1236,7 +1232,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1248,7 +1244,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               color="black"
               fontWeight="300"
             />
-            <InputText border="solid 0.2vw black" />
+            <InputText border="solid 0.2vw #9E4B00" />
           </InputPlace>
 
           <div style={{ marginTop: '2vw' }}>
@@ -1257,7 +1253,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               fontFamily="rob"
               fontWeight="600"
               size="1.6vw"
-              color="#032759"
+              color="black"
             />
           </div>
 
@@ -1306,14 +1302,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
               textColor="white"
             />
             <Button
-              colorButton="green"
+              colorButton="#9E4B00"
               heightButton="2vw"
               textButton="Aprovar"
               widthButton="7vw"
@@ -1343,7 +1339,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '10vw' }}>
             <Image
-              src={animalBlue}
               alt="logoAnimal"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -1353,14 +1348,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             fontFamily="pop"
             fontWeight="700"
             size="1.8vw"
-            color="#032759"
+            color="black"
           />
           <Text
             text="Informações"
             fontFamily="rob"
             fontWeight="600"
             size="1.6vw"
-            color="#032759"
+            color="black"
           />
 
           <InputPair style={{ width: '90%' }}>
@@ -1372,7 +1367,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1383,7 +1378,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1396,7 +1391,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1407,7 +1402,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1420,7 +1415,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1431,7 +1426,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1444,7 +1439,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1455,7 +1450,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1468,7 +1463,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1479,7 +1474,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1489,7 +1484,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               fontFamily="rob"
               fontWeight="600"
               size="1.6vw"
-              color="#032759"
+              color="black"
             />
           </div>
 
@@ -1502,7 +1497,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -1513,7 +1508,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -1525,7 +1520,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               color="black"
               fontWeight="300"
             />
-            <InputText border="solid 0.2vw black" />
+            <InputText border="solid 0.2vw #9E4B00" />
           </InputPlace>
 
           <div style={{ marginTop: '2vw' }}>
@@ -1534,7 +1529,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               fontFamily="rob"
               fontWeight="600"
               size="1.6vw"
-              color="#032759"
+              color="black"
             />
           </div>
 
@@ -1583,14 +1578,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
               textColor="white"
             />
             <Button
-              colorButton="green"
+              colorButton="#9E4B00"
               heightButton="2vw"
               textButton="Aprovar"
               widthButton="7vw"
@@ -1620,7 +1615,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '10vw' }}>
             <Image
-              src={animalBlue}
               alt="logoAnimal"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -1630,7 +1624,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
             fontFamily="pop"
             fontWeight="700"
             size="2vw"
-            color="#032759"
+            color="black"
           />
 
           <Table>
@@ -1742,7 +1736,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
 
           <div style={{ display: 'flex', marginTop: '1vw' }}>
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
@@ -1765,7 +1759,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '4vw' }}>
             <Image
-              src={animalBlue}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -1896,7 +1889,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
 
           <div style={{ marginTop: '1vw' }}>
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
@@ -1919,7 +1912,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '4vw' }}>
             <Image
-              src={animalBlue}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -2051,7 +2043,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
 
           <div style={{ marginTop: '1vw' }}>
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
@@ -2074,7 +2066,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '10vw' }}>
             <Image
-              src={animalBlue}
               alt="logoAnimal"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -2084,7 +2075,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
             fontFamily="pop"
             fontWeight="700"
             size="1.8vw"
-            color="#032759"
+            color="black"
           />
 
           <InputPlace>
@@ -2095,7 +2086,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               color="black"
               fontWeight="300"
             />
-            <InputText border="solid 0.2vw black" />
+            <InputText border="solid 0.2vw #9E4B00" />
           </InputPlace>
 
           <InputPair style={{ width: '90%' }}>
@@ -2107,7 +2098,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2118,7 +2109,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2131,7 +2122,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2142,7 +2133,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2155,7 +2146,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2166,7 +2157,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2179,7 +2170,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText type="date" border="solid 0.2vw black" />
+              <InputText type="date" border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2196,7 +2187,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                border="solid 0.2vw #9E4B00"
               />
             </InputPlace>
 
@@ -2212,7 +2203,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                border="solid 0.2vw #9E4B00"
               />
             </InputPlace>
           </InputPair>
@@ -2230,7 +2221,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                border="solid 0.2vw #9E4B00"
               />
             </InputPlace>
 
@@ -2246,7 +2237,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw black"
+                border="solid 0.2vw #9E4B00"
               />
             </InputPlace>
           </InputPair>
@@ -2262,14 +2253,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
               textColor="white"
             />
             <Button
-              colorButton="green"
+              colorButton="#9E4B00"
               heightButton="2vw"
               textButton="Registrar Animal"
               widthButton="17vw"
@@ -2292,7 +2283,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '4vw' }}>
             <Image
-              src={animalBlue}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -2472,7 +2462,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
 
           <div style={{ marginTop: '1vw' }}>
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
@@ -2495,7 +2485,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '10vw' }}>
             <Image
-              src={animalBlue}
               alt="logoAnimal"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -2505,7 +2494,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
             fontFamily="pop"
             fontWeight="700"
             size="1.8vw"
-            color="#032759"
+            color="black"
           />
 
           <InputPlace>
@@ -2514,7 +2503,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               fontFamily="pop"
               fontWeight="700"
               size="1.5vw"
-              color="#032759"
+              color="black"
             />
           </InputPlace>
 
@@ -2527,7 +2516,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2538,7 +2527,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2551,7 +2540,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2562,7 +2551,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2575,7 +2564,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2590,7 +2579,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
@@ -2610,7 +2599,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '4vw' }}>
             <Image
-              src={animalBlue}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -2728,14 +2716,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
               textColor="white"
             />
             <Button
-              colorButton="green "
+              colorButton="#9E4B00 "
               heightButton="2vw"
               textButton="Registrar novo técnico"
               widthButton="20vw"
@@ -2755,7 +2743,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '4vw' }}>
             <Image
-              src={animalBlue}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -2873,14 +2860,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
               textColor="white"
             />
             <Button
-              colorButton="green "
+              colorButton="#9E4B00 "
               heightButton="2vw"
               textButton="Registrar novo criador"
               widthButton="20vw"
@@ -2903,7 +2890,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '10vw' }}>
             <Image
-              src={animalBlue}
               alt="logoAnimal"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -2913,14 +2899,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             fontFamily="pop"
             fontWeight="700"
             size="1.8vw"
-            color="#032759"
+            color="black"
           />
           <Text
             text="Informações"
             fontFamily="rob"
             fontWeight="600"
             size="1.6vw"
-            color="#032759"
+            color="black"
           />
 
           <InputPair style={{ width: '90%' }}>
@@ -2932,7 +2918,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2943,7 +2929,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2956,7 +2942,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2967,7 +2953,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -2980,7 +2966,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2991,7 +2977,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -3004,7 +2990,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3015,7 +3001,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -3028,7 +3014,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3039,7 +3025,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -3054,14 +3040,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
               textColor="white"
             />
             <Button
-              colorButton="green"
+              colorButton="#9E4B00"
               heightButton="2vw"
               textButton="Editar"
               widthButton="7vw"
@@ -3091,7 +3077,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
         >
           <div style={{ width: '10vw' }}>
             <Image
-              src={animalBlue}
               alt="logoAnimal"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -3101,14 +3086,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             fontFamily="pop"
             fontWeight="700"
             size="1.8vw"
-            color="#032759"
+            color="black"
           />
           <Text
             text="Informações"
             fontFamily="rob"
             fontWeight="600"
             size="1.6vw"
-            color="#032759"
+            color="black"
           />
 
           <InputPair style={{ width: '90%' }}>
@@ -3120,7 +3105,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3131,7 +3116,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -3144,7 +3129,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3155,7 +3140,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -3168,7 +3153,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3179,7 +3164,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -3192,7 +3177,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3203,7 +3188,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -3216,7 +3201,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3227,7 +3212,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw black" />
+              <InputText border="solid 0.2vw #9E4B00" />
             </InputPlace>
           </InputPair>
 
@@ -3242,14 +3227,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <Button
-              colorButton="#032759"
+              colorButton="black"
               heightButton="2vw"
               textButton="← Voltar"
               widthButton="7vw"
               textColor="white"
             />
             <Button
-              colorButton="green"
+              colorButton="#9E4B00"
               heightButton="2vw"
               textButton="Editar"
               widthButton="7vw"

@@ -36,6 +36,8 @@ import { PaymentAPI } from '@/actions/paymentApi'
 import { AlertContext } from '@/context/AlertContextProvider'
 import { RebanhoAPI } from '@/actions/RebanhApi'
 import { getUserCPFEmail } from '@/actions/user'
+import { CircularProgress } from '@mui/material'
+import FazendaDTO from '@/utils/FazendaDTO'
 
 export function Register() {
   const { alert } = useContext(AlertContext)
@@ -48,6 +50,7 @@ export function Register() {
   const [creditPay, setCredit] = useState(false)
   const [imagePix, setImagePix] = useState()
   const [boletoURL, setBoletoURL] = useState('')
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     setSchema(getSchema())
   }, [pageOneX, pageTwoX, pageThreeX])
@@ -214,23 +217,34 @@ export function Register() {
     return response
   }
 
-  const handle = (data) => {
-    setFormValues({ ...formValues, ...data })
-    if (Object.keys(errors).length === 0) {
-      setPageOneX(!pageOneX)
+  const handle = async (data) => {
+    if (await CPFUsado(data.email)) {
+      alert('Email já foi utilizado')
+    } else {
+      setFormValues({ ...formValues, ...data })
+      if (Object.keys(errors).length === 0) {
+        setPageOneX(!pageOneX)
+      }
     }
   }
 
-  const handle2 = (data) => {
+  const handle2 = async (data) => {
     setFormValues({ ...formValues, ...data })
-    if (Object.keys(errors).length === 0) {
-      setPageTwoX(!pageTwoX)
+    if (await CPFUsado(formValues.cpf)) {
+      alert('CPF Já foi utilizado')
+    } else {
+      if (Object.keys(errors).length === 0) {
+        setPageTwoX(!pageTwoX)
+      }
     }
   }
 
   const handle3 = (data) => {
-    setFormValues({ ...formValues, ...data })
-    Enviar()
+    if (data) {
+      Enviar(data)
+    } else {
+      alert('Formulário inválido')
+    }
   }
 
   async function getPixImage(id: string) {
@@ -246,23 +260,22 @@ export function Register() {
     }
   }
 
-  async function getBoleto() {
+  async function getBoleto(id: string) {
     const response = await PaymentAPI(
       {
         billingType: 'BOLETO',
         value: '10',
       },
-      '75e513d7-73a5-469a-9b97-3d07c5141227',
+      id,
     )
 
     if (response.invoiceUrl && boletoURL == '') {
-      console.log(response)
-
       setBoletoURL(response.invoiceUrl)
     }
   }
 
-  const Enviar = async () => {
+  const Enviar = async (fazenda: FazendaDTO) => {
+    setLoading(true)
     const palavras = formValues.nomeCompleto.split(' ')
 
     const UserData = {
@@ -276,6 +289,7 @@ export function Register() {
       telefone: formValues.telefone,
       ultimaConexao: new Date(Date.now()).toISOString(),
     }
+
     const CriadorData = {
       cep: formValues.cep,
       nomeBairro: formValues.nomeBairro,
@@ -288,49 +302,44 @@ export function Register() {
     }
 
     const response = await CriarCriador({ ...CriadorData, ...UserData })
-    alert(response?.message ? response?.message : null)
 
     if (!response.message) {
       const FazendaData = {
         criadorFazenda: response?.id,
-        areaFazenda: formValues.areaFazenda,
+        areaFazenda: fazenda.areaFazenda,
         atualizacoes: '',
-        comoChegar: formValues.comoChegar,
-        femeas04Fazenda: parseInt(formValues.femeas04Fazenda),
-        femeas1224Fazenda: parseInt(formValues.femeas1224Fazenda),
-        femeas2436Fazenda: parseInt(formValues.femeas2436Fazenda),
-        femeas36Fazenda: parseInt(formValues.femeas36Fazenda),
-        femeas412Fazenda: parseInt(formValues.femeas412Fazenda),
-        macho04Fazenda: parseInt(formValues.macho04Fazenda),
-        macho1224Fazenda: parseInt(formValues.macho1224Fazenda),
-        macho2436Fazenda: parseInt(formValues.macho2436Fazenda),
-        macho36Fazenda: parseInt(formValues.macho36Fazenda),
-        macho412Fazenda: parseInt(formValues.macho412Fazenda),
-        municipioFazenda: formValues.municipioFazenda,
-        nomeFazenda: formValues.nomeFazenda,
-        observacoes: formValues.observacoes,
-        outrasEspecies: formValues.outrasEspecies,
-        telefoneFazenda: formValues.telefoneFazenda,
+        comoChegar: fazenda.comoChegar,
+        femeas04Fazenda: parseInt(fazenda.femeas04Fazenda),
+        femeas1224Fazenda: parseInt(fazenda.femeas1224Fazenda),
+        femeas2436Fazenda: parseInt(fazenda.femeas2436Fazenda),
+        femeas36Fazenda: parseInt(fazenda.femeas36Fazenda),
+        femeas412Fazenda: parseInt(fazenda.femeas412Fazenda),
+        macho04Fazenda: parseInt(fazenda.macho04Fazenda),
+        macho1224Fazenda: parseInt(fazenda.macho1224Fazenda),
+        macho2436Fazenda: parseInt(fazenda.macho2436Fazenda),
+        macho36Fazenda: parseInt(fazenda.macho36Fazenda),
+        macho412Fazenda: parseInt(fazenda.macho412Fazenda),
+        municipioFazenda: fazenda.municipioFazenda,
+        nomeFazenda: fazenda.nomeFazenda,
+        observacoes: fazenda.observacoes,
+        outrasEspecies: fazenda.outrasEspecies,
+        telefoneFazenda: fazenda.telefoneFazenda,
         fazendaCadastrada: false,
       }
-
       const responseFazenda = await CriarFazenda(FazendaData)
-      if (responseFazenda.message && responseFazenda?.message != '') {
-        alert(responseFazenda?.message ? responseFazenda?.message : null)
-      }
+
       const responseRebanho = await RebanhoAPI({
         fazendaId: responseFazenda.id,
-        serie: formValues.rebanho,
+        serie: fazenda.rebanho,
       })
-      if (responseRebanho.message && responseRebanho?.message != '') {
-        alert(responseRebanho?.message ? responseRebanho?.message : null)
-      }
       if (!responseRebanho.message) {
         alert('Conta criada com sucesso', 'success')
-        responseFazenda?.message ? null : setPageThreeX(!pageThreeX)
+        setPageThreeX(!pageThreeX)
         getPixImage(response?.id)
+        getBoleto(response?.id)
       }
     }
+    setLoading(false)
   }
 
   return (
@@ -355,7 +364,7 @@ export function Register() {
               <Button
                 widthButton="10%"
                 heightButton="3vw"
-                colorButton="black"
+                colorButton="#9E4B00"
                 textButton="←  Voltar"
                 onClick={() => {
                   window.location.assign('/')
@@ -453,7 +462,7 @@ export function Register() {
               type="submit"
               widthButton="80%"
               heightButton="6vw"
-              colorButton="green"
+              colorButton="#9E4B00"
               textButton="Continuar"
             />
           </GrayBackground>
@@ -476,7 +485,7 @@ export function Register() {
                 }}
                 widthButton="10%"
                 heightButton="3vw"
-                colorButton="black"
+                colorButton="#9E4B00"
                 textButton="←  Voltar"
                 type="button"
               />
@@ -688,7 +697,7 @@ export function Register() {
               }}
               widthButton="80%"
               heightButton="6vw"
-              colorButton="green"
+              colorButton="#9E4B00"
               textButton="Continuar"
             />
           </GrayBackground>
@@ -710,7 +719,7 @@ export function Register() {
                 }}
                 widthButton="10%"
                 heightButton="3vw"
-                colorButton="black"
+                colorButton="#9E4B00"
                 textButton="←  Voltar"
                 type="button"
               />
@@ -1062,18 +1071,22 @@ export function Register() {
 
         <ButtonPanel style={{ marginTop: '129vw' }}>
           <GrayBackground>
-            <Button
-              onClick={() => {
-                for (const componente in errors) {
-                  const mensagem = errors[componente]
-                  alert(mensagem.message)
-                }
-              }}
-              widthButton="80%"
-              heightButton="6vw"
-              colorButton="green"
-              textButton="Continuar"
-            />
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <Button
+                onClick={() => {
+                  for (const componente in errors) {
+                    const mensagem = errors[componente]
+                    alert(mensagem.message)
+                  }
+                }}
+                widthButton="80%"
+                heightButton="6vw"
+                colorButton="#9E4B00"
+                textButton="Continuar"
+              />
+            )}
           </GrayBackground>
         </ButtonPanel>
       </ScreenThree>
@@ -1092,7 +1105,7 @@ export function Register() {
                 }}
                 widthButton="10%"
                 heightButton="3vw"
-                colorButton="black"
+                colorButton="#9E4B00"
                 textButton="← "
               />
               <div style={{ marginLeft: '8vw' }}>
@@ -1247,7 +1260,7 @@ export function Register() {
                   <WhiteBackground
                     alignItems="normal"
                     padding="3vw"
-                    boxShadow="0.1vw 0.1vw 0.6vw black"
+                    boxShadow="0.1vw 0.1vw 0.6vw #9E4B00"
                     width="40%"
                     height="15vw"
                   >
@@ -1332,7 +1345,7 @@ export function Register() {
                       <Button
                         widthButton="100%"
                         heightButton="3vw"
-                        colorButton="green"
+                        colorButton="#9E4B00"
                         textButton="Confirmar Pagamento"
                       />
                     </div>
@@ -1394,7 +1407,6 @@ export function Register() {
                       setBoleto(!boletoPay)
                       setPix(false)
                       setCredit(false)
-                      getBoleto()
                     }}
                     checked={boletoPay === true}
                   />

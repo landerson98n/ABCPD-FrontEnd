@@ -39,7 +39,7 @@ export function InputText(props: InputProps) {
         height,
         width,
         border,
-        borderColor: `${borderColor ?? 'black'}`,
+        borderColor: `${borderColor ?? '#9E4B00'}`,
         borderTop,
         borderLeft,
         borderRight,

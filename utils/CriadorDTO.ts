@@ -1,4 +1,5 @@
 type CriadorDTO = {
+  id: string
   userId: string
   cep: string
   nomeBairro: string

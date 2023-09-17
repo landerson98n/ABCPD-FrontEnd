@@ -1,9 +1,6 @@
 import ComunicacaoCoberturaDto from '@/utils/CoberturaDTO'
 
-export async function ComunicarCobertura(
-  data: ComunicacaoCoberturaDto,
-  token: string,
-) {
+export async function ComunicarCobertura(data, token: string) {
   const res = await fetch(
     'http://localhost:3001/comunicacao-cobertura/cadastrar-cobertura',
     {
@@ -14,7 +11,25 @@ export async function ComunicarCobertura(
         Authorization: `Bearer ${token}`,
       },
     },
-  )
+  ).then((response) => {
+    return response.json()
+  })
 
-  return res.json()
+  return res
+}
+
+export async function getAllCoberturas(token: string, id: string) {
+  const res = await fetch(
+    `http://localhost:3001/comunicacao-cobertura/get-coberturas-criador/${id}`,
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  ).then((response) => {
+    return response.json()
+  })
+
+  return res
 }
