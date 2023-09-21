@@ -20,7 +20,7 @@ import done from './done.svg'
 import waiting from './waiting.svg'
 import arrowLeft from './Shape.svg'
 import hamb from './hamburguer.svg'
-import search from './search.svg'
+import searchIcon from './search.svg'
 import seta from './seta.svg'
 import boi from './boiExample.svg'
 import add from './add.svg'
@@ -31,7 +31,7 @@ export {
   add,
   boi,
   seta,
-  search,
+  searchIcon,
   hamb,
   arrowLeft,
   done,

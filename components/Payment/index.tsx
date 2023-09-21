@@ -17,37 +17,55 @@ import { useState } from 'react'
 import { boleto, card, cartao, logo, logo2, pix } from '@/assets'
 import { motion } from 'framer-motion'
 import { PaymentAPI } from '@/actions/paymentApi'
+import { getCriadorByUserId } from '@/actions/criadorApi'
+import jsonWebTokenService from 'jsonwebtoken'
+import { useQuery } from 'react-query'
 
-export default function PaymentComponent() {
+export default function PaymentComponent(props: { token: string }) {
+  const decodedJwt = jsonWebTokenService.decode(props.token)
+
+  const { data: criador, isLoading: isLoadingCriador } = useQuery(
+    'criadores',
+    async () => getCriadorByUserId(decodedJwt?.sub, props.token),
+  )
   const [pixPay, setPix] = useState(false)
   const [boletoPay, setBoleto] = useState(false)
   const [creditPay, setCredit] = useState(false)
   const [imagePix, setImagePix] = useState()
   const [boletoURL, setBoletoURL] = useState('')
+
   async function getPixImage() {
-    const response = await PaymentAPI(
-      {
-        billingType: 'PIX',
-        value: '10',
-      },
-      '75e513d7-73a5-469a-9b97-3d07c5141227',
-    )
-    if (response.encodedImage) {
-      setImagePix(`data:image/png;base64, ${response.encodedImage}`)
+    if (criador) {
+      const response = await PaymentAPI(
+        {
+          billingType: 'PIX',
+          value: '10',
+        },
+        criador.id,
+        props.token,
+      )
+      console.log(props.token)
+
+      if (response.encodedImage) {
+        setImagePix(`data:image/png;base64, ${response.encodedImage}`)
+      }
     }
   }
 
   async function getBoleto() {
-    const response = await PaymentAPI(
-      {
-        billingType: 'BOLETO',
-        value: '10',
-      },
-      '75e513d7-73a5-469a-9b97-3d07c5141227',
-    )
+    if (criador) {
+      const response = await PaymentAPI(
+        {
+          billingType: 'BOLETO',
+          value: '10',
+        },
+        criador.id,
+        props.token,
+      )
 
-    if (response.invoiceUrl && boletoURL == '') {
-      setBoletoURL(response.invoiceUrl)
+      if (response.invoiceUrl && boletoURL == '') {
+        setBoletoURL(response.invoiceUrl)
+      }
     }
   }
 
@@ -61,6 +79,9 @@ export default function PaymentComponent() {
               heightButton="3vw"
               colorButton="#9E4B00"
               textButton="← "
+              onClick={() => {
+                window.location.assign(`/CriadorPage/${props.token}`)
+              }}
             />
             <div style={{ marginLeft: '8vw' }}>
               <Title>

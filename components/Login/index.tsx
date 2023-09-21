@@ -159,7 +159,6 @@ export default function Login() {
                 const mensagem = errors[componente]
                 alert(mensagem?.message)
               }
-              console.log(errors)
             }}
             type="submit"
             widthButton="20vw"

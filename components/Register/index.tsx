@@ -137,17 +137,6 @@ export function Register() {
         telefoneFazenda: z.string().min(1, 'Telefone é um campo obrigatório'),
         areaFazenda: z.string().min(1, 'Area é um campo obrigatório'),
         municipioFazenda: z.string().min(1, 'Municipio é um campo obrigatório'),
-        rebanho: z
-          .string({
-            errorMap: () => {
-              return {
-                message:
-                  'Rebanho é um campo obrigatório e deve conter 3 letras',
-              }
-            },
-          })
-          .min(3, 'Rebanho é um campo obrigatório e deve conter 3 letras')
-          .max(3),
         comoChegar: z.string(),
         outrasEspecies: z.string(),
         observacoes: z.string(),
@@ -328,11 +317,7 @@ export function Register() {
       }
       const responseFazenda = await CriarFazenda(FazendaData)
 
-      const responseRebanho = await RebanhoAPI({
-        fazendaId: responseFazenda.id,
-        serie: fazenda.rebanho,
-      })
-      if (!responseRebanho.message) {
+      if (responseFazenda.id) {
         alert('Conta criada com sucesso', 'success')
         setPageThreeX(!pageThreeX)
         getPixImage(response?.id)
@@ -1009,29 +994,6 @@ export function Register() {
                   </InputPlace>
                 </InputPair>
               </InputData>
-              <Title>
-                <Text
-                  fontFamily="pop"
-                  size={'2vw'}
-                  text="Rebanhos"
-                  color="black"
-                  fontWeight="600"
-                />
-              </Title>
-
-              <InputPlace>
-                <Text
-                  fontFamily="pop"
-                  size={'1.5vw'}
-                  text="Rebanho"
-                  color="black"
-                  fontWeight="300"
-                />
-                <Input
-                  placeholder=""
-                  {...register('rebanho', { required: true })}
-                />
-              </InputPlace>
 
               <Title>
                 <Text

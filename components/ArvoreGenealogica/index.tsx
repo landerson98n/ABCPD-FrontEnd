@@ -13,7 +13,7 @@ export function ArvoreGenealogica(props: ArvoreGenealogica) {
     return index.id === animalSelecionado.pai
   })
 
-  const mae: AnimalDTO | undefined = animais.find((index: AnimalDTO) => {
+  const mae: AnimalDTO | undefined = animais?.find((index: AnimalDTO) => {
     return index.id === animalSelecionado.mae
   })
 
@@ -22,13 +22,15 @@ export function ArvoreGenealogica(props: ArvoreGenealogica) {
       {pai ? (
         <TreeNode
           label={
-            <Text
-              text={pai.nomeAnimal}
-              fontFamily="rob"
-              fontWeight="600"
-              size="1.6vw"
-              color="black"
-            />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Text
+                text={pai.nomeAnimal}
+                fontFamily="rob"
+                fontWeight="600"
+                size="1.6vw"
+                color="black"
+              />
+            </div>
           }
         >
           {ArvoreGenealogica({ animais, animalSelecionado: pai })}
@@ -38,13 +40,15 @@ export function ArvoreGenealogica(props: ArvoreGenealogica) {
       {mae ? (
         <TreeNode
           label={
-            <Text
-              text={mae.nomeAnimal}
-              fontFamily="rob"
-              fontWeight="600"
-              size="1.6vw"
-              color="black"
-            />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Text
+                text={mae.nomeAnimal}
+                fontFamily="rob"
+                fontWeight="600"
+                size="1.6vw"
+                color="black"
+              />
+            </div>
           }
         >
           {ArvoreGenealogica({ animais, animalSelecionado: mae })}

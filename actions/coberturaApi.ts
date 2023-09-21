@@ -1,4 +1,3 @@
-import ComunicacaoCoberturaDto from '@/utils/CoberturaDTO'
 
 export async function ComunicarCobertura(data, token: string) {
   const res = await fetch(
@@ -12,7 +11,7 @@ export async function ComunicarCobertura(data, token: string) {
       },
     },
   ).then((response) => {
-    return response.json()
+    return response
   })
 
   return res

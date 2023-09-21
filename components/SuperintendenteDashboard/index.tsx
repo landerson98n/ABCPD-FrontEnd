@@ -37,6 +37,9 @@ import {
   VerComunicCobertura,
   UsersPage,
   UserRegister,
+  TelaAnimaisRGD,
+  TelaAnimaisRGN,
+  TelaFazendasCriador,
 } from './style'
 import Image from 'next/legacy/image'
 import { Button } from '../Button'
@@ -44,28 +47,140 @@ import { Text } from '../Text'
 import { InputText } from '../InputText'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { getUserById } from '@/actions/user'
+import { getTodosAnimais } from '@/actions/animaisApi'
+import { getRebanhosAll } from '@/actions/RebanhApi'
+import { getTodasFazendas } from '@/actions/fazendaApi'
+import { useQuery } from 'react-query'
+import UserDTO from '@/utils/UserDTO'
+import jsonWebTokenService from 'jsonwebtoken'
+import AnimalDTO from '@/utils/AnimalDTO'
+import { CircularProgress } from '@mui/material'
+import CriadorDTO from '@/utils/CriadorDTO'
+import FazendaDTO from '@/utils/FazendaDTO'
+import { ComunicacaoNascimentoDto } from '@/utils/ComunicacaoNascimentoDTO'
+import { getComunicacoesNascimentoCriador } from '@/actions/comunicacaoNascimento'
+import format from 'date-fns/format'
 
 export function SuperintendenteDashboard(data: { token: string }) {
-  const [animalPage, setAnimalPage] = useState(false)
-  const [tecnicoPage, setTecnicoPage] = useState(false)
-  const [criadorPage, setCriadorPage] = useState(false)
-  const [verAnimalPage, setVerAnimalPage] = useState(false)
-  const [verAnimaRGDPage, setVerAnimalRGDPage] = useState(false)
-  const [verAnimaisCriador, setVerAnimaisCriador] = useState(false)
-  const [initialPage, setInitialPage] = useState(true)
-  const [comunicPage, setComunicPage] = useState(false)
-  const [usersPage, setUsersPage] = useState(false)
-  const [animalBasePage, setAnimalBasePage] = useState(false)
-  const [RGD, setRGD] = useState(false)
-  const [comunicNascPage, setComunicNascPage] = useState(false)
-  const [comunicCoberPage, setComunicCoberPage] = useState(false)
-  const [todasComunicNascPage, setTodasComunicNascPage] = useState(false)
-  const [verComunicNascPage, setVerComunicNascPage] = useState(false)
-  const [solicitacao, setSolicitacao] = useState(false)
-  const [verComunicCoberPage, setVerComunicCoberPage] = useState(false)
-  const [criadorRegister, setCriadorRegister] = useState(false)
-  const [tecnicoRegister, setTecnicoRegister] = useState(false)
-  const [menu, setMenu] = useState(true)
+  const decodedJwt = jsonWebTokenService.decode(data.token)
+
+  const { isLoading: isLoadingTecnicoUser, data: tecnicoUser } =
+    useQuery<UserDTO>('tecnico', async () =>
+      getUserById(decodedJwt.sub, data.token),
+    )
+
+  const { isLoading: isLoadingAnimais, data: todosAnimais } = useQuery(
+    'animais',
+    async () => getTodosAnimais(data.token),
+  )
+
+  const { isLoading: isLoadingRebanhos, data: todosRebanhos } = useQuery(
+    'rebanhos',
+    async () => getRebanhosAll(data.token),
+  )
+
+  const { data: todasFazendas, isLoading: isLoadingFazendas } = useQuery(
+    'fazendas',
+    async () => getTodasFazendas(data.token),
+  )
+
+  const { isLoading, data: criadores } = useQuery('criadores', async () =>
+    fetch('http://localhost:3001/criador/get-criadores', {
+      headers: {
+        Authorization: `Bearer ${data.token}`,
+      },
+      method: 'GET',
+    }).then((res) => res.json()),
+  )
+
+  console.log(criadores)
+
+  const [paginas, setPaginas] = useState({
+    animalPage: false,
+    tecnicoPage: false,
+    criadorPage: false,
+    verAnimalPage: false,
+    verAnimaRGDPage: false,
+    initialPage: false,
+    comunicPage: false,
+    usersPage: false,
+    animalBasePage: false,
+    RGD: false,
+    RGN: false,
+    comunicNascPage: false,
+    comunicCoberPage: false,
+    todasComunicNascPage: false,
+    verComunicNascPage: false,
+    solicitacao: false,
+    verComunicCoberPage: false,
+    tecnicoRegister: false,
+    criadorRegister: false,
+    menu: true,
+    verAnimaisCriador: false,
+  })
+  const [nascimentos, setNascimentos] = useState([])
+  const {
+    RGD,
+    RGN,
+    animalBasePage,
+    animalPage,
+    comunicCoberPage,
+    comunicNascPage,
+    comunicPage,
+    criadorPage,
+    criadorRegister,
+    initialPage,
+    menu,
+    solicitacao,
+    tecnicoPage,
+    tecnicoRegister,
+    todasComunicNascPage,
+    usersPage,
+    verAnimaRGDPage,
+    verAnimalPage,
+    verComunicCoberPage,
+    verComunicNascPage,
+    verAnimaisCriador,
+  } = paginas
+
+  const updatedPages = { ...paginas }
+
+  for (const key in updatedPages) {
+    if (key !== 'menu') {
+      updatedPages[key] = false
+    }
+  }
+
+  if (
+    isLoading ||
+    isLoadingAnimais ||
+    isLoadingRebanhos ||
+    isLoadingFazendas ||
+    isLoadingTecnicoUser
+  ) {
+    return (
+      <div
+        style={{
+          width: '100%',
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </div>
+    )
+  }
+
+  async function getNascimentos(id: string) {
+    const nascimentoData = await getComunicacoesNascimentoCriador(
+      data.token,
+      id,
+    )
+    setNascimentos(nascimentoData)
+  }
 
   return (
     <Container>
@@ -79,7 +194,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
           transition={{ duration: 0.5 }}
           animate={{ x: menu ? '13vw' : '1.5vw' }}
           onClick={() => {
-            setMenu(!menu)
+            setPaginas((prev) => ({
+              ...updatedPages,
+              menu: !prev.menu,
+            }))
           }}
           style={{ width: '100%', display: 'flex', marginTop: '1vw' }}
         >
@@ -144,34 +262,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
               src={Home}
               heightButton="3.3vw"
               onClick={() => {
-                setInitialPage(true),
-                  setAnimalPage(false),
-                  setVerComunicNascPage(false),
-                  setVerAnimalPage(false),
-                  setVerAnimalRGDPage(false),
-                  setSolicitacao(false),
-                  setVerComunicCoberPage(false),
-                  setComunicCoberPage(false),
-                  setCriadorRegister(false),
-                  setTecnicoPage(false),
-                  setCriadorPage(false),
-                  setTecnicoRegister(false),
-                  setUsersPage(false),
-                  setComunicPage(false),
-                  setAnimalBasePage(false),
-                  setRGD(false),
-                  setComunicNascPage(false),
-                  setVerComunicNascPage(false),
-                  setVerAnimalPage(false),
-                  setVerAnimalRGDPage(false),
-                  setSolicitacao(false),
-                  setVerComunicCoberPage(false),
-                  setComunicCoberPage(false),
-                  setCriadorRegister(false),
-                  setTecnicoPage(false),
-                  setCriadorPage(false),
-                  setTecnicoRegister(false),
-                  setUsersPage(false)
+                setPaginas(() => ({
+                  ...updatedPages,
+                  initialPage: true,
+                }))
               }}
               colorButton={initialPage ? 'black' : '#9E4B00'}
               textButton="Pagina Inicial"
@@ -182,25 +276,12 @@ export function SuperintendenteDashboard(data: { token: string }) {
               src={logo2Branca}
               heightButton="3.3vw"
               onClick={() => {
-                setAnimalPage(!animalPage),
-                  setInitialPage(false),
-                  setComunicPage(false),
-                  setAnimalBasePage(false),
-                  setRGD(false),
-                  setComunicNascPage(false),
-                  setVerComunicNascPage(false),
-                  setVerAnimalPage(false),
-                  setVerAnimalRGDPage(false),
-                  setSolicitacao(false),
-                  setVerComunicCoberPage(false),
-                  setComunicCoberPage(false),
-                  setCriadorRegister(false),
-                  setTecnicoPage(false),
-                  setCriadorPage(false),
-                  setTecnicoRegister(false),
-                  setUsersPage(false)
+                setPaginas((prev) => ({
+                  ...updatedPages,
+                  RGN: !prev.RGN,
+                }))
               }}
-              colorButton={animalPage ? 'black' : '#9E4B00'}
+              colorButton={RGN || RGD ? 'black' : '#9E4B00'}
               textButton="Animais"
             />
             <Button
@@ -209,24 +290,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
               src={group}
               heightButton="3.3vw"
               onClick={() => {
-                setUsersPage(!usersPage),
-                  setInitialPage(false),
-                  setComunicPage(false),
-                  setAnimalBasePage(false),
-                  setRGD(false),
-                  setComunicNascPage(false),
-                  setVerComunicNascPage(false),
-                  setVerAnimalPage(false),
-                  setVerAnimalRGDPage(false),
-                  setSolicitacao(false),
-                  setVerComunicCoberPage(false),
-                  setComunicCoberPage(false),
-                  setCriadorRegister(false),
-                  setTecnicoPage(false),
-                  setCriadorPage(false),
-                  setTecnicoRegister(false)
+                setPaginas((prev) => ({
+                  ...updatedPages,
+                  usersPage: !prev.usersPage,
+                }))
               }}
-              colorButton={usersPage ? 'black' : '#9E4B00'}
+              colorButton={
+                usersPage || criadorPage || tecnicoPage ? 'black' : '#9E4B00'
+              }
               textButton="Usuários"
             />
             <Button
@@ -235,25 +306,16 @@ export function SuperintendenteDashboard(data: { token: string }) {
               src={comunic}
               heightButton="3.3vw"
               onClick={() => {
-                setAnimalPage(false),
-                  setInitialPage(false),
-                  setComunicPage(!comunicPage),
-                  setAnimalBasePage(false),
-                  setRGD(false),
-                  setComunicNascPage(false),
-                  setVerComunicNascPage(false),
-                  setVerAnimalPage(false),
-                  setVerAnimalRGDPage(false),
-                  setSolicitacao(false),
-                  setVerComunicCoberPage(false),
-                  setComunicCoberPage(false),
-                  setCriadorRegister(false),
-                  setTecnicoPage(false),
-                  setCriadorPage(false),
-                  setTecnicoRegister(false),
-                  setUsersPage(false)
+                setPaginas((prev) => ({
+                  ...updatedPages,
+                  comunicPage: !prev.comunicPage,
+                }))
               }}
-              colorButton={comunicPage ? 'black' : '#9E4B00'}
+              colorButton={
+                comunicPage || comunicNascPage || comunicCoberPage
+                  ? 'black'
+                  : '#9E4B00'
+              }
               textButton="Comunicações "
             />
             <Button
@@ -262,53 +324,42 @@ export function SuperintendenteDashboard(data: { token: string }) {
               src={comunic}
               heightButton="3.3vw"
               onClick={() => {
-                setSolicitacao(!solicitacao),
-                  setAnimalPage(false),
-                  setInitialPage(false),
-                  setComunicPage(false),
-                  setAnimalBasePage(false),
-                  setRGD(false),
-                  setComunicNascPage(false),
-                  setVerComunicNascPage(false),
-                  setVerAnimalPage(false),
-                  setVerAnimalRGDPage(false)
+                setPaginas((prev) => ({
+                  ...updatedPages,
+                  solicitacao: !prev.solicitacao,
+                }))
               }}
-              colorButton={solicitacao ? 'black' : '#9E4B00'}
+              colorButton={solicitacao || animalBasePage ? 'black' : '#9E4B00'}
               textButton="Solicitações "
             />
 
             <DropdownMenu
               initial={{ opacity: 0 }}
               animate={{
-                y: animalPage ? '-9.5vw' : '-15vw',
-                opacity: animalPage ? 1 : 0,
+                y: RGN || RGD ? '-9.5vw' : '-15vw',
+                opacity: RGN || RGD ? 1 : 0,
               }}
               transition={{ duration: 0.5 }}
-              style={{ pointerEvents: `${animalPage ? 'auto' : 'none'}` }}
+              style={{
+                pointerEvents: `${RGN || RGD ? 'auto' : 'none'}`,
+              }}
             >
               <Button
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
                 textSize="0.9vw"
-                textColor={animalBasePage ? 'white' : 'black'}
+                textColor={RGD ? 'white' : 'black'}
                 widthButton="100%"
                 widthImage="0.5vw"
                 src={arrowLeft}
                 heightButton="3.3vw"
                 onClick={() => {
-                  setAnimalBasePage(false),
-                    setRGD(true),
-                    setComunicNascPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false),
-                    setInitialPage(false),
-                    setAnimalPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false)
+                  setPaginas((prev) => ({
+                    ...updatedPages,
+                    RGD: !prev.RGD,
+                  }))
                 }}
-                colorButton={animalBasePage ? 'black' : 'white'}
+                colorButton={RGD ? 'black' : 'white'}
                 textButton="RGD"
               />
             </DropdownMenu>
@@ -316,11 +367,21 @@ export function SuperintendenteDashboard(data: { token: string }) {
             <DropdownMenu
               initial={{ opacity: 0 }}
               animate={{
-                y: comunicPage ? '-6vw' : '-12vw',
-                opacity: comunicPage ? 1 : 0,
+                y:
+                  comunicPage || comunicNascPage || comunicCoberPage
+                    ? '-6vw'
+                    : '-12vw',
+                opacity:
+                  comunicPage || comunicNascPage || comunicCoberPage ? 1 : 0,
               }}
               transition={{ duration: 0.5 }}
-              style={{ pointerEvents: `${comunicPage ? 'auto' : 'none'}` }}
+              style={{
+                pointerEvents: `${
+                  comunicPage || comunicNascPage || comunicCoberPage
+                    ? 'auto'
+                    : 'none'
+                }`,
+              }}
             >
               <Button
                 marginRightImage="0.6vw"
@@ -332,22 +393,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 src={arrowLeft}
                 heightButton="3.3vw"
                 onClick={() => {
-                  setAnimalBasePage(false),
-                    setRGD(false),
-                    setComunicNascPage(true),
-                    setInitialPage(false),
-                    setAnimalPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false),
-                    setSolicitacao(false),
-                    setVerComunicCoberPage(false),
-                    setComunicCoberPage(false),
-                    setCriadorRegister(false),
-                    setTecnicoPage(false),
-                    setCriadorPage(false),
-                    setTecnicoRegister(false),
-                    setUsersPage(false)
+                  setPaginas((prev) => ({
+                    ...updatedPages,
+                    comunicNascPage: !prev.comunicNascPage,
+                  }))
                 }}
                 colorButton={comunicNascPage ? 'black' : 'white'}
                 textButton="Comunicações de Nascimento"
@@ -362,17 +411,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 src={arrowLeft}
                 heightButton="3.3vw"
                 onClick={() => {
-                  setComunicCoberPage(true),
-                    setAnimalBasePage(false),
-                    setRGD(false),
-                    setComunicNascPage(false),
-                    setInitialPage(false),
-                    setAnimalPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false),
-                    setSolicitacao(false),
-                    setVerComunicCoberPage(false)
+                  setPaginas((prev) => ({
+                    ...updatedPages,
+                    comunicCoberPage: !prev.comunicCoberPage,
+                  }))
                 }}
                 colorButton={comunicCoberPage ? 'black' : 'white'}
                 textButton="Comunicações de Cobertura"
@@ -382,11 +424,15 @@ export function SuperintendenteDashboard(data: { token: string }) {
             <DropdownMenu
               initial={{ opacity: 0 }}
               animate={{
-                y: usersPage ? '-16vw' : '-20vw',
-                opacity: usersPage ? 1 : 0,
+                y: usersPage || tecnicoPage || criadorPage ? '-16vw' : '-20vw',
+                opacity: usersPage || tecnicoPage || criadorPage ? 1 : 0,
               }}
               transition={{ duration: 0.5 }}
-              style={{ pointerEvents: `${usersPage ? 'auto' : 'none'}` }}
+              style={{
+                pointerEvents: `${
+                  usersPage || tecnicoPage || criadorPage ? 'auto' : 'none'
+                }`,
+              }}
             >
               <Button
                 marginRightImage="0.6vw"
@@ -398,20 +444,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 src={arrowLeft}
                 heightButton="3.3vw"
                 onClick={() => {
-                  setAnimalBasePage(false),
-                    setCriadorRegister(false),
-                    setRGD(false),
-                    setTecnicoPage(true),
-                    setComunicNascPage(false),
-                    setCriadorPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false),
-                    setInitialPage(false),
-                    setAnimalPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false)
+                  setPaginas((prev) => ({
+                    ...updatedPages,
+                    tecnicoPage: !prev.tecnicoPage,
+                  }))
                 }}
                 colorButton={tecnicoPage ? 'black' : 'white'}
                 textButton="Tecnicos"
@@ -426,20 +462,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 src={arrowLeft}
                 heightButton="3.3vw"
                 onClick={() => {
-                  setTecnicoRegister(false),
-                    setAnimalBasePage(false),
-                    setRGD(false),
-                    setTecnicoPage(false),
-                    setCriadorPage(true),
-                    setComunicNascPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false),
-                    setInitialPage(false),
-                    setAnimalPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false)
+                  setPaginas((prev) => ({
+                    ...updatedPages,
+                    criadorPage: !prev.criadorPage,
+                  }))
                 }}
                 colorButton={criadorPage ? 'black' : 'white'}
                 textButton="Criadores"
@@ -449,11 +475,15 @@ export function SuperintendenteDashboard(data: { token: string }) {
             <DropdownMenu
               initial={{ opacity: 0 }}
               animate={{
-                y: solicitacao ? '-16vw' : '-20vw',
-                opacity: solicitacao ? 1 : 0,
+                y: solicitacao || animalBasePage ? '-16vw' : '-20vw',
+                opacity: solicitacao || animalBasePage ? 1 : 0,
               }}
               transition={{ duration: 0.5 }}
-              style={{ pointerEvents: `${solicitacao ? 'auto' : 'none'}` }}
+              style={{
+                pointerEvents: `${
+                  solicitacao || animalBasePage ? 'auto' : 'none'
+                }`,
+              }}
             >
               <Button
                 marginRightImage="0.6vw"
@@ -465,17 +495,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 src={arrowLeft}
                 heightButton="3.3vw"
                 onClick={() => {
-                  setAnimalBasePage(true),
-                    setRGD(false),
-                    setComunicNascPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false),
-                    setInitialPage(false),
-                    setAnimalPage(false),
-                    setVerComunicNascPage(false),
-                    setVerAnimalPage(false),
-                    setVerAnimalRGDPage(false)
+                  setPaginas((prev) => ({
+                    ...updatedPages,
+                    animalBasePage: !prev.animalBasePage,
+                  }))
                 }}
                 colorButton={animalBasePage ? 'black' : 'white'}
                 textButton="Solicitações Animais Base"
@@ -523,6 +546,430 @@ export function SuperintendenteDashboard(data: { token: string }) {
             fontWeight="600"
           />
         </motion.div>
+
+        <TelaAnimaisRGD
+          initial={{ opacity: 0 }}
+          animate={{ y: paginas.RGD ? 0 : -50, opacity: paginas.RGD ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            display: `${paginas.RGD ? 'block' : 'none'}`,
+            pointerEvents: `${paginas.RGD ? 'auto' : 'none'}`,
+          }}
+        >
+          <div style={{ width: '4vw' }}>
+            <Image
+              src={logo2Branca}
+              alt="Logo"
+              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+            />
+          </div>
+          <Text
+            fontFamily="pop"
+            size={'1.5vw'}
+            text="Todos os Animais que Precisam do Registro RGD| ABCPD"
+            color="black"
+            fontWeight="600"
+          />
+
+          <div
+            style={{
+              width: '30%',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
+            <InputText
+              width="20vw"
+              fontSize="1.2vw"
+              placeholder="Buscar"
+              height="3vw"
+              border="solid 1px rgba(103, 97, 97, 0.5)"
+              borderRight="solid 1px rgba(103, 97, 97, 0.5)"
+              borderLeft="solid 1px rgba(103, 97, 97, 0.5)"
+              borderTop="solid 1px rgba(103, 97, 97, 0.5)"
+              borderColor="rgba(103, 97, 97, 0.5)"
+            />
+          </div>
+
+          <Table>
+            <TableHeader>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Número"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Criador"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Fazenda"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Decisão RGD do Superintendente"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Opções"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+            </TableHeader>
+            {todosAnimais
+              ? todosAnimais.map((index: AnimalDTO) => {
+                  if (!index.decisaoAnimalTecnicoRGD) {
+                    return (
+                      <TableContent key={index.id}>
+                        <td style={{ width: '20%' }}>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={index.nomeAnimal}
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
+
+                        <td>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={
+                              criadores
+                                ? (
+                                    criadores.find((indexFind: CriadorDTO) => {
+                                      return (
+                                        indexFind.id === index.criadorAnimal
+                                      )
+                                    }) || {}
+                                  ).nomeCompleto
+                                : ''
+                            }
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
+
+                        <td style={{ width: '25%' }}>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={
+                              todasFazendas
+                                ? (
+                                    todasFazendas.find(
+                                      (indexFind: FazendaDTO) => {
+                                        return indexFind.id === index.fazenda
+                                      },
+                                    ) || {}
+                                  ).nomeFazenda
+                                : ''
+                            }
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
+
+                        <td style={{ width: '25%' }}>
+                          <Text
+                            widthImage="1.5vw"
+                            src={index.decisaoAnimalSuperRGD ? add : waiting}
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={index.decisaoAnimalSuperRGD || 'Em análise'}
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
+
+                        <td>
+                          <div
+                            style={{
+                              display: 'flex',
+                              width: '100%',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              height: '100%',
+                            }}
+                          >
+                            <Button
+                              radius="2vw"
+                              marginLeftImage="0vw"
+                              marginRightImage="0vw"
+                              src={seta}
+                              colorButton="white"
+                              heightButton="3vw"
+                              widthImage="65%"
+                              widthButton="4vw"
+                              textColor="white"
+                              onClick={() => {
+                                getInformacoesAnimal(index)
+                                setAnimalInfos((prev) => ({
+                                  ...prev,
+                                  animalSelecionado: index,
+                                }))
+                                setPaginas(() => ({
+                                  ...updatedPages,
+                                  verAnimaRGDPage: true,
+                                }))
+
+                                setRegistro(true)
+                              }}
+                            />
+                          </div>
+                        </td>
+                      </TableContent>
+                    )
+                  }
+                })
+              : null}
+          </Table>
+        </TelaAnimaisRGD>
+
+        <TelaAnimaisRGN
+          initial={{ opacity: 0 }}
+          animate={{ y: paginas.RGN ? 0 : -50, opacity: paginas.RGN ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            display: `${paginas.RGN ? 'block' : 'none'}`,
+            pointerEvents: `${paginas.RGN ? 'auto' : 'none'}`,
+          }}
+        >
+          <div style={{ width: '4vw' }}>
+            <Image
+              src={logo2Branca}
+              alt="Logo"
+              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+            />
+          </div>
+          <Text
+            fontFamily="pop"
+            size={'1.5vw'}
+            text="Todos os Animais que Precisam do Registro RGN| ABCPD"
+            color="black"
+            fontWeight="600"
+          />
+
+          <div
+            style={{
+              width: '30%',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
+            <InputText
+              width="20vw"
+              fontSize="1.2vw"
+              placeholder="Buscar"
+              height="3vw"
+              border="solid 1px rgba(103, 97, 97, 0.5)"
+              borderRight="solid 1px rgba(103, 97, 97, 0.5)"
+              borderLeft="solid 1px rgba(103, 97, 97, 0.5)"
+              borderTop="solid 1px rgba(103, 97, 97, 0.5)"
+              borderColor="rgba(103, 97, 97, 0.5)"
+            />
+          </div>
+
+          <Table>
+            <TableHeader>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Número"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Criador"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Fazenda"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Decisão RGN do Superintendente"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+              <th>
+                <Text
+                  textAlign="center"
+                  fontFamily="rob"
+                  size={'1.3vw'}
+                  text="Opções"
+                  color="black"
+                  fontWeight="400"
+                />
+              </th>
+            </TableHeader>
+            {todosAnimais
+              ? todosAnimais.map((index: AnimalDTO) => {
+                  if (!index.decisaoAnimalTecnicoRGD) {
+                    return (
+                      <TableContent key={index.id}>
+                        <td style={{ width: '20%' }}>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={index.nomeAnimal}
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
+
+                        <td>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={
+                              criadores
+                                ? (
+                                    criadores.find((indexFind: CriadorDTO) => {
+                                      return (
+                                        indexFind.id === index.criadorAnimal
+                                      )
+                                    }) || {}
+                                  ).nomeCompleto
+                                : ''
+                            }
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
+
+                        <td style={{ width: '25%' }}>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={
+                              todasFazendas
+                                ? (
+                                    todasFazendas.find(
+                                      (indexFind: FazendaDTO) => {
+                                        return indexFind.id === index.fazenda
+                                      },
+                                    ) || {}
+                                  ).nomeFazenda
+                                : ''
+                            }
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
+
+                        <td style={{ width: '25%' }}>
+                          <Text
+                            widthImage="1.5vw"
+                            src={index.decisaoAnimalSuperRGD ? add : waiting}
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={index.decisaoAnimalSuperRGD || 'Em análise'}
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
+
+                        <td>
+                          <div
+                            style={{
+                              display: 'flex',
+                              width: '100%',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              height: '100%',
+                            }}
+                          >
+                            <Button
+                              radius="2vw"
+                              marginLeftImage="0vw"
+                              marginRightImage="0vw"
+                              src={seta}
+                              colorButton="white"
+                              heightButton="3vw"
+                              widthImage="65%"
+                              widthButton="4vw"
+                              textColor="white"
+                              onClick={() => {
+                                getInformacoesAnimal(index)
+                                setAnimalInfos((prev) => ({
+                                  ...prev,
+                                  animalSelecionado: index,
+                                }))
+                                setPaginas(() => ({
+                                  ...updatedPages,
+                                  verAnimaRGDPage: true,
+                                }))
+
+                                setRegistro(true)
+                              }}
+                            />
+                          </div>
+                        </td>
+                      </TableContent>
+                    )
+                  }
+                })
+              : null}
+          </Table>
+        </TelaAnimaisRGN>
 
         <Animals
           initial={{ opacity: 0 }}
@@ -681,7 +1128,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     widthButton="3vw"
                     textColor="white"
                     onClick={() => {
-                      setVerAnimalPage(true), setAnimalPage(false)
+                      setPaginas((prev) => ({
+                        ...updatedPages,
+                        verAnimaisCriador: !prev.verAnimaisCriador,
+                      }))
                     }}
                   />
                 </div>
@@ -743,7 +1193,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
               widthButton="17vw"
               textColor="white"
               onClick={() => {
-                setVerAnimaisCriador(false), setVerAnimalPage(true)
+                setPaginas((prev) => ({
+                  ...updatedPages,
+                  verAnimalPage: !prev.verAnimalPage,
+                }))
               }}
             />
           </div>
@@ -867,180 +1320,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     textColor="white"
                     onClick={() => {
                       setVerAnimalPage(true), setAnimalPage(false)
-                    }}
-                  />
-                </div>
-              </td>
-            </TableContent>
-          </Table>
-        </Animals>
-
-        <Animals
-          initial={{ opacity: 0 }}
-          animate={{ y: RGD ? 0 : -50, opacity: RGD ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-          style={{
-            display: `${RGD ? 'block' : 'none'}`,
-            pointerEvents: `${RGD ? 'auto' : 'none'}`,
-          }}
-        >
-          <div style={{ width: '4vw' }}>
-            <Image
-              alt="Logo"
-              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
-          </div>
-          <Text
-            fontFamily="pop"
-            size={'1.5vw'}
-            text="Todos os Animais que Precisam do Registro | ABCPD"
-            color="black"
-            fontWeight="600"
-          />
-
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <InputText
-              width="20vw"
-              fontSize="1.2vw"
-              placeholder="Buscar"
-              height="3vw"
-              border="solid 1px rgba(103, 97, 97, 0.5)"
-              borderRight="solid 1px rgba(103, 97, 97, 0.5)"
-              borderLeft="solid 1px rgba(103, 97, 97, 0.5)"
-              borderTop="solid 1px rgba(103, 97, 97, 0.5)"
-              borderColor="rgba(103, 97, 97, 0.5)"
-            />
-          </div>
-
-          <Table>
-            <TableHeader>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Nome"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Criador"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Fazenda"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Decisão RGD do Superintendente"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Opções"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-            </TableHeader>
-
-            <TableContent>
-              <td style={{ width: '20%' }}>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Angus"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="João da Silva Santos"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-
-              <td style={{ width: '25%' }}>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Fazenda Boa Vista"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-
-              <td style={{ width: '25%' }}>
-                <Text
-                  widthImage="1.5vw"
-                  src={waiting}
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Em Análise"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-
-              <td>
-                <div
-                  style={{
-                    display: 'flex',
-                    width: '100%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100%',
-                  }}
-                >
-                  <Button
-                    radius="2vw"
-                    marginLeftImage="0vw"
-                    marginRightImage="0vw"
-                    src={seta}
-                    colorButton="white"
-                    heightButton="3vw"
-                    widthImage="65%"
-                    widthButton="4vw"
-                    textColor="white"
-                    onClick={() => {
-                      setVerAnimalRGDPage(true), setRGD(false)
                     }}
                   />
                 </div>
@@ -1745,20 +2024,21 @@ export function SuperintendenteDashboard(data: { token: string }) {
           </div>
         </RegistroAnimalBase>
 
-        <ComunicNascimento
+        <TelaFazendasCriador
           initial={{ opacity: 0 }}
           animate={{
-            y: comunicNascPage ? 0 : -50,
-            opacity: comunicNascPage ? 1 : 0,
+            y: paginas.comunicNascPage ? 0 : -50,
+            opacity: paginas.comunicNascPage ? 1 : 0,
           }}
           transition={{ duration: 0.5 }}
           style={{
-            display: `${comunicNascPage ? 'block' : 'none'}`,
-            pointerEvents: `${comunicNascPage ? 'auto' : 'none'}`,
+            display: `${paginas.comunicNascPage ? 'block' : 'none'}`,
+            pointerEvents: `${paginas.comunicNascPage ? 'auto' : 'none'}`,
           }}
         >
           <div style={{ width: '4vw' }}>
             <Image
+              src={logo2Branca}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -1827,64 +2107,79 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 />
               </th>
             </TableHeader>
-
-            <TableContent>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Fazenda Boa Vista"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="João Da Silva Santos"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="(86) 99999-9999"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <div
-                  style={{
-                    display: 'flex',
-                    width: '100%',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setTodasComunicNascPage(true), setComunicNascPage(false)
-                    }}
-                    marginTopImage="0.6vw"
-                    radius="2.5vw"
-                    marginLeftImage="0vw"
-                    marginRightImage="0vw"
-                    src={seta}
-                    colorButton="white"
-                    heightButton="2.8vw"
-                    widthImage="100%"
-                    widthButton="3vw"
-                    textColor="white"
-                  />
-                </div>
-              </td>
-            </TableContent>
+            {todasFazendas
+              ? todasFazendas.map((index: FazendaDTO) => {
+                  return (
+                    <TableContent key={index.id}>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={index.nomeFazenda}
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={
+                            (
+                              criadores?.find((indexFind: CriadorDTO) => {
+                                return indexFind.id === index.criadorFazenda
+                              }) || {}
+                            ).nomeCompleto || ''
+                          }
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={index.telefoneFazenda}
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <div
+                          style={{
+                            display: 'flex',
+                            width: '100%',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Button
+                            onClick={() => {
+                              getNascimentos(index.criadorFazenda)
+                              setPaginas(() => ({
+                                ...updatedPages,
+                                todasComunicNascPage: true,
+                              }))
+                            }}
+                            marginTopImage="0.6vw"
+                            radius="2.5vw"
+                            marginLeftImage="0vw"
+                            marginRightImage="0vw"
+                            src={seta}
+                            colorButton="white"
+                            heightButton="2.8vw"
+                            widthImage="100%"
+                            widthButton="3vw"
+                            textColor="white"
+                          />
+                        </div>
+                      </td>
+                    </TableContent>
+                  )
+                })
+              : null}
           </Table>
 
           <div style={{ marginTop: '1vw' }}>
@@ -1896,22 +2191,23 @@ export function SuperintendenteDashboard(data: { token: string }) {
               textColor="white"
             />
           </div>
-        </ComunicNascimento>
+        </TelaFazendasCriador>
 
         <ComunicNascimento
           initial={{ opacity: 0 }}
           animate={{
-            y: todasComunicNascPage ? 0 : -50,
-            opacity: todasComunicNascPage ? 1 : 0,
+            y: paginas.todasComunicNascPage ? 0 : -50,
+            opacity: paginas.todasComunicNascPage ? 1 : 0,
           }}
           transition={{ duration: 0.5 }}
           style={{
-            display: `${todasComunicNascPage ? 'block' : 'none'}`,
-            pointerEvents: `${todasComunicNascPage ? 'auto' : 'none'}`,
+            display: `${paginas.todasComunicNascPage ? 'block' : 'none'}`,
+            pointerEvents: `${paginas.todasComunicNascPage ? 'auto' : 'none'}`,
           }}
         >
           <div style={{ width: '4vw' }}>
             <Image
+              src={logo2Branca}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -1980,65 +2276,81 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 />
               </th>
             </TableHeader>
-
-            <TableContent>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="15 de Março de 2023 "
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Angus"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Marrom"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <div
-                  style={{
-                    display: 'flex',
-                    width: '100%',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setVerComunicNascPage(true),
-                        setTodasComunicNascPage(false)
-                    }}
-                    marginTopImage="0.6vw"
-                    radius="2.5vw"
-                    marginLeftImage="0vw"
-                    marginRightImage="0vw"
-                    src={add}
-                    colorButton="white"
-                    heightButton="2.8vw"
-                    widthImage="100%"
-                    widthButton="3vw"
-                    textColor="white"
-                  />
-                </div>
-              </td>
-            </TableContent>
+            {nascimentos
+              ? nascimentos.map((index: ComunicacaoNascimentoDto) => {
+                  return (
+                    <TableContent key={index.id}>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={format(
+                            new Date(index.dataComunicacao),
+                            'dd/ MM/ yyyy',
+                          )}
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={
+                            (
+                              todosAnimais.find((indexAnimal) => {
+                                return index.matrizAnimalId == indexAnimal.id
+                              }) || {}
+                            ).nomeAnimal || ''
+                          }
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={index.animalBezerro}
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <div
+                          style={{
+                            display: 'flex',
+                            width: '100%',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Button
+                            onClick={() => {
+                              setPaginas(() => ({
+                                ...updatedPages,
+                                verComunicNascPage: true,
+                              }))
+                            }}
+                            marginTopImage="0.6vw"
+                            radius="2.5vw"
+                            marginLeftImage="0vw"
+                            marginRightImage="0vw"
+                            src={add}
+                            colorButton="white"
+                            heightButton="2.8vw"
+                            widthImage="100%"
+                            widthButton="3vw"
+                            textColor="white"
+                          />
+                        </div>
+                      </td>
+                    </TableContent>
+                  )
+                })
+              : null}
           </Table>
 
           <div style={{ marginTop: '1vw' }}>
@@ -2055,17 +2367,18 @@ export function SuperintendenteDashboard(data: { token: string }) {
         <VerComunicNascimento
           initial={{ opacity: 0 }}
           animate={{
-            y: verComunicNascPage ? 0 : -50,
-            opacity: verComunicNascPage ? 1 : 0,
+            y: paginas.verComunicNascPage ? 0 : -50,
+            opacity: paginas.verComunicNascPage ? 1 : 0,
           }}
           transition={{ duration: 0.5 }}
           style={{
-            display: `${verComunicNascPage ? 'flex' : 'none'}`,
-            pointerEvents: `${verComunicNascPage ? 'auto' : 'none'}`,
+            display: `${paginas.verComunicNascPage ? 'flex' : 'none'}`,
+            pointerEvents: `${paginas.verComunicNascPage ? 'auto' : 'none'}`,
           }}
         >
           <div style={{ width: '10vw' }}>
             <Image
+              src={logo2Branca}
               alt="logoAnimal"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
@@ -2086,32 +2399,8 @@ export function SuperintendenteDashboard(data: { token: string }) {
               color="black"
               fontWeight="300"
             />
-            <InputText border="solid 0.2vw #9E4B00" />
+            <InputText />
           </InputPlace>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Pai"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Mãe"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
 
           <InputPair style={{ width: '90%' }}>
             <InputPlace style={{ width: '47%' }}>
@@ -2122,7 +2411,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2133,7 +2422,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -2146,7 +2435,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -2157,7 +2446,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -2170,7 +2459,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText type="date" border="solid 0.2vw #9E4B00" />
+              <InputText type="date" />
             </InputPlace>
           </InputPair>
 
@@ -2187,7 +2476,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw #9E4B00"
+                accept="image/*"
               />
             </InputPlace>
 
@@ -2203,7 +2492,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw #9E4B00"
+                accept="image/*"
               />
             </InputPlace>
           </InputPair>
@@ -2221,7 +2510,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw #9E4B00"
+                accept="image/*"
               />
             </InputPlace>
 
@@ -2237,7 +2526,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 fontSize="1.4vw"
                 height="3vw"
                 type="file"
-                border="solid 0.2vw #9E4B00"
+                accept="image/*"
               />
             </InputPlace>
           </InputPair>
@@ -2436,13 +2725,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 >
                   <Button
                     onClick={() => {
-                      setVerComunicCoberPage(true),
-                        setComunicCoberPage(false),
-                        setCriadorRegister(false),
-                        setTecnicoPage(false),
-                        setCriadorPage(false),
-                        setTecnicoRegister(false),
-                        setUsersPage(false)
+                      setPaginas(() => ({
+                        ...updatedPages,
+                        verComunicCoberPage: true,
+                      }))
                     }}
                     marginTopImage="0.6vw"
                     radius="2.5vw"
@@ -2689,7 +2975,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 >
                   <Button
                     onClick={() => {
-                      setTecnicoRegister(true), setTecnicoPage(false)
+                      setPaginas((prev) => ({
+                        ...updatedPages,
+                        tecnicoRegister: !prev.tecnicoRegister,
+                      }))
                     }}
                     marginTopImage="0.6vw"
                     radius="2.5vw"
@@ -2833,7 +3122,10 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 >
                   <Button
                     onClick={() => {
-                      setCriadorRegister(true), setCriadorPage(false)
+                      setPaginas((prev) => ({
+                        ...updatedPages,
+                        criadorRegister: !prev.criadorRegister,
+                      }))
                     }}
                     marginTopImage="0.6vw"
                     radius="2.5vw"

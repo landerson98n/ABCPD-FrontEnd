@@ -19,7 +19,14 @@ export async function getCriadorByUserId(id: string, token: string) {
     },
   )
 
-  console.log(res)
+  return res.json()
+}
+
+export async function getCriadorById(id: string, token: string) {
+  const res = await fetch(`http://localhost:3001/criador/get-criador/${id}`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+  })
 
   return res.json()
 }

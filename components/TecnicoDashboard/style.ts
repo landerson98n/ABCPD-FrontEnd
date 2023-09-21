@@ -73,7 +73,33 @@ export const Animals = styled(motion.div)`
   background-color: white;
   margin-top: 2vw;
 `
+export const TelaAnimaisCriador = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+`
+export const TelaCriadoresABCPD = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+`
+
+export const TelaAnimaisRGD = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+`
 export const ComunicNascimento = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+`
+
+export const TelaFazendasCriador = styled(motion.div)`
   width: 90%;
   height: 90%;
   background-color: white;
@@ -90,7 +116,27 @@ export const VerComunicNascimento = styled(motion.div)`
   overflow-y: scroll;
 `
 
-export const VerAnimals = styled(motion.form)`
+export const VerAnimals = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+  flex-direction: column;
+  align-items: start;
+  overflow-y: scroll;
+  overflow-x: hidden;
+`
+export const TelaCadastroAnimal = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+  flex-direction: column;
+  align-items: start;
+  overflow-y: scroll;
+  overflow-x: hidden;
+`
+export const VerAnimalsRGD = styled(motion.div)`
   width: 90%;
   height: 90%;
   background-color: white;

@@ -57,6 +57,19 @@ export const Menu = styled(motion.div)`
   flex-direction: column;
 `
 
+export const TelaAnimaisRGD = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+`
+export const TelaAnimaisRGN = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+`
+
 export const Animals = styled(motion.div)`
   width: 90%;
   height: 90%;
@@ -69,6 +82,14 @@ export const ComunicNascimento = styled(motion.div)`
   background-color: white;
   margin-top: 2vw;
 `
+
+export const TelaFazendasCriador = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+`
+
 export const ComunicCobertura = styled(motion.div)`
   width: 90%;
   height: 90%;

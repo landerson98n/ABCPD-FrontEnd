@@ -32,11 +32,13 @@ export const Select = styled.select`
 `
 export const RegistroAnimalBase = styled(motion.form)`
   width: 90%;
-  height: 90%;
+  height: 100%;
   background-color: white;
-  margin-top: 2vw;
+  margin-top: 1vw;
+  margin-bottom: 3vw;
   flex-direction: column;
   align-items: center;
+  overflow-y: scroll;
 `
 export const ComunicCobertura = styled(motion.form)`
   width: 90%;

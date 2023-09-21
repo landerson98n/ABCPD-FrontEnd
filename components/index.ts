@@ -5,6 +5,8 @@ import { CriadorDashboard } from './CriadorDashboard'
 import { TecnicoDashboard } from './TecnicoDashboard'
 import { SuperintendenteDashboard } from './SuperintendenteDashboard'
 import PaymentComponent from './Payment'
+import { CadastrarFazenda } from './CadastrarFazenda'
+import { CadastrarRebanho } from './CadastrarRebanho'
 export {
   InitialPage,
   Login,
@@ -12,5 +14,7 @@ export {
   CriadorDashboard,
   TecnicoDashboard,
   SuperintendenteDashboard,
-  PaymentComponent
+  PaymentComponent,
+  CadastrarFazenda,
+  CadastrarRebanho,
 }

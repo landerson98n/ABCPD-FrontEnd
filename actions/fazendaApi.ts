@@ -21,3 +21,28 @@ export async function getFazendaCriador(token: string, id: string) {
 
   return response.json()
 }
+
+export async function getFazendaById(token: string, id: string) {
+  const response = await fetch(
+    `http://localhost:3001/fazenda/get-fazenda/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      method: 'GET',
+    },
+  )
+
+  return response.json()
+}
+
+export async function getTodasFazendas(token: string) {
+  const response = await fetch(`http://localhost:3001/fazenda/get-fazenda`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: 'GET',
+  })
+
+  return response.json()
+}
