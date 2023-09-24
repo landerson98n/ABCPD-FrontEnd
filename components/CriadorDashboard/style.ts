@@ -70,6 +70,9 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: end;
+  @media print {
+    display: none;
+  }
 `
 
 export const Menu = styled(motion.div)`
@@ -79,6 +82,9 @@ export const Menu = styled(motion.div)`
   display: flex;
   align-items: center;
   flex-direction: column;
+  @media print {
+    display: none;
+  }
 `
 
 export const Animals = styled(motion.div)`
@@ -113,6 +119,10 @@ export const VerAnimals = styled(motion.div)`
   align-items: start;
   overflow-y: scroll;
   overflow-x: hidden;
+
+  @media print {
+    overflow: visible;
+  }
 `
 
 export const InputPair = styled.div`

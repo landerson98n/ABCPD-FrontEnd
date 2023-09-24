@@ -56,8 +56,6 @@ export async function getTodosAnimais(token: string) {
 }
 
 export async function updateAnimal(data: AnimalDTO, token: string, id: string) {
-  console.log(data)
-
   try {
     const res = await fetch(
       `http://localhost:3001/animal/update-animal/${id}`,

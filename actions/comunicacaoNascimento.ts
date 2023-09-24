@@ -13,7 +13,25 @@ export async function criarComunicacaoNacimento(data: any, token: string) {
 
   return res
 }
+export async function updateComunicacaoNascimento(
+  data: any,
+  token: string,
+  id: string,
+) {
+  const res = await fetch(
+    `http://localhost:3001/comunicacao-nascimento/update-comunicacoes-nascimentos/${id}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
 
+  return res
+}
 export async function getTodasComunicacoesNascimento(token: string) {
   const res = await fetch(
     'http://localhost:3001/comunicacao-nascimento/get-comunicacoes-nascimentos',

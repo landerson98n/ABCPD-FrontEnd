@@ -44,7 +44,6 @@ export function CadastrarRebanho(props: { token: string }) {
   async function cadastrarRebanho(data) {
     const rebanho: RebanhoDTO = data
     setLoading(true)
-    console.log(fazendas.length)
 
     if (fazendas.length > 1 && rebanho.serie.length === 3) {
       setLoading(false)

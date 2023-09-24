@@ -129,7 +129,7 @@ export default function InitialPage() {
               widthButton="20vw"
               heightButton="3.3vw"
               colorButton="#9E4B00"
-              textButton="Registre-se"
+              textButton="Associar-se"
             />
           </div>
           <Image

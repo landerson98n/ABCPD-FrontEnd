@@ -11,7 +11,7 @@ import {
   hamb,
   logo2Branca,
   logoBranca,
-  search,
+  searchIcon,
   seta,
   user,
   waiting,
@@ -40,17 +40,17 @@ import {
   TelaAnimaisRGD,
   TelaAnimaisRGN,
   TelaFazendasCriador,
+  InputText,
 } from './style'
 import Image from 'next/legacy/image'
 import { Button } from '../Button'
 import { Text } from '../Text'
-import { InputText } from '../InputText'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { motion } from 'framer-motion'
-import { getUserById } from '@/actions/user'
-import { getTodosAnimais } from '@/actions/animaisApi'
+import { getAllUsers, getUserById } from '@/actions/user'
+import { getAnimaisByCriadorId, getTodosAnimais } from '@/actions/animaisApi'
 import { getRebanhosAll } from '@/actions/RebanhApi'
-import { getTodasFazendas } from '@/actions/fazendaApi'
+import { getFazendaById, getTodasFazendas } from '@/actions/fazendaApi'
 import { useQuery } from 'react-query'
 import UserDTO from '@/utils/UserDTO'
 import jsonWebTokenService from 'jsonwebtoken'
@@ -59,8 +59,22 @@ import { CircularProgress } from '@mui/material'
 import CriadorDTO from '@/utils/CriadorDTO'
 import FazendaDTO from '@/utils/FazendaDTO'
 import { ComunicacaoNascimentoDto } from '@/utils/ComunicacaoNascimentoDTO'
-import { getComunicacoesNascimentoCriador } from '@/actions/comunicacaoNascimento'
+import {
+  getComunicacoesNascimentoCriador,
+  updateComunicacaoNascimento,
+} from '@/actions/comunicacaoNascimento'
 import format from 'date-fns/format'
+import { getCriadorById } from '@/actions/criadorApi'
+import { DetalhesAnimal } from '../DetalhesAnimal'
+import RebanhoDTO from '@/utils/RebanhoDTO'
+import { allTecnicos } from '@/actions/tecnicoApi'
+import { AlertContext } from '@/context/AlertContextProvider'
+import {
+  getAllCoberturas,
+  getCoberturas,
+  updateComunicCobertura,
+} from '@/actions/coberturaApi'
+import ComunicacaoCoberturaDto from '@/utils/CoberturaDTO'
 
 export function SuperintendenteDashboard(data: { token: string }) {
   const decodedJwt = jsonWebTokenService.decode(data.token)
@@ -75,6 +89,11 @@ export function SuperintendenteDashboard(data: { token: string }) {
     async () => getTodosAnimais(data.token),
   )
 
+  const { isLoading: isLoadingTecnicos, data: todosTecnicos } = useQuery(
+    'tecnicos',
+    async () => allTecnicos(data.token),
+  )
+
   const { isLoading: isLoadingRebanhos, data: todosRebanhos } = useQuery(
     'rebanhos',
     async () => getRebanhosAll(data.token),
@@ -85,6 +104,16 @@ export function SuperintendenteDashboard(data: { token: string }) {
     async () => getTodasFazendas(data.token),
   )
 
+  const { data: todasCoberturas, isLoading: isLoadingCobertura } = useQuery(
+    'coberturas',
+    async () => getCoberturas(data.token),
+  )
+
+  const { data: todosUsuarios, isLoading: isLoadingUsuarios } = useQuery(
+    'usuarios',
+    async () => getAllUsers(data.token),
+  )
+
   const { isLoading, data: criadores } = useQuery('criadores', async () =>
     fetch('http://localhost:3001/criador/get-criadores', {
       headers: {
@@ -93,8 +122,6 @@ export function SuperintendenteDashboard(data: { token: string }) {
       method: 'GET',
     }).then((res) => res.json()),
   )
-
-  console.log(criadores)
 
   const [paginas, setPaginas] = useState({
     animalPage: false,
@@ -118,9 +145,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
     criadorRegister: false,
     menu: true,
     verAnimaisCriador: false,
+    loading: false,
   })
+  const { alert } = useContext(AlertContext)
   const [nascimentos, setNascimentos] = useState([])
+  const [cobertura, setCobertura] = useState<ComunicacaoCoberturaDto>([])
+  const [criadorSelecionado, setCriadorSelecionado] = useState<CriadorDTO>([])
   const {
+    loading,
     RGD,
     RGN,
     animalBasePage,
@@ -144,6 +176,30 @@ export function SuperintendenteDashboard(data: { token: string }) {
     verAnimaisCriador,
   } = paginas
 
+  const [animalInfos, setAnimalInfos] = useState({
+    animalSelecionado: {} as AnimalDTO,
+    fazendaSelecionado: {} as FazendaDTO,
+    criadorSelecionado: {} as CriadorDTO,
+    paiSelecionado: {} as AnimalDTO,
+    maeSelecionado: {} as AnimalDTO,
+    resgistro: false,
+    rgn: false,
+    rgd: false,
+  })
+
+  const [nascimentoSelecionado, setNascimentoSelecionado] =
+    useState<ComunicacaoNascimentoDto>({})
+
+  const [criadorInfo, setCriadorInfo] = useState({
+    animaisCriador: [] as AnimalDTO[],
+    fazendasCriador: [] as FazendaDTO[],
+    rebanhosCriador: [] as RebanhoDTO[],
+    criadorId: '',
+  })
+
+  const { animaisCriador, fazendasCriador, rebanhosCriador, criadorId } =
+    criadorInfo
+  const { resgistro, rgn, rgd } = animalInfos
   const updatedPages = { ...paginas }
 
   for (const key in updatedPages) {
@@ -174,12 +230,102 @@ export function SuperintendenteDashboard(data: { token: string }) {
     )
   }
 
+  async function getInformacoesAnimal(animal: AnimalDTO) {
+    setPaginas((prev) => ({
+      ...prev,
+      loading: true,
+    }))
+
+    const fazenda: FazendaDTO = await getFazendaById(data.token, animal.fazenda)
+    const criador: CriadorDTO = await getCriadorById(
+      animal.criadorAnimal,
+      data.token,
+    )
+
+    setAnimalInfos((prevAnimal) => ({
+      ...prevAnimal,
+      fazendaSelecionado: fazenda,
+      criadorSelecionado: criador,
+      maeSelecionado:
+        todosAnimais.find((index: AnimalDTO) => {
+          return index.id === animal.mae
+        }) || ({} as AnimalDTO),
+      paiSelecionado:
+        todosAnimais.find((index: AnimalDTO) => {
+          return index.id === animal.pai
+        }) || ({} as AnimalDTO),
+    }))
+
+    const animais = await getAnimaisByCriadorId(
+      animal.criadorAnimal,
+      data.token,
+    )
+
+    setCriadorInfo((prev) => ({
+      ...prev,
+      animaisCriador: animais,
+    }))
+
+    setPaginas((prev) => ({
+      ...prev,
+      loading: false,
+    }))
+  }
+
   async function getNascimentos(id: string) {
     const nascimentoData = await getComunicacoesNascimentoCriador(
       data.token,
       id,
     )
     setNascimentos(nascimentoData)
+  }
+
+  async function updateNascimento(decisao: string) {
+    setPaginas((prev) => ({
+      ...prev,
+      loading: true,
+    }))
+    nascimentoSelecionado.statusNascimento = decisao
+    const resposta = await updateComunicacaoNascimento(
+      nascimentoSelecionado,
+      data.token,
+      nascimentoSelecionado.id,
+    )
+
+    if (resposta.status === 200) {
+      alert('Decisão salva com sucesso', 'success')
+    } else {
+      alert('Houve um erro ao salvar a decisão')
+    }
+
+    setPaginas((prev) => ({
+      ...prev,
+      loading: false,
+    }))
+  }
+
+  async function updateCobertura(decisao: string) {
+    setPaginas((prev) => ({
+      ...prev,
+      loading: true,
+    }))
+    cobertura.statusCobertura = decisao
+    const resposta = await updateComunicCobertura(
+      data.token,
+      cobertura,
+      cobertura.id,
+    )
+
+    if (resposta.status === 200) {
+      alert('Decisão salva com sucesso', 'success')
+    } else {
+      alert('Houve um erro ao salvar a decisão')
+    }
+
+    setPaginas((prev) => ({
+      ...prev,
+      loading: false,
+    }))
   }
 
   return (
@@ -312,7 +458,11 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 }))
               }}
               colorButton={
-                comunicPage || comunicNascPage || comunicCoberPage
+                comunicPage ||
+                comunicNascPage ||
+                comunicCoberPage ||
+                todasComunicNascPage ||
+                verComunicNascPage
                   ? 'black'
                   : '#9E4B00'
               }
@@ -387,7 +537,11 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
                 textSize="0.9vw"
-                textColor={comunicNascPage ? 'white' : 'black'}
+                textColor={
+                  comunicNascPage || todasComunicNascPage || verComunicNascPage
+                    ? 'white'
+                    : 'black'
+                }
                 widthButton="100%"
                 widthImage="0.5vw"
                 src={arrowLeft}
@@ -398,7 +552,11 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     comunicNascPage: !prev.comunicNascPage,
                   }))
                 }}
-                colorButton={comunicNascPage ? 'black' : 'white'}
+                colorButton={
+                  comunicNascPage || todasComunicNascPage || verComunicNascPage
+                    ? 'black'
+                    : 'white'
+                }
                 textButton="Comunicações de Nascimento"
               />
               <Button
@@ -740,13 +898,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
                                 setAnimalInfos((prev) => ({
                                   ...prev,
                                   animalSelecionado: index,
+                                  resgistro: true,
+                                  rgn: false,
+                                  rgd: true,
                                 }))
                                 setPaginas(() => ({
                                   ...updatedPages,
-                                  verAnimaRGDPage: true,
+                                  verAnimalPage: true,
                                 }))
-
-                                setRegistro(true)
                               }}
                             />
                           </div>
@@ -858,7 +1017,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
             </TableHeader>
             {todosAnimais
               ? todosAnimais.map((index: AnimalDTO) => {
-                  if (!index.decisaoAnimalTecnicoRGD) {
+                  if (!index.decisaoAnimalSuperRGN) {
                     return (
                       <TableContent key={index.id}>
                         <td style={{ width: '20%' }}>
@@ -952,13 +1111,18 @@ export function SuperintendenteDashboard(data: { token: string }) {
                                 setAnimalInfos((prev) => ({
                                   ...prev,
                                   animalSelecionado: index,
+                                  resgistro: true,
+                                  rgn: true,
+                                  rgd: false,
+                                }))
+                                setCriadorInfo((prev) => ({
+                                  ...prev,
+                                  criadorId: index.criadorAnimal,
                                 }))
                                 setPaginas(() => ({
                                   ...updatedPages,
-                                  verAnimaRGDPage: true,
+                                  verAnimalPage: true,
                                 }))
-
-                                setRegistro(true)
                               }}
                             />
                           </div>
@@ -1312,14 +1476,17 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     radius="2vw"
                     marginLeftImage="0vw"
                     marginRightImage="0vw"
-                    src={search}
+                    src={searchIcon}
                     colorButton="#0B7AB8"
                     heightButton="3vw"
                     widthImage="65%"
                     widthButton="3vw"
                     textColor="white"
                     onClick={() => {
-                      setVerAnimalPage(true), setAnimalPage(false)
+                      setPaginas(() => ({
+                        ...updatedPages,
+                        verAnimalPage: true,
+                      }))
                     }}
                   />
                 </div>
@@ -1340,544 +1507,14 @@ export function SuperintendenteDashboard(data: { token: string }) {
             pointerEvents: `${verAnimalPage ? 'auto' : 'none'}`,
           }}
         >
-          <div style={{ width: '10vw' }}>
-            <Image
-              alt="logoAnimal"
-              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
-          </div>
-          <Text
-            text="Detalhes do Animal | ABCPD"
-            fontFamily="pop"
-            fontWeight="700"
-            size="1.8vw"
-            color="black"
+          <DetalhesAnimal
+            token={data.token}
+            animalInfos={animalInfos}
+            animaisCriador={animaisCriador}
+            registro={resgistro}
+            SuperRGD={rgd}
+            SuperRGN={rgn}
           />
-          <Text
-            text="Informações"
-            fontFamily="rob"
-            fontWeight="600"
-            size="1.6vw"
-            color="black"
-          />
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome da Mãe"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome do Pai"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Sexo do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Criador do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Fazenda"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Tipo de Registro"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Pelagem Do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Mês da Avaliação"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Ano Da Avaliação"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <div style={{ marginTop: '2vw' }}>
-            <Text
-              text="Decisão do Técnico"
-              fontFamily="rob"
-              fontWeight="600"
-              size="1.6vw"
-              color="black"
-            />
-          </div>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="RNG"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Data de  Registro do RNG"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPlace style={{ width: '43%' }}>
-            <Text
-              fontFamily="pop"
-              size={'1.5vw'}
-              text="Observações"
-              color="black"
-              fontWeight="300"
-            />
-            <InputText border="solid 0.2vw #9E4B00" />
-          </InputPlace>
-
-          <div style={{ marginTop: '2vw' }}>
-            <Text
-              text="Imagens"
-              fontFamily="rob"
-              fontWeight="600"
-              size="1.6vw"
-              color="black"
-            />
-          </div>
-
-          <InputPair>
-            <div style={{ width: '36vw' }}>
-              <Image
-                alt="animal"
-                style={{ width: '100%', height: 'auto' }}
-                src={boi}
-              />
-            </div>
-            <div style={{ width: '36vw' }}>
-              <Image
-                alt="animal"
-                style={{ width: '100%', height: 'auto' }}
-                src={boi}
-              />
-            </div>
-          </InputPair>
-
-          <InputPair>
-            <div style={{ width: '36vw' }}>
-              <Image
-                alt="animal"
-                style={{ width: '100%', height: 'auto' }}
-                src={boi}
-              />
-            </div>
-            <div style={{ width: '36vw' }}>
-              <Image
-                alt="animal"
-                style={{ width: '100%', height: 'auto' }}
-                src={boi}
-              />
-            </div>
-          </InputPair>
-
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '1vw',
-              justifyContent: 'space-between',
-              width: '35%',
-              marginLeft: '48vw',
-              marginBottom: '10vw',
-            }}
-          >
-            <Button
-              colorButton="black"
-              heightButton="2vw"
-              textButton="← Voltar"
-              widthButton="7vw"
-              textColor="white"
-            />
-            <Button
-              colorButton="#9E4B00"
-              heightButton="2vw"
-              textButton="Aprovar"
-              widthButton="7vw"
-              textColor="white"
-            />
-            <Button
-              colorButton="#BC433B"
-              heightButton="2vw"
-              textButton="Pendente"
-              widthButton="7vw"
-              textColor="white"
-            />
-          </div>
-        </VerAnimals>
-
-        <VerAnimals
-          initial={{ opacity: 0 }}
-          animate={{
-            y: verAnimaRGDPage ? 0 : -50,
-            opacity: verAnimaRGDPage ? 1 : 0,
-          }}
-          transition={{ duration: 0.5 }}
-          style={{
-            display: `${verAnimaRGDPage ? 'flex' : 'none'}`,
-            pointerEvents: `${verAnimaRGDPage ? 'auto' : 'none'}`,
-          }}
-        >
-          <div style={{ width: '10vw' }}>
-            <Image
-              alt="logoAnimal"
-              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
-          </div>
-          <Text
-            text="Detalhe do Animal | ABCPD"
-            fontFamily="pop"
-            fontWeight="700"
-            size="1.8vw"
-            color="black"
-          />
-          <Text
-            text="Informações"
-            fontFamily="rob"
-            fontWeight="600"
-            size="1.6vw"
-            color="black"
-          />
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome da Mãe"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome do Pai"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Sexo do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Criador do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Fazenda"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Tipo de Registro"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Pelagem Do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Mês da Avaliação"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Ano Da Avaliação"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <div style={{ marginTop: '2vw' }}>
-            <Text
-              text="Decisão do Técnico"
-              fontFamily="rob"
-              fontWeight="600"
-              size="1.6vw"
-              color="black"
-            />
-          </div>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="RNG"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Data de  Registro do RNG"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
-
-          <InputPlace style={{ width: '43%' }}>
-            <Text
-              fontFamily="pop"
-              size={'1.5vw'}
-              text="Observações"
-              color="black"
-              fontWeight="300"
-            />
-            <InputText border="solid 0.2vw #9E4B00" />
-          </InputPlace>
-
-          <div style={{ marginTop: '2vw' }}>
-            <Text
-              text="Imagens"
-              fontFamily="rob"
-              fontWeight="600"
-              size="1.6vw"
-              color="black"
-            />
-          </div>
-
-          <InputPair>
-            <div style={{ width: '36vw' }}>
-              <Image
-                alt="animal"
-                style={{ width: '100%', height: 'auto' }}
-                src={boi}
-              />
-            </div>
-            <div style={{ width: '36vw' }}>
-              <Image
-                alt="animal"
-                style={{ width: '100%', height: 'auto' }}
-                src={boi}
-              />
-            </div>
-          </InputPair>
-
-          <InputPair>
-            <div style={{ width: '36vw' }}>
-              <Image
-                alt="animal"
-                style={{ width: '100%', height: 'auto' }}
-                src={boi}
-              />
-            </div>
-            <div style={{ width: '36vw' }}>
-              <Image
-                alt="animal"
-                style={{ width: '100%', height: 'auto' }}
-                src={boi}
-              />
-            </div>
-          </InputPair>
-
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '1vw',
-              justifyContent: 'space-between',
-              width: '35%',
-              marginLeft: '48vw',
-              marginBottom: '10vw',
-            }}
-          >
-            <Button
-              colorButton="black"
-              heightButton="2vw"
-              textButton="← Voltar"
-              widthButton="7vw"
-              textColor="white"
-            />
-            <Button
-              colorButton="#9E4B00"
-              heightButton="2vw"
-              textButton="Aprovar"
-              widthButton="7vw"
-              textColor="white"
-            />
-            <Button
-              colorButton="#BC433B"
-              heightButton="2vw"
-              textButton="Pendente"
-              widthButton="7vw"
-              textColor="white"
-            />
-          </div>
         </VerAnimals>
 
         <RegistroAnimalBase
@@ -2329,6 +1966,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                         >
                           <Button
                             onClick={() => {
+                              setNascimentoSelecionado(index)
                               setPaginas(() => ({
                                 ...updatedPages,
                                 verComunicNascPage: true,
@@ -2376,186 +2014,202 @@ export function SuperintendenteDashboard(data: { token: string }) {
             pointerEvents: `${paginas.verComunicNascPage ? 'auto' : 'none'}`,
           }}
         >
-          <div style={{ width: '10vw' }}>
-            <Image
-              src={logo2Branca}
-              alt="logoAnimal"
-              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
-          </div>
-          <Text
-            text="Registro de um Novo Bezerro | ABCPD"
-            fontFamily="pop"
-            fontWeight="700"
-            size="1.8vw"
-            color="black"
-          />
-
-          <InputPlace>
-            <Text
-              fontFamily="pop"
-              size={'1.5vw'}
-              text="Nome do Bezerro"
-              color="black"
-              fontWeight="300"
-            />
-            <InputText />
-          </InputPlace>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
+          {verComunicNascPage ? (
+            <>
+              <div style={{ width: '10vw' }}>
+                <Image
+                  src={logo2Branca}
+                  alt="logoAnimal"
+                  style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                />
+              </div>
               <Text
+                text="Detalhe comunicação de nascimento | ABCPD"
                 fontFamily="pop"
-                size={'1.5vw'}
-                text="Mês Da Avaliação"
+                fontWeight="700"
+                size="1.8vw"
                 color="black"
-                fontWeight="300"
               />
-              <InputText />
-            </InputPlace>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Ano Da Avaliação"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText />
-            </InputPlace>
-          </InputPair>
+              <InputPlace>
+                <Text
+                  fontFamily="pop"
+                  size={'1.5vw'}
+                  text="Nome do Bezerro"
+                  color="black"
+                  fontWeight="300"
+                />
+                <InputText value={nascimentoSelecionado.animalBezerro} />
+              </InputPlace>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Sexo do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText />
-            </InputPlace>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Fazenda"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={
+                      todasFazendas.find((index) => {
+                        return (
+                          index.id === nascimentoSelecionado.fazendaNascimentoId
+                        )
+                      }).nomeFazenda
+                    }
+                  />
+                </InputPlace>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Pelagem do Animal"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText />
-            </InputPlace>
-          </InputPair>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Criador"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={
+                      criadores.find((index) => {
+                        return (
+                          index.id === nascimentoSelecionado.criadorNascimentoId
+                        )
+                      }).nomeCompleto
+                    }
+                  />
+                </InputPlace>
+              </InputPair>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Data de Nascimento"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText type="date" />
-            </InputPlace>
-          </InputPair>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Matriz"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={
+                      todosAnimais.find((index) => {
+                        return index.id === nascimentoSelecionado.matrizAnimalId
+                      }).nomeAnimal
+                    }
+                  />
+                </InputPlace>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Imagem 01"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText
-                fontSize="1.4vw"
-                height="3vw"
-                type="file"
-                accept="image/*"
-              />
-            </InputPlace>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Reprodutor"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={
+                      todosAnimais.find((index) => {
+                        return (
+                          index.id === nascimentoSelecionado.reprodutorAnimalId
+                        )
+                      }).nomeAnimal
+                    }
+                  />
+                </InputPlace>
+              </InputPair>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Imagem 02"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText
-                fontSize="1.4vw"
-                height="3vw"
-                type="file"
-                accept="image/*"
-              />
-            </InputPlace>
-          </InputPair>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Técnico"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={
+                      todosTecnicos.find((index) => {
+                        return (
+                          index.id === nascimentoSelecionado.tecnicoNascimentoId
+                        )
+                      }).nomeCompleto
+                    }
+                  />
+                </InputPlace>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Imagem 03"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText
-                fontSize="1.4vw"
-                height="3vw"
-                type="file"
-                accept="image/*"
-              />
-            </InputPlace>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Data comunicação"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={format(
+                      new Date(nascimentoSelecionado.dataComunicacao),
+                      'dd/MM/yyyy',
+                    )}
+                  />
+                </InputPlace>
+              </InputPair>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Imagem 04"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText
-                fontSize="1.4vw"
-                height="3vw"
-                type="file"
-                accept="image/*"
-              />
-            </InputPlace>
-          </InputPair>
-
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '1vw',
-              justifyContent: 'space-between',
-              width: '35%',
-              marginLeft: '41.9vw',
-              marginBottom: '10vw',
-            }}
-          >
-            <Button
-              colorButton="black"
-              heightButton="2vw"
-              textButton="← Voltar"
-              widthButton="7vw"
-              textColor="white"
-            />
-            <Button
-              colorButton="#9E4B00"
-              heightButton="2vw"
-              textButton="Registrar Animal"
-              widthButton="17vw"
-              textColor="white"
-            />
-          </div>
+              <InputPair style={{ width: '91%', marginTop: '2vw' }}>
+                <div
+                  style={{
+                    width: '100%',
+                    justifyContent: 'end',
+                    display: 'flex',
+                  }}
+                >
+                  {loading ? (
+                    <CircularProgress size="3vw" />
+                  ) : (
+                    <div
+                      style={{
+                        display: 'flex',
+                        marginTop: '1vw',
+                        justifyContent: 'space-between',
+                        width: '60%',
+                        marginBottom: '10vw',
+                      }}
+                    >
+                      <Button
+                        colorButton="black"
+                        heightButton="2vw"
+                        textButton="← Voltar"
+                        widthButton="7vw"
+                        textColor="white"
+                      />
+                      <Button
+                        colorButton="red"
+                        heightButton="2vw"
+                        textButton="Reprovar"
+                        widthButton="15vw"
+                        textColor="white"
+                        onClick={() => {
+                          updateNascimento('Reprovar')
+                        }}
+                      />
+                      <Button
+                        colorButton="green"
+                        heightButton="2vw"
+                        textButton="Aprovar"
+                        widthButton="17vw"
+                        textColor="white"
+                        onClick={() => {
+                          updateNascimento('Aprovar')
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </InputPair>
+            </>
+          ) : null}
         </VerComunicNascimento>
 
         <ComunicCobertura
@@ -2570,191 +2224,189 @@ export function SuperintendenteDashboard(data: { token: string }) {
             pointerEvents: `${comunicCoberPage ? 'auto' : 'none'}`,
           }}
         >
-          <div style={{ width: '4vw' }}>
-            <Image
-              alt="Logo"
-              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
-          </div>
-          <Text
-            fontFamily="pop"
-            size={'1.5vw'}
-            text="Listagem de Comunicações de Cobertura | ABCPD"
-            color="black"
-            fontWeight="600"
-          />
+          {comunicCoberPage ? (
+            <>
+              <div style={{ width: '4vw' }}>
+                <Image
+                  alt="Logo"
+                  style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                />
+              </div>
+              <Text
+                fontFamily="pop"
+                size={'1.5vw'}
+                text="Listagem de Comunicações de Cobertura | ABCPD"
+                color="black"
+                fontWeight="600"
+              />
 
-          <div style={{ width: '30%' }}>
-            <InputText
-              fontSize="1.2vw"
-              placeholder="Buscar"
-              height="3vw"
-              border="solid 1px rgba(103, 97, 97, 0.5)"
-              borderRight="solid 1px rgba(103, 97, 97, 0.5)"
-              borderLeft="solid 1px rgba(103, 97, 97, 0.5)"
-              borderTop="solid 1px rgba(103, 97, 97, 0.5)"
-              borderColor="rgba(103, 97, 97, 0.5)"
-            />
-          </div>
+              <div style={{ width: '30%' }}>
+                <InputText
+                  fontSize="1.2vw"
+                  placeholder="Buscar"
+                  height="3vw"
+                  border="solid 1px rgba(103, 97, 97, 0.5)"
+                  borderRight="solid 1px rgba(103, 97, 97, 0.5)"
+                  borderLeft="solid 1px rgba(103, 97, 97, 0.5)"
+                  borderTop="solid 1px rgba(103, 97, 97, 0.5)"
+                  borderColor="rgba(103, 97, 97, 0.5)"
+                />
+              </div>
 
-          <Table>
-            <TableHeader>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Data da Comunicação"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Reprodutor"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Matriz"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Tipo de Cobertura"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
+              <Table>
+                <TableHeader>
+                  <th>
+                    <Text
+                      textAlign="center"
+                      fontFamily="rob"
+                      size={'1.3vw'}
+                      text="Data da Comunicação"
+                      color="black"
+                      fontWeight="400"
+                    />
+                  </th>
+                  <th>
+                    <Text
+                      textAlign="center"
+                      fontFamily="rob"
+                      size={'1.3vw'}
+                      text="Fazenda"
+                      color="black"
+                      fontWeight="400"
+                    />
+                  </th>
+                  <th>
+                    <Text
+                      textAlign="center"
+                      fontFamily="rob"
+                      size={'1.3vw'}
+                      text="Criador"
+                      color="black"
+                      fontWeight="400"
+                    />
+                  </th>
+                  <th>
+                    <Text
+                      textAlign="center"
+                      fontFamily="rob"
+                      size={'1.3vw'}
+                      text="Tipo de Cobertura"
+                      color="black"
+                      fontWeight="400"
+                    />
+                  </th>
 
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Status"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-              <th>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1.3vw'}
-                  text="Opções"
-                  color="black"
-                  fontWeight="400"
-                />
-              </th>
-            </TableHeader>
+                  <th>
+                    <Text
+                      textAlign="center"
+                      fontFamily="rob"
+                      size={'1.3vw'}
+                      text="Opções"
+                      color="black"
+                      fontWeight="400"
+                    />
+                  </th>
+                </TableHeader>
+                {todasCoberturas.map((index: ComunicacaoCoberturaDto) => {
+                  return (
+                    <TableContent key={index.id}>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={format(
+                            new Date(index.dataCobertura),
+                            'dd/MM/yyyy',
+                          )}
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={
+                            todasFazendas.find((data) => {
+                              return data.id === index.fazendaCobertura
+                            }).nomeFazenda
+                          }
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={
+                            criadores.find((data) => {
+                              return data.id === index.criadorCobertura
+                            }).nomeCompleto
+                          }
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={index.tipoCobertura}
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
 
-            <TableContent>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="15 de Março de 2023 "
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Angus"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Angus"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Monta Natural"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  widthImage="1.5vw"
-                  src={waiting}
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Em análise"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <div
-                  style={{
-                    display: 'flex',
-                    width: '100%',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setPaginas(() => ({
-                        ...updatedPages,
-                        verComunicCoberPage: true,
-                      }))
-                    }}
-                    marginTopImage="0.6vw"
-                    radius="2.5vw"
-                    marginLeftImage="0vw"
-                    marginRightImage="0vw"
-                    src={seta}
-                    colorButton="white"
-                    heightButton="2.8vw"
-                    widthImage="100%"
-                    widthButton="3vw"
-                    textColor="white"
-                  />
-                </div>
-              </td>
-            </TableContent>
-          </Table>
+                      <td>
+                        <div
+                          style={{
+                            display: 'flex',
+                            width: '100%',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Button
+                            onClick={() => {
+                              setPaginas(() => ({
+                                ...updatedPages,
+                                verComunicCoberPage: true,
+                              }))
+                              setCobertura(index)
+                            }}
+                            marginTopImage="0.6vw"
+                            radius="2.5vw"
+                            marginLeftImage="0vw"
+                            marginRightImage="0vw"
+                            src={seta}
+                            colorButton="white"
+                            heightButton="2.8vw"
+                            widthImage="100%"
+                            widthButton="3vw"
+                            textColor="white"
+                          />
+                        </div>
+                      </td>
+                    </TableContent>
+                  )
+                })}
+              </Table>
 
-          <div style={{ marginTop: '1vw' }}>
-            <Button
-              colorButton="black"
-              heightButton="2vw"
-              textButton="← Voltar"
-              widthButton="7vw"
-              textColor="white"
-            />
-          </div>
+              <div style={{ marginTop: '1vw' }}>
+                <Button
+                  colorButton="black"
+                  heightButton="2vw"
+                  textButton="← Voltar"
+                  widthButton="7vw"
+                  textColor="white"
+                />
+              </div>
+            </>
+          ) : null}
         </ComunicCobertura>
 
         <VerComunicCobertura
@@ -2769,109 +2421,199 @@ export function SuperintendenteDashboard(data: { token: string }) {
             pointerEvents: `${verComunicCoberPage ? 'auto' : 'none'}`,
           }}
         >
-          <div style={{ width: '10vw' }}>
-            <Image
-              alt="logoAnimal"
-              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
-          </div>
-          <Text
-            text="Detalhe da Cobertura | ABCPD"
-            fontFamily="pop"
-            fontWeight="700"
-            size="1.8vw"
-            color="black"
-          />
-
-          <InputPlace>
-            <Text
-              text="Informações "
-              fontFamily="pop"
-              fontWeight="700"
-              size="1.5vw"
-              color="black"
-            />
-          </InputPlace>
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
+          {verComunicCoberPage ? (
+            <>
+              <div style={{ width: '10vw' }}>
+                <Image
+                  alt="logoAnimal"
+                  style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                />
+              </div>
               <Text
+                text="Detalhe da Cobertura | ABCPD"
                 fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome do Reprodudor"
+                fontWeight="700"
+                size="1.8vw"
                 color="black"
-                fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome da Matriz"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
+              <InputPlace>
+                <Text
+                  text="Informações "
+                  fontFamily="pop"
+                  fontWeight="700"
+                  size="1.5vw"
+                  color="black"
+                />
+              </InputPlace>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Tipo de Cobertura"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
+              <InputPair style={{ width: '90%', alignItems: 'start' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Reprodudor(es)"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  {cobertura.animais.map((index: AnimalDTO) => {
+                    if (index.sexoAnimal === 'Macho') {
+                      return (
+                        <InputText key={index.id} value={index.nomeAnimal} />
+                      )
+                    }
+                  })}
+                </InputPlace>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Data da Cobertura"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Matriz(es)"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  {cobertura.animais.map((index: AnimalDTO) => {
+                    if (index.sexoAnimal === 'Fêmea') {
+                      return (
+                        <InputText key={index.id} value={index.nomeAnimal} />
+                      )
+                    }
+                  })}
+                </InputPlace>
+              </InputPair>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Criador da Cobertura"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Tipo de Cobertura"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText value={cobertura.tipoCobertura} />
+                </InputPlace>
 
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '1vw',
-              justifyContent: 'end',
-              width: '35%',
-              marginLeft: '41.9vw',
-              marginBottom: '10vw',
-            }}
-          >
-            <Button
-              colorButton="black"
-              heightButton="2vw"
-              textButton="← Voltar"
-              widthButton="7vw"
-              textColor="white"
-            />
-          </div>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Data da Cobertura"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={format(
+                      new Date(cobertura.dataCobertura),
+                      'dd/MM/yyyy',
+                    )}
+                  />
+                </InputPlace>
+              </InputPair>
+
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Criador da Cobertura"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={
+                      criadores.find((index) => {
+                        return index.id === cobertura.criadorCobertura
+                      }).nomeCompleto
+                    }
+                  />
+                </InputPlace>
+
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Observações"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText value={cobertura.observacoes} />
+                </InputPlace>
+              </InputPair>
+
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Fazenda"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    value={
+                      todasFazendas.find((index) => {
+                        return index.id === cobertura.fazendaCobertura
+                      }).nomeFazenda
+                    }
+                  />
+                </InputPlace>
+              </InputPair>
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'end',
+                  width: '92%',
+                }}
+              >
+                {loading ? (
+                  <CircularProgress size={'4vw'} />
+                ) : (
+                  <div
+                    style={{
+                      display: 'flex',
+                      marginTop: '1vw',
+                      justifyContent: 'space-between',
+                      width: '40%',
+                      marginBottom: '10vw',
+                    }}
+                  >
+                    <Button
+                      colorButton="black"
+                      heightButton="2vw"
+                      textButton="← Voltar"
+                      widthButton="7vw"
+                      textColor="white"
+                    />
+
+                    <Button
+                      colorButton="red"
+                      heightButton="2vw"
+                      textButton="Reprovar"
+                      widthButton="7vw"
+                      textColor="white"
+                      onClick={() => {
+                        updateCobertura('Reprovado')
+                      }}
+                    />
+
+                    <Button
+                      colorButton="green"
+                      heightButton="2vw"
+                      textButton="Aprovar"
+                      widthButton="7vw"
+                      textColor="white"
+                      onClick={() => {
+                        updateCobertura('Aprovado')
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            </>
+          ) : null}
         </VerComunicCobertura>
 
         <UsersPage
@@ -3074,7 +2816,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   textAlign="center"
                   fontFamily="rob"
                   size={'1.3vw'}
-                  text="CPF"
+                  text="Cidade"
                   color="black"
                   fontWeight="400"
                 />
@@ -3091,56 +2833,62 @@ export function SuperintendenteDashboard(data: { token: string }) {
               </th>
             </TableHeader>
 
-            <TableContent>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Pedro"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <Text
-                  textAlign="center"
-                  fontFamily="rob"
-                  size={'1vw'}
-                  text="Tec.nic.o@t-es"
-                  color="black"
-                  fontWeight="400"
-                />
-              </td>
-              <td>
-                <div
-                  style={{
-                    display: 'flex',
-                    width: '100%',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setPaginas((prev) => ({
-                        ...updatedPages,
-                        criadorRegister: !prev.criadorRegister,
-                      }))
-                    }}
-                    marginTopImage="0.6vw"
-                    radius="2.5vw"
-                    marginLeftImage="0vw"
-                    marginRightImage="0vw"
-                    src={seta}
-                    colorButton="white"
-                    heightButton="2.8vw"
-                    widthImage="100%"
-                    widthButton="3vw"
-                    textColor="white"
-                  />
-                </div>
-              </td>
-            </TableContent>
+            {criadores.map((index: CriadorDTO) => {
+              return (
+                <TableContent key={index.id}>
+                  <td>
+                    <Text
+                      textAlign="center"
+                      fontFamily="rob"
+                      size={'1vw'}
+                      text={index.nomeCompleto}
+                      color="black"
+                      fontWeight="400"
+                    />
+                  </td>
+                  <td>
+                    <Text
+                      textAlign="center"
+                      fontFamily="rob"
+                      size={'1vw'}
+                      text={index.nomeCidade}
+                      color="black"
+                      fontWeight="400"
+                    />
+                  </td>
+                  <td>
+                    <div
+                      style={{
+                        display: 'flex',
+                        width: '100%',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Button
+                        onClick={() => {
+                          setPaginas((prev) => ({
+                            ...updatedPages,
+                            criadorRegister: !prev.criadorRegister,
+                          }))
+
+                          setCriadorSelecionado(index)
+                        }}
+                        marginTopImage="0.6vw"
+                        radius="2.5vw"
+                        marginLeftImage="0vw"
+                        marginRightImage="0vw"
+                        src={seta}
+                        colorButton="white"
+                        heightButton="2.8vw"
+                        widthImage="100%"
+                        widthButton="3vw"
+                        textColor="white"
+                      />
+                    </div>
+                  </td>
+                </TableContent>
+              )
+            })}
           </Table>
 
           <div
@@ -3180,179 +2928,225 @@ export function SuperintendenteDashboard(data: { token: string }) {
             pointerEvents: `${criadorRegister ? 'auto' : 'none'}`,
           }}
         >
-          <div style={{ width: '10vw' }}>
-            <Image
-              alt="logoAnimal"
-              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
-          </div>
-          <Text
-            text="Registro do Criador"
-            fontFamily="pop"
-            fontWeight="700"
-            size="1.8vw"
-            color="black"
-          />
-          <Text
-            text="Informações"
-            fontFamily="rob"
-            fontWeight="600"
-            size="1.6vw"
-            color="black"
-          />
-
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
+          {criadorRegister ? (
+            <>
+              <div style={{ width: '10vw' }}>
+                <Image
+                  alt="logoAnimal"
+                  style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                />
+              </div>
               <Text
+                text="Registro do Criador"
                 fontFamily="pop"
-                size={'1.5vw'}
-                text="Nome Completo"
+                fontWeight="700"
+                size="1.8vw"
                 color="black"
-                fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-
-            <InputPlace style={{ width: '47%' }}>
               <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Email"
+                text="Informações"
+                fontFamily="rob"
+                fontWeight="600"
+                size="1.6vw"
                 color="black"
-                fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="CPF/CNPJ"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Nome Completo"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={criadorSelecionado.nomeCompleto}
+                  />
+                </InputPlace>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="RG"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Email"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={
+                      todosUsuarios.find((index) => {
+                        return index.id === criadorSelecionado.userId
+                      }).email
+                    }
+                  />
+                </InputPlace>
+              </InputPair>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Endereço"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="CPF/CNPJ"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={
+                      todosUsuarios.find((index) => {
+                        return index.id === criadorSelecionado.userId
+                      }).cpf
+                    }
+                  />
+                </InputPlace>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Bairro"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="RG"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={criadorSelecionado.rg}
+                  />
+                </InputPlace>
+              </InputPair>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Cidade"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Endereço"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={criadorSelecionado.nomeRua}
+                  />
+                </InputPlace>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Estado"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Bairro"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={criadorSelecionado.nomeBairro}
+                  />
+                </InputPlace>
+              </InputPair>
 
-          <InputPair style={{ width: '90%' }}>
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="CEP"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Cidade"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={criadorSelecionado.nomeCidade}
+                  />
+                </InputPlace>
 
-            <InputPlace style={{ width: '47%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Telefone"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText border="solid 0.2vw #9E4B00" />
-            </InputPlace>
-          </InputPair>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Estado"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={criadorSelecionado.nomeEstado}
+                  />
+                </InputPlace>
+              </InputPair>
 
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '5vw',
-              justifyContent: 'space-between',
-              width: '40%',
-              marginLeft: '38vw',
-              marginBottom: '10vw',
-            }}
-          >
-            <Button
-              colorButton="black"
-              heightButton="2vw"
-              textButton="← Voltar"
-              widthButton="7vw"
-              textColor="white"
-            />
-            <Button
-              colorButton="#9E4B00"
-              heightButton="2vw"
-              textButton="Editar"
-              widthButton="7vw"
-              textColor="white"
-            />
-            <Button
-              colorButton="#BC433B"
-              heightButton="2vw"
-              textButton="Desativar Conta"
-              widthButton="12vw"
-              textColor="white"
-            />
-          </div>
+              <InputPair style={{ width: '90%' }}>
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="CEP"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={criadorSelecionado.cep}
+                  />
+                </InputPlace>
+
+                <InputPlace style={{ width: '47%' }}>
+                  <Text
+                    fontFamily="pop"
+                    size={'1.5vw'}
+                    text="Telefone"
+                    color="black"
+                    fontWeight="300"
+                  />
+                  <InputText
+                    style={{ fontSize: '1.3vw' }}
+                    value={
+                      todosUsuarios.find((index) => {
+                        return index.id === criadorSelecionado.userId
+                      }).telefone
+                    }
+                  />
+                </InputPlace>
+              </InputPair>
+
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: '5vw',
+                  justifyContent: 'space-between',
+                  width: '40%',
+                  marginLeft: '38vw',
+                  marginBottom: '10vw',
+                }}
+              >
+                <Button
+                  colorButton="black"
+                  heightButton="2vw"
+                  textButton="← Voltar"
+                  widthButton="7vw"
+                  textColor="white"
+                />
+                <Button
+                  colorButton="#9E4B00"
+                  heightButton="2vw"
+                  textButton="Editar"
+                  widthButton="7vw"
+                  textColor="white"
+                />
+                <Button
+                  colorButton="#BC433B"
+                  heightButton="2vw"
+                  textButton="Desativar Conta"
+                  widthButton="12vw"
+                  textColor="white"
+                />
+              </div>
+            </>
+          ) : null}
         </UserRegister>
 
         <UserRegister
@@ -3397,7 +3191,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3408,7 +3202,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -3421,7 +3215,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3432,7 +3226,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -3445,7 +3239,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3456,7 +3250,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -3469,7 +3263,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3480,7 +3274,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
           </InputPair>
 
@@ -3493,7 +3287,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
 
             <InputPlace style={{ width: '47%' }}>
@@ -3504,7 +3298,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 color="black"
                 fontWeight="300"
               />
-              <InputText border="solid 0.2vw #9E4B00" />
+              <InputText />
             </InputPlace>
           </InputPair>
 

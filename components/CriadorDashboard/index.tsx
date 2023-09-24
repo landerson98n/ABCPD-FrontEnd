@@ -294,16 +294,17 @@ export function CriadorDashboard(data: { token: string }) {
     }
 
     try {
-      const response = ComunicarCobertura(dataCoberturaApi, data.token)
+      const response = await ComunicarCobertura(dataCoberturaApi, data.token)
       if (response.status == 201) {
         alert('Solicitação de cobertura cadastrada com sucesso', 'success')
       }
     } catch (e) {
       console.log(e)
     }
-
-    setAnimaisSelecionadosMatriz([])
-    setAnimaisSelecionados([])
+    setAnimaisSelecionadosCobertura((prev)=>({
+      animaisSelecionados: [],
+      animaisSelecionadosMatriz: []
+    }))
   }
 
   async function handleSubmitNascimento(e) {
@@ -338,20 +339,27 @@ export function CriadorDashboard(data: { token: string }) {
       tecnicoNascimentoId: e.tecnicoNascimento,
       dataNascimento: e.dataNascimento,
       finalizadoNascimento: false,
-      observacoes: e.observacoes,
+      observacoes: e.observacoes || '',
     }
 
     const response = await criarComunicacaoNacimento(dataNascimento, data.token)
 
-    if (!response.message) {
+
+    if (response.status == 201) {
       setPaginas((prev) => ({
         ...prev,
         loading: false,
       }))
-      setAnimaisSelecionadosMatriz([])
-      setAnimaisSelecionados([])
+      setAnimaisSelecionadosCobertura((prev)=>({
+        animaisSelecionados: [],
+        animaisSelecionadosMatriz: []
+      }))
       return alert('Comunicação criada com sucesso', 'success')
     } else {
+      setPaginas((prev) => ({
+        ...prev,
+        loading: false,
+      }))
       return alert('Houve um erro ao criar a comunicação')
     }
   }

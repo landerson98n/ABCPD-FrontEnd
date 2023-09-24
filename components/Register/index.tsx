@@ -360,7 +360,7 @@ export function Register() {
                 <Text
                   fontFamily="pop"
                   size={'2vw'}
-                  text="Registre-se"
+                  text="Associar-se"
                   color="black"
                   fontWeight="600"
                 />

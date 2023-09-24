@@ -6,6 +6,12 @@ export const InputPlace = styled.div`
   width: 90%;
 `
 
+export const Container = styled.div`
+  @media print {
+    display: none;
+  }
+`
+
 export const InputText = styled.input`
   width: 100%;
   height: 4vw;

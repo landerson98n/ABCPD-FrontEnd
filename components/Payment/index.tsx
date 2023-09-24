@@ -44,7 +44,7 @@ export default function PaymentComponent(props: { token: string }) {
         criador.id,
         props.token,
       )
-      console.log(props.token)
+
 
       if (response.encodedImage) {
         setImagePix(`data:image/png;base64, ${response.encodedImage}`)

@@ -88,7 +88,7 @@ export function Header(props: HeaderProps) {
             widthButton="9vw"
             heightButton="3.3vw"
             colorButton="#9E4B00"
-            textButton="Registre-se"
+            textButton="Associar-se"
             onClick={() => {
               window.location.assign(`/Register`)
             }}

@@ -30,7 +30,6 @@ export async function getRebanhosAll(token: string) {
     },
   })
   const resposta = await res.json()
-  console.log(resposta)
 
   return resposta
 }

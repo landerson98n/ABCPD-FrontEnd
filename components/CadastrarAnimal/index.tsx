@@ -197,6 +197,14 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
   }
 
   async function send(animalData) {
+    const animalPai = animaisCriador.find((index: AnimalDTO) => {
+      return index.id === animalData.pai
+    })
+
+    const animalMatriz = animaisCriador.find((index: AnimalDTO) => {
+      return index.id === animalData.mae
+    })
+
     if (typeCadastro == 'animalBase') {
       animalData.rebanho = solicitacaoBase.rebanhoId
       animalData.fazenda = solicitacaoBase.fazendaId
@@ -255,14 +263,6 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     if (animalData.racaAnimalMatriz === '' && isCG) {
       return alert('Selecione uma raça para o animal matriz')
     }
-
-    const animalPai = animaisCriador.find((index: AnimalDTO) => {
-      return index.id === animalData.pai
-    })
-
-    const animalMatriz = animaisCriador.find((index: AnimalDTO) => {
-      return index.id === animalData.mae
-    })
 
     if (
       animalData.registro ===
@@ -575,8 +575,6 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
         </InputPlace>
       </InputPair>
 
-      
-
       <InputPair style={{ width: '90%' }}>
         <InputPlace style={{ width: '47%' }}>
           {fieldNames.map((fieldName) => (
@@ -717,7 +715,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
           <Text
             fontFamily="pop"
             size={'1.5vw'}
-            text="Raça da matriz"
+            text="Raça do animal matriz"
             color="black"
             fontWeight="300"
           />

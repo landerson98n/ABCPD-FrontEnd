@@ -46,6 +46,9 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: end;
+  @media print {
+    display: none;
+  }
 `
 
 export const Menu = styled(motion.div)`
@@ -55,6 +58,9 @@ export const Menu = styled(motion.div)`
   display: flex;
   align-items: center;
   flex-direction: column;
+  @media print {
+    display: none;
+  }
 `
 
 export const TelaAnimaisRGD = styled(motion.div)`
@@ -133,6 +139,20 @@ export const VerAnimals = styled(motion.div)`
   align-items: start;
   overflow-y: scroll;
   overflow-x: hidden;
+  @media print {
+    overflow: visible;
+  }
+`
+
+export const InputText = styled.input`
+  width: 100%;
+  height: 4vw;
+  background-color: white;
+  border: solid 1px #9e4b00;
+  font-size: 1.2vw;
+  padding-left: 1vw;
+  outline: none;
+  display: flex;
 `
 export const UserRegister = styled(motion.div)`
   width: 90%;

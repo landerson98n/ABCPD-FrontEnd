@@ -26,7 +26,9 @@ import boi from './boiExample.svg'
 import add from './add.svg'
 import group from './group.svg'
 import animalBlue from './animalBlue.svg'
+import logoCert from './logo_cert.svg'
 export {
+  logoCert,
   group,
   add,
   boi,

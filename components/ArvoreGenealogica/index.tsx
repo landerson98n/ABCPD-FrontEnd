@@ -9,13 +9,15 @@ interface ArvoreGenealogica {
 export function ArvoreGenealogica(props: ArvoreGenealogica) {
   const { animais, animalSelecionado } = props
 
-  const pai: AnimalDTO | undefined = animais.find((index: AnimalDTO) => {
-    return index.id === animalSelecionado.pai
-  })
+  const pai: AnimalDTO | undefined =
+    animais?.find((index: AnimalDTO) => {
+      return index.id === animalSelecionado.pai
+    }) || undefined
 
-  const mae: AnimalDTO | undefined = animais?.find((index: AnimalDTO) => {
-    return index.id === animalSelecionado.mae
-  })
+  const mae: AnimalDTO | undefined =
+    animais?.find((index: AnimalDTO) => {
+      return index.id === animalSelecionado.mae
+    }) || undefined
 
   return (
     <>

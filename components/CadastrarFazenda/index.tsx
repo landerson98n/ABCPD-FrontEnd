@@ -181,7 +181,7 @@ export function CadastrarFazenda(props: { token: string }) {
                   <Text
                     fontFamily="pop"
                     size={'1.5vw'}
-                    text="Área"
+                    text="Área (Ha)"
                     color="black"
                     fontWeight="300"
                   />
@@ -212,7 +212,7 @@ export function CadastrarFazenda(props: { token: string }) {
               <Text
                 fontFamily="pop"
                 size={'2vw'}
-                text="Registro do Gado da Raça Pé-Duro:"
+                text="Registro do Gado da Raça Curraleiro Pé-Duro:"
                 color="black"
                 fontWeight="600"
               />
