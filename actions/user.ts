@@ -16,7 +16,9 @@ export async function getUserById(data: string, token: string) {
       headers: { Authorization: `Bearer ${token}` },
     },
   )
-  return response.json()
+  const resJson = await response.json()
+
+  return resJson
 }
 
 export async function getAllUsers(token: string) {

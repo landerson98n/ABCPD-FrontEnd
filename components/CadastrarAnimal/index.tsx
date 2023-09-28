@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import AnimalDTO from '@/utils/AnimalDTO'
 import RebanhoDTO from '@/utils/RebanhoDTO'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import FazendaDTO from '@/utils/FazendaDTO'
 import { CreateAnimal } from '@/actions/animaisApi'
 import { AlertContext } from '@/context/AlertContextProvider'
@@ -85,60 +85,115 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     membrosPosteriores: z.number(),
     mucosa: z.number(),
   })
+
   const [loading, setLoading] = useState(false)
   const [isCG, setIsCG] = useState(false)
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({ resolver: zodResolver(animalSchema) })
 
-  const initialComunicacaoCobertura = {
-    formaCabeca: 0,
-    orelhasCabeca: 0,
-    chifresCabeca: 0,
-    formaPescoco: 0,
-    barbelaPescoco: 0,
-    morrilhoPescoco: 0,
-    insercaoPescoco: 0,
+  const [values, setValues] = useState({
     aparenciaGeral: 0,
-    peso: 0,
-    membrosAnterioresZoot: 0,
-  }
-  const initialComunicacaoCobertura2 = {
+    formaCabeca: 0,
+    chifresCabeca: 0,
+    barbelaPescoco: 0,
+    insercaoPescoco: 0,
     membrosAnterioresRacial: 0,
+    peso: 0,
+    orelhasCabeca: 0,
+    formaPescoco: 0,
+    morrilhoPescoco: 0,
+    membrosAnterioresZoot: 0,
     profundidadeTorax: 0,
     dorsoTorax: 0,
     lomboFlancoTorax: 0,
     traseira: 0,
-    umbigo: 0,
     testiculoZoot: 0,
-    testiculoUbere: 0,
     membrosPosteriores: 0,
+    umbigo: 0,
+    testiculoUbere: 0,
+    mucosa: 0,
+  })
+
+  const [average, setAverage] = useState(0)
+
+  useEffect(() => {
+    const calculateAverage = () => {
+      const valueArray = Object.values(values)
+      const total = valueArray.reduce((acc, val) => acc + parseFloat(val), 0)
+      const avg = total / valueArray.length
+      setAverage(avg.toFixed(2))
+    }
+
+    calculateAverage()
+  }, [values])
+
+  const initialComunicacaoCobertura = {
+    aparenciaGeral: 0,
+    formaCabeca: 0,
+    chifresCabeca: 0,
+    barbelaPescoco: 0,
+    insercaoPescoco: 0,
+    membrosAnterioresRacial: 0,
+  }
+
+  const initialComunicacaoCobertura2 = {
+    peso: 0,
+    orelhasCabeca: 0,
+    formaPescoco: 0,
+    morrilhoPescoco: 0,
+    membrosAnterioresZoot: 0,
+  }
+
+  const initialComunicacaoCobertura3 = {
+    profundidadeTorax: 0,
+    dorsoTorax: 0,
+  }
+
+  const initialComunicacaoCobertura4 = {
+    lomboFlancoTorax: 0,
+  }
+
+  const initialComunicacaoCobertura5 = {
+    traseira: 0,
+    testiculoZoot: 0,
+    membrosPosteriores: 0,
+  }
+
+  const initialComunicacaoCobertura6 = {
+    umbigo: 0,
+    testiculoUbere: 0,
     mucosa: 0,
   }
+
   const fieldNames = Object.keys(initialComunicacaoCobertura)
   const fieldNames2 = Object.keys(initialComunicacaoCobertura2)
+  const fieldNames3 = Object.keys(initialComunicacaoCobertura3)
+  const fieldNames4 = Object.keys(initialComunicacaoCobertura4)
+  const fieldNames5 = Object.keys(initialComunicacaoCobertura5)
+  const fieldNames6 = Object.keys(initialComunicacaoCobertura6)
+
   const fieldDisplayNames = {
-    nomeCobertura: 'Nome da Cobertura',
-    observacoes: 'Observações',
-    tipoCobertura: 'Tipo de Cobertura',
     formaCabeca: 'Forma da Cabeça',
-    orelhasCabeca: 'Orelhas da Cabeça',
     chifresCabeca: 'Chifres da Cabeça',
-    formaPescoco: 'Forma do Pescoço',
     barbelaPescoco: 'Barbela do Pescoço',
-    morrilhoPescoco: 'Morrilho do Pescoço',
     insercaoPescoco: 'Inserção do Pescoço',
     aparenciaGeral: 'Aparência Geral',
+    membrosAnterioresRacial: 'Membros Anteriores Racial',
+  }
+
+  const fieldDisplayNames2 = {
     peso: 'Peso',
     membrosAnterioresZoot: 'Membros Anteriores Zoo.',
-  }
-  const fieldDisplayNames2 = {
-    membrosAnterioresRacial: 'Membros Anteriores Racial',
+    morrilhoPescoco: 'Morrilho do Pescoço',
+    orelhasCabeca: 'Orelhas da Cabeça',
+    formaPescoco: 'Forma do Pescoço',
     profundidadeTorax: 'Profundidade do Tórax',
     dorsoTorax: 'Dorso do Tórax',
-    lomboFlancoTorax: 'Lombo Flanco do Tórax',
+    lomboFlancoTorax: 'Lombo e Flanco ',
     traseira: 'Traseira',
     umbigo: 'Umbigo',
     testiculoZoot: 'Testículo Zoo.',
@@ -333,6 +388,9 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     const response = await CreateAnimal(animal, token)
     if (!response?.message) {
       alert('Animal criado com sucesso', 'success')
+      Object.keys(animalData).forEach((fieldName) => {
+        setValue(fieldName, '')
+      })
       setLoading(false)
     }
   }
@@ -347,7 +405,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
         />
       </div>
       <Text
-        text="Formulário Para Registro de Novo Animal | ABCPD"
+        text="Formulário de Avaliação Técnica | ABCPD"
         fontFamily="pop"
         fontWeight="700"
         size="1.8vw"
@@ -575,10 +633,24 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
         </InputPlace>
       </InputPair>
 
-      <InputPair style={{ width: '90%' }}>
+      <div>
+        <Text
+          fontFamily="pop"
+          size={'1.5vw'}
+          text="1 - APRECIAÇÃO GERAL "
+          color="black"
+          fontWeight="300"
+        />
+      </div>
+      <InputPair style={{ width: '90%', display: 'flex', alignItems: 'start' }}>
         <InputPlace style={{ width: '47%' }}>
           {fieldNames.map((fieldName) => (
-            <div key={fieldName} style={{ width: '100%' }}>
+            <div
+              key={fieldName}
+              style={{
+                width: '100%',
+              }}
+            >
               <InputPlace style={{ width: '100%' }}>
                 <Text
                   fontFamily="pop"
@@ -591,8 +663,17 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                   {...register(fieldName, {
                     required: true,
                     valueAsNumber: true,
+                    min: 0,
+                    max: 10,
                   })}
+                  step="1"
                   type="number"
+                  onChange={(e) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      [fieldName]: e.target.value,
+                    }))
+                  }}
                 />
               </InputPlace>
             </div>
@@ -614,8 +695,17 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                   {...register(fieldName, {
                     required: true,
                     valueAsNumber: true,
+                    min: 0,
+                    max: 10,
                   })}
+                  step="1"
                   type="number"
+                  onChange={(e) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      [fieldName]: e.target.value,
+                    }))
+                  }}
                 />
               </InputPlace>
             </div>
@@ -623,12 +713,195 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
         </InputPlace>
       </InputPair>
 
+      <div>
+        <Text
+          fontFamily="pop"
+          size={'1.5vw'}
+          text="3 - APRECIAÇÃO PARCIAL - TÓRAX 
+          "
+          color="black"
+          fontWeight="300"
+        />
+      </div>
+      <InputPair style={{ width: '90%', display: 'flex', alignItems: 'start' }}>
+        <InputPlace style={{ width: '47%' }}>
+          {fieldNames3.map((fieldName) => (
+            <div
+              key={fieldName}
+              style={{
+                width: '100%',
+              }}
+            >
+              <InputPlace style={{ width: '100%' }}>
+                <Text
+                  fontFamily="pop"
+                  size={'1.5vw'}
+                  text={fieldDisplayNames2[fieldName]}
+                  color="black"
+                  fontWeight="300"
+                />
+                <InputText
+                  {...register(fieldName, {
+                    required: true,
+                    valueAsNumber: true,
+                    min: 0,
+                    max: 10,
+                  })}
+                  step="1"
+                  type="number"
+                  onChange={(e) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      [fieldName]: e.target.value,
+                    }))
+                  }}
+                />
+              </InputPlace>
+            </div>
+          ))}
+        </InputPlace>
+
+        <InputPlace style={{ width: '47%' }}>
+          {fieldNames4.map((fieldName) => (
+            <div key={fieldName} style={{ width: '100%' }}>
+              <InputPlace style={{ width: '100%' }}>
+                <Text
+                  fontFamily="pop"
+                  size={'1.5vw'}
+                  text={fieldDisplayNames2[fieldName]}
+                  color="black"
+                  fontWeight="300"
+                />
+                <InputText
+                  {...register(fieldName, {
+                    required: true,
+                    valueAsNumber: true,
+                    min: 0,
+                    max: 10,
+                  })}
+                  step="1"
+                  type="number"
+                  onChange={(e) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      [fieldName]: e.target.value,
+                    }))
+                  }}
+                />
+              </InputPlace>
+            </div>
+          ))}
+        </InputPlace>
+      </InputPair>
+
+      <div>
+        <Text
+          fontFamily="pop"
+          size={'1.5vw'}
+          text="4 - APRECIAÇÃO PARCIAL - QUARTOS TRAZEIROS 
+          "
+          color="black"
+          fontWeight="300"
+        />
+      </div>
+
+      <InputPair style={{ width: '90%', display: 'flex', alignItems: 'start' }}>
+        <InputPlace style={{ width: '47%' }}>
+          {fieldNames5.map((fieldName) => (
+            <div
+              key={fieldName}
+              style={{
+                width: '100%',
+              }}
+            >
+              <InputPlace style={{ width: '100%' }}>
+                <Text
+                  fontFamily="pop"
+                  size={'1.5vw'}
+                  text={fieldDisplayNames2[fieldName]}
+                  color="black"
+                  fontWeight="300"
+                />
+                <InputText
+                  {...register(fieldName, {
+                    required: true,
+                    valueAsNumber: true,
+                    min: 0,
+                    max: 10,
+                  })}
+                  step="1"
+                  type="number"
+                  onChange={(e) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      [fieldName]: e.target.value,
+                    }))
+                  }}
+                />
+              </InputPlace>
+            </div>
+          ))}
+        </InputPlace>
+
+        <InputPlace style={{ width: '47%' }}>
+          {fieldNames6.map((fieldName) => (
+            <div key={fieldName} style={{ width: '100%' }}>
+              <InputPlace style={{ width: '100%' }}>
+                <Text
+                  fontFamily="pop"
+                  size={'1.5vw'}
+                  text={fieldDisplayNames2[fieldName]}
+                  color="black"
+                  fontWeight="300"
+                />
+                <InputText
+                  {...register(fieldName, {
+                    required: true,
+                    valueAsNumber: true,
+                    min: 0,
+                    max: 10,
+                  })}
+                  step="1"
+                  type="number"
+                  onChange={(e) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      [fieldName]: e.target.value,
+                    }))
+                  }}
+                />
+              </InputPlace>
+            </div>
+          ))}
+        </InputPlace>
+      </InputPair>
+      <div>
+        <Text
+          fontFamily="pop"
+          size={'1.5vw'}
+          text="Média"
+          color="black"
+          fontWeight="300"
+        />
+      </div>
+
+      <div style={{ width: '100%', justifyContent: 'center' }}>
+        <Text
+          fontFamily="pop"
+          size={'3.5vw'}
+          text={`${average || 0}`}
+          color="black"
+          fontWeight="300"
+          textAlign="center"
+        />
+      </div>
+
       <InputPair style={{ width: '90%' }}>
         <InputPlace style={{ width: '47%' }}>
           <Text
             fontFamily="pop"
             size={'1.5vw'}
-            text="Imagem 01"
+            text="Imagem Frente"
             color="black"
             fontWeight="300"
           />
@@ -645,7 +918,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
           <Text
             fontFamily="pop"
             size={'1.5vw'}
-            text="Imagem 02"
+            text="Imagem Esquerda"
             color="black"
             fontWeight="300"
           />
@@ -663,7 +936,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
           <Text
             fontFamily="pop"
             size={'1.5vw'}
-            text="Imagem 03"
+            text="Imagem Direita"
             color="black"
             fontWeight="300"
           />
@@ -680,7 +953,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
           <Text
             fontFamily="pop"
             size={'1.5vw'}
-            text="Imagem 04"
+            text="Imagem Traseira"
             color="black"
             fontWeight="300"
           />
@@ -693,11 +966,12 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
           />
         </InputPlace>
       </InputPair>
+
       <InputPlace style={{ width: '47%' }}>
         <Text
           fontFamily="pop"
           size={'1.5vw'}
-          text="Observações"
+          text="Parecer Técnico"
           color="black"
           fontWeight="300"
         />
@@ -778,7 +1052,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
             <Button
               colorButton="#9E4B00"
               heightButton="2vw"
-              textButton="Registrar Novo Animal"
+              textButton="Salvar"
               widthButton="18vw"
               textColor="white"
               type="submit"

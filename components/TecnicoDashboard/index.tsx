@@ -212,11 +212,12 @@ export function TecnicoDashboard(data: { token: string }) {
       ...prev,
       loading: true
     }))
-    const response = await getRegistrosAnimalBase(data.token)    
-    if (response) {
+    const response = await getRegistrosAnimalBase(data.token)   
+    const responseJson = await response.json() 
+    if (response.status==200) {      
       setAnimalBaseInfo((prev)=>({
         ...prev,
-        solicitacoesAnimaisBase: response
+        solicitacoesAnimaisBase: responseJson 
       }))
 
       setPaginas((prev)=>({
@@ -503,7 +504,7 @@ export function TecnicoDashboard(data: { token: string }) {
                     }))
                   }}
                   colorButton={paginas.animalBasePage ? 'black' : 'white'}
-                  textButton="Solicitações Animais Base"
+                  textButton="Solicitações de  Animais PA"
                 />
               </DropdownMenu>
             </div>
@@ -1141,14 +1142,16 @@ export function TecnicoDashboard(data: { token: string }) {
                                   getInformacoesAnimal(index)
                                   setAnimalInfos((prev) =>({
                                     ...prev,
-                                    animalSelecionado: index
+                                    animalSelecionado: index,
+                                    resgistro: true
                                   }))
                                   setPaginas(()=>({
                                     ...updatedPages,
                                     verAnimaRGDPage: true,
+                                    
                                   }))
 
-                                    setRegistro(true)
+                                    
                                 }}
                               />
                             </div>
@@ -1212,7 +1215,7 @@ export function TecnicoDashboard(data: { token: string }) {
               />
             </div>
             <Text
-              text="Solicitação de Registro de Animais Base | ABCPD"
+              text="Solicitação de Registro de Animais Puros por Adjudicação | ABCPD"
               fontFamily="pop"
               fontWeight="700"
               size="2vw"
@@ -1226,7 +1229,7 @@ export function TecnicoDashboard(data: { token: string }) {
                     textAlign="center"
                     fontFamily="rob"
                     size={'1.3vw'}
-                    text="Rebanho"
+                    text="Série alfabética"
                     color="black"
                     fontWeight="400"
                   />

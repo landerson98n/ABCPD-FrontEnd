@@ -1,6 +1,6 @@
 import Image from 'next/legacy/image'
 import { Container, Border } from './style'
-import { logo } from '@/assets'
+import { logo, logo2, logoCert } from '@/assets'
 import { InputPair, InputPlace } from '../Register/style'
 import { Text } from '../Text'
 import { InputText } from '../InputText'
@@ -12,9 +12,10 @@ interface CertificadoProps {
   animal: AnimalDTO
   fazendaName: string
   criadorName: string
+  animaisCriador: AnimalDTO[]
 }
 export function Certificado(props: CertificadoProps) {
-  const { animal, fazendaName, criadorName } = props
+  const { animal, fazendaName, criadorName, animaisCriador } = props
 
   return (
     <Container>
@@ -65,17 +66,6 @@ export function Certificado(props: CertificadoProps) {
           </InputPair>
 
           <InputPair style={{ width: '47%' }}>
-            <InputPlace style={{ width: '31%' }}>
-              <Text
-                fontFamily="pop"
-                size={'1.5vw'}
-                text="Série alfabética"
-                color="black"
-                fontWeight="300"
-              />
-              <InputText fontSize="1.1vw" disabled value="" />
-            </InputPlace>
-
             <InputPlace style={{ width: '64%' }}>
               <Text
                 fontFamily="pop"
@@ -177,7 +167,7 @@ export function Certificado(props: CertificadoProps) {
             <div style={{ width: '15vw' }}>
               <Image
                 src={logo}
-                style={{ width: '3vw', height: '3vw' }}
+                style={{ width: '10vw', height: '10vw' }}
                 alt="logo"
               />
             </div>
@@ -189,7 +179,7 @@ export function Certificado(props: CertificadoProps) {
                     style={{
                       display: 'flex',
                       justifyContent: 'center',
-                      rotate: '270deg',
+                      rotate: '90deg',
                     }}
                   >
                     <Text
@@ -212,7 +202,11 @@ export function Certificado(props: CertificadoProps) {
                       }}
                     >
                       <Text
-                        text={'text'}
+                        text={
+                          animaisCriador.find((index) => {
+                            return index.id === animal.mae
+                          })?.nomeAnimal || ''
+                        }
                         fontFamily="rob"
                         fontWeight="600"
                         size="1.6vw"
@@ -231,7 +225,20 @@ export function Certificado(props: CertificadoProps) {
                         }}
                       >
                         <Text
-                          text={'text'}
+                          text={
+                            (
+                              animaisCriador?.find((index) => {
+                                return (
+                                  index.id ===
+                                  (
+                                    animaisCriador?.find((index) => {
+                                      return index.id === animal?.mae
+                                    }) || {}
+                                  )?.mae
+                                )
+                              }) || {}
+                            )?.nomeAnimal || ''
+                          }
                           fontFamily="rob"
                           fontWeight="600"
                           size="1.6vw"
@@ -251,7 +258,20 @@ export function Certificado(props: CertificadoProps) {
                         }}
                       >
                         <Text
-                          text={'text'}
+                          text={
+                            (
+                              animaisCriador?.find((index) => {
+                                return (
+                                  index.id ===
+                                  (
+                                    animaisCriador?.find((index) => {
+                                      return index.id === animal?.mae
+                                    }) || {}
+                                  )?.pai
+                                )
+                              }) || {}
+                            )?.nomeAnimal || ''
+                          }
                           fontFamily="rob"
                           fontWeight="600"
                           size="1.6vw"
@@ -272,7 +292,11 @@ export function Certificado(props: CertificadoProps) {
                       }}
                     >
                       <Text
-                        text={'text'}
+                        text={
+                          animaisCriador.find((index) => {
+                            return index.id === animal.pai
+                          })?.nomeAnimal
+                        }
                         fontFamily="rob"
                         fontWeight="600"
                         size="1.6vw"
@@ -291,7 +315,20 @@ export function Certificado(props: CertificadoProps) {
                         }}
                       >
                         <Text
-                          text={'text'}
+                          text={
+                            (
+                              animaisCriador?.find((index) => {
+                                return (
+                                  index.id ===
+                                  (
+                                    animaisCriador?.find((index) => {
+                                      return index.id === animal?.pai
+                                    }) || {}
+                                  )?.mae
+                                )
+                              }) || {}
+                            )?.nomeAnimal || ''
+                          }
                           fontFamily="rob"
                           fontWeight="600"
                           size="1.6vw"
@@ -311,7 +348,20 @@ export function Certificado(props: CertificadoProps) {
                         }}
                       >
                         <Text
-                          text={'text'}
+                          text={
+                            (
+                              animaisCriador?.find((index) => {
+                                return (
+                                  index.id ===
+                                  (
+                                    animaisCriador?.find((index) => {
+                                      return index.id === animal?.pai
+                                    }) || {}
+                                  )?.mae
+                                )
+                              }) || {}
+                            )?.nomeAnimal || ''
+                          }
                           fontFamily="rob"
                           fontWeight="600"
                           size="1.6vw"

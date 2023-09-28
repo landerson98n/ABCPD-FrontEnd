@@ -73,3 +73,17 @@ export async function updateAnimal(data: AnimalDTO, token: string, id: string) {
     console.log(Error.message)
   }
 }
+
+export async function getAnimalById(id: string) {
+  try {
+    const res = await fetch(`http://localhost:3001/animal/get-animal/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    return res.json()
+  } catch (Error) {
+    console.log(Error.message)
+  }
+}

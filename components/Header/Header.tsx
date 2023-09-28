@@ -44,7 +44,7 @@ export function Header(props: HeaderProps) {
           style={{
             display: 'flex',
             justifyContent: 'space-between',
-            width: '40vw',
+            width: '20vw',
             paddingRight: '4vw',
             alignItems: 'center',
           }}
@@ -52,35 +52,7 @@ export function Header(props: HeaderProps) {
           <Text
             fontFamily="pop"
             size={'1.5vw'}
-            text="Sobre"
-            color="black"
-            fontWeight="300"
-          />
-          <Text
-            fontFamily="pop"
-            size={'1.5vw'}
-            text="|"
-            color="gray"
-            fontWeight="300"
-          />
-          <Text
-            fontFamily="pop"
-            size={'1.5vw'}
-            text="Depoimentos"
-            color="black"
-            fontWeight="300"
-          />
-          <Text
-            fontFamily="pop"
-            size={'1.5vw'}
-            text="|"
-            color="gray"
-            fontWeight="300"
-          />
-          <Text
-            fontFamily="pop"
-            size={'1.5vw'}
-            text="Contato"
+            text="Certificados"
             color="black"
             fontWeight="300"
           />

@@ -165,6 +165,17 @@ export const UserRegister = styled(motion.div)`
   overflow-x: hidden;
 `
 
+export const TelaRegistroUsuario = styled(motion.form)`
+  width: 90%;
+  height: 90%;
+  background-color: white;
+  margin-top: 2vw;
+  flex-direction: column;
+  align-items: start;
+  overflow-y: scroll;
+  overflow-x: hidden;
+`
+
 export const InputPair = styled.div`
   display: flex;
   justify-content: space-between;

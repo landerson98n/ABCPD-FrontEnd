@@ -111,6 +111,7 @@ export function DetalhesAnimal(props: DetalheAnimal) {
         animal={animalSelecionado}
         fazendaName={fazendaSelecionado.nomeFazenda}
         criadorName={criadorSelecionado.nomeCompleto}
+        animaisCriador={animaisCriador}
       />
       <Container>
         <div style={{ width: '10vw' }}>
@@ -563,33 +564,27 @@ export function DetalhesAnimal(props: DetalheAnimal) {
                     onClick={() => {
                       window.setTimeout(function () {
                         window.print()
-                      }, 400)
+                      }, 800)
                     }}
                   />
                 </>
               )}
             </div>
           ) : (
-            <Button
-              colorButton="green"
-              heightButton="2vw"
-              textButton="Certificado do animal"
-              widthButton="15vw"
-              textColor="white"
-              onClick={() => {
-                setCertificado(() => ({
-                  visible: true,
-                }))
-                window.setTimeout(function () {
-                  window.print()
+            <div style={{ marginBottom: '2vw', marginTop: '1vw' }}>
+              <Button
+                colorButton="green"
+                heightButton="2vw"
+                textButton="Certificado do animal"
+                widthButton="15vw"
+                textColor="white"
+                onClick={() => {
                   window.setTimeout(function () {
-                    setCertificado(() => ({
-                      visible: false,
-                    }))
-                  }, 900)
-                }, 400)
-              }}
-            />
+                    window.print()
+                  }, 400)
+                }}
+              />
+            </div>
           )}
         </div>
       </Container>

@@ -31,5 +31,5 @@ export async function getRegistrosAnimalBase(token: string) {
     },
   )
 
-  return res.json()
+  return res
 }

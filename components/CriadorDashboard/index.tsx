@@ -69,10 +69,13 @@ import { criarComunicacaoNacimento } from '@/actions/comunicacaoNascimento'
 import RebanhoDTO from '@/utils/RebanhoDTO'
 import { getRebanhoByFazendaId } from '@/actions/RebanhApi'
 import { getFazendaCriador } from '@/actions/fazendaApi'
-import { getTecnicos } from '@/actions/tecnicoApi'
+import { getTecnicoEmail, getTecnicos } from '@/actions/tecnicoApi'
 import { getAnimaisCriador } from '@/actions/animaisApi'
 import { DetalhesAnimal } from '../DetalhesAnimal'
 import CriadorDTO from '@/utils/CriadorDTO'
+import { sendEmail } from '@/actions/emailApi'
+import { getUserById } from '@/actions/user'
+import UserDTO from '@/utils/UserDTO'
 
 export function CriadorDashboard(data: { token: string }) {
   const decodedJwt = jsonWebTokenService.decode(data.token)
@@ -139,6 +142,7 @@ export function CriadorDashboard(data: { token: string }) {
       .string()
       .nonempty('Data de nascimento é um campo obrigatório'),
   })
+  const [page, setPage] = useState(1)
 
   const {
     register: registerNascimento,
@@ -397,7 +401,10 @@ export function CriadorDashboard(data: { token: string }) {
     const response = await registrarAnimaisBase(dataAPI, data.token)
 
     if (!response.message) {
+      const tecnicoUser = await getTecnicoEmail(data.token,dataSolicitacao.tecnicoId)
+      
       alert('Solicitação criada com sucesso', 'success')
+      await sendEmail({to:`${tecnicoUser.user.email}`, subject:"Nova solicitação de registro de animais puros por adjudicação foi criada"}, data.token)
     }
     setPaginas((prev) => ({
       ...prev,
@@ -425,6 +432,21 @@ export function CriadorDashboard(data: { token: string }) {
     }))
   }
 
+  function paginate({ items, currentPage }: PaginationOptions) {
+    const itemsPerPage = 4
+    if (!Array.isArray(items) || itemsPerPage <= 0 || currentPage <= 0) {
+      throw new Error('Invalid input parameters')
+    }
+    const startIndex = (currentPage - 1) * itemsPerPage
+    let endIndex = startIndex + itemsPerPage
+
+    if (endIndex > items.length) {
+      endIndex = items.length
+    }
+
+    return items.slice(startIndex, endIndex)
+  }
+
   const updatedPages = { ...paginas }
 
   for (const key in updatedPages) {
@@ -436,7 +458,6 @@ export function CriadorDashboard(data: { token: string }) {
   if (
     isLoadingAnimais ||
     isLoadingFazendas ||
-    isLoadingRebanho ||
     isLoadingCriador ||
     isLoadingTecnicos
   ) {
@@ -466,11 +487,12 @@ export function CriadorDashboard(data: { token: string }) {
           initial={{ x: '13vw' }}
           transition={{ duration: 0.5 }}
           animate={{ x: menu ? '13vw' : '1.5vw' }}
-          onClick={() => {
+          onClick={async () => {
             setPaginas((prev) => ({
               ...updatedPages,
               menu: !prev.menu,
             }))
+
           }}
           style={{ width: '100%', display: 'flex', marginTop: '1vw' }}
         >
@@ -629,7 +651,7 @@ export function CriadorDashboard(data: { token: string }) {
                   }))
                 }}
                 colorButton={animalBasePage ? 'black' : 'white'}
-                textButton="Registrar Animais Base"
+                textButton="Registrar PA"
               />
               <Button
                 marginRightImage="0.6vw"
@@ -906,7 +928,7 @@ export function CriadorDashboard(data: { token: string }) {
               </th>
             </TableHeader>
 
-            {animaisCriador.map((data: AnimalDTO) => {
+            {paginate({items: animaisCriador, currentPage: page}).map((data: AnimalDTO) => {
               const fazendaCriador: FazendaDTO = fazendas.find((index) => {
                 return index.id == data.fazenda
               })
@@ -1037,6 +1059,38 @@ export function CriadorDashboard(data: { token: string }) {
               )
             })}
           </Table>
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: '1vw',
+            }}
+          >
+            <div style={{ marginRight: '1vw' }}>
+              <Button
+                colorButton="green"
+                heightButton="2vw"
+                widthButton="3vw"
+                textButton="<"
+                onClick={() => {
+                  setPage((prevPage) =>
+                    prevPage > 1 ? prevPage - 1 : prevPage,
+                  )
+                }}
+              />
+            </div>
+
+            <Button
+              colorButton="green"
+              heightButton="2vw"
+              widthButton="3vw"
+              textButton=">"
+              onClick={() => {
+                setPage((prevPage) => prevPage + 1)
+              }}
+            />
+          </div>
         </Animals>
 
         <VerAnimals
@@ -1076,7 +1130,7 @@ export function CriadorDashboard(data: { token: string }) {
             />
           </div>
           <Text
-            text="Solicitação de Registro de Animais Base | ABCPD"
+            text="Solicitação de Registro de PA | ABCPD"
             fontFamily="pop"
             fontWeight="700"
             size="2vw"
@@ -1149,6 +1203,9 @@ export function CriadorDashboard(data: { token: string }) {
            
               {...registerAnimalBase('rebanhoId', { required: true })}
             >
+               <option disabled selected>
+                Selecione um rebanho
+              </option>
               {rebanhos
                 ? rebanhos.map((data: RebanhoDTO) => {
                     return (
@@ -1495,7 +1552,7 @@ export function CriadorDashboard(data: { token: string }) {
                 <LinearProgress color="inherit" />
               </div>
             ) : (
-              coberturas.map((data: ComunicacaoCoberturaDto) => {
+              paginate({items: coberturas, currentPage: page}).map((data: ComunicacaoCoberturaDto) => {
                 return (
                   <TableContent key={data.id}>
                     <td>
@@ -1564,6 +1621,38 @@ export function CriadorDashboard(data: { token: string }) {
               })
             )}
           </Table>
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: '1vw',
+            }}
+          >
+            <div style={{ marginRight: '1vw' }}>
+              <Button
+                colorButton="green"
+                heightButton="2vw"
+                widthButton="3vw"
+                textButton="<"
+                onClick={() => {
+                  setPage((prevPage) =>
+                    prevPage > 1 ? prevPage - 1 : prevPage,
+                  )
+                }}
+              />
+            </div>
+
+            <Button
+              colorButton="green"
+              heightButton="2vw"
+              widthButton="3vw"
+              textButton=">"
+              onClick={() => {
+                setPage((prevPage) => prevPage + 1)
+              }}
+            />
+          </div>
         </ComunicNascimento>
 
         <VerComunicNascimento
