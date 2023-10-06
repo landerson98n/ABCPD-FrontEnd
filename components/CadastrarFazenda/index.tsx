@@ -62,6 +62,7 @@ export function CadastrarFazenda(props: { token: string }) {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     criteriaMode: 'all',
     mode: 'all',
@@ -103,7 +104,11 @@ export function CadastrarFazenda(props: { token: string }) {
     const responseFazenda = await CriarFazenda(FazendaData)
 
     if (responseFazenda.id) {
-      alert('Fazenda criada com sucesso', 'success')
+      setLoading(false)
+      Object.keys(fazenda).forEach((fieldName) => {
+        setValue(fieldName, '')
+      })
+      return alert('Fazenda criada com sucesso', 'success')
     }
 
     setLoading(false)

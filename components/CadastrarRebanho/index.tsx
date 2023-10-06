@@ -10,20 +10,39 @@ import RebanhoDTO from '@/utils/RebanhoDTO'
 import { useQuery } from 'react-query'
 import { getFazendaCriador } from '@/actions/fazendaApi'
 import { useForm } from 'react-hook-form'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { RebanhoAPI, getRebanhoBySerie } from '@/actions/RebanhApi'
 import { AlertContext } from '@/context/AlertContextProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import { getCriadorByUserId } from '@/actions/criadorApi'
 
 export function CadastrarRebanho(props: { token: string }) {
   const [loading, setLoading] = useState(false)
   const decodedJwt = jsonWebTokenService.decode(props?.token)
+
+  const { data: criador, isLoading: isLoadingCriador } = useQuery(
+    'criadores',
+    async () => getCriadorByUserId(decodedJwt?.sub, props.token),
+  )
+
+  const { isLoading: isLoadingFazendas, data: fazendas } = useQuery(
+    'fazendas',
+    async () => getFazendaCriador(props.token, criador.id),
+    { enabled: criador !== undefined },
+  )
+
   const schema = z.object({
-    serie: z
-      .string()
-      .min(3, 'Rebanho deve ter no mínimo 3 caracteres')
-      .max(4, 'Rebanho deve ter no máximo 4 caracteres'),
+    serie:
+      criador?.rebanhos.length === 0
+        ? z
+            .string()
+            .min(3, 'Rebanho deve ter no mínimo 3 caracteres')
+            .max(3, 'Rebanho deve ter no máximo 3 caracteres')
+        : z
+            .string()
+            .min(1, 'Rebanho deve ter no mínimo 1 caracter')
+            .max(1, 'Rebanho deve ter no máximo 1 caracter'),
     fazendaId: z.string().nonempty('Selecione uma fazenda'),
   })
   const {
@@ -35,42 +54,45 @@ export function CadastrarRebanho(props: { token: string }) {
     mode: 'all',
     resolver: zodResolver(schema),
   })
-  const { isLoading: isLoadingFazendas, data: fazendas } = useQuery(
-    'fazendas',
-    async () => getFazendaCriador(props.token, decodedJwt?.sub),
-  )
   const { alert } = useContext(AlertContext)
 
   async function cadastrarRebanho(data) {
     const rebanho: RebanhoDTO = data
     setLoading(true)
 
-    if (fazendas.length > 1 && rebanho.serie.length === 3) {
-      setLoading(false)
-      return alert(
-        'Serie alfabetica deve conter 4 caracteres, pois já possui outra fazenda',
-      )
-    }
-    const serieUsada = await getRebanhoBySerie(rebanho.serie, props.token)
+    const serieUsada = await getRebanhoBySerie(
+      criador.rebanhos.length !== 0
+        ? `${criador.rebanhos[0].serie}${rebanho.serie}`
+        : rebanho.serie,
+      props.token,
+    )
+    console.log(serieUsada)
 
-    if (serieUsada.id) {
+    if (serieUsada.status !== 404) {
       setLoading(false)
-      return alert('Serie alfabetica já foi utlizada por outro criador')
+      return alert('Serie alfabetica já foi utilizada')
     }
 
     const responseRebanho = await RebanhoAPI({
       fazendaId: rebanho.fazendaId,
-      serie: rebanho.serie,
+      serie:
+        criador.rebanhos.length !== 0
+          ? `${criador.rebanhos[0].serie}${rebanho.serie}`
+          : rebanho.serie,
+      criadorId: criador.id,
     })
 
     if (responseRebanho.serie) {
+      if (criador.rebanhos.length === 0) {
+        window.location.assign(`/CadastrarRebanho/${props.token}`)
+      }
       setLoading(false)
       return alert('Rebanho cadastrado com sucesso!', 'success')
     }
     setLoading(false)
   }
 
-  if (isLoadingFazendas) {
+  if (isLoadingFazendas || isLoadingCriador) {
     return (
       <div
         style={{
@@ -115,7 +137,7 @@ export function CadastrarRebanho(props: { token: string }) {
         />
       </div>
       <Text
-        text="Cadastro de novo rebanho | ABCPD"
+        text="Cadastro de nova série alfabética | ABCPD"
         fontFamily="pop"
         fontWeight="700"
         size="2vw"
@@ -151,11 +173,31 @@ export function CadastrarRebanho(props: { token: string }) {
         size="2vw"
         color="black"
       />
-      <InputText
-        {...register('serie', { required: true })}
-        style={{ width: '30vw' }}
-        type="text"
-      />
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '30%',
+        }}
+      >
+        {criador?.rebanhos.length !== 0 ? (
+          <Text
+            text={`${criador.rebanhos[0].serie} - `}
+            fontFamily="rob"
+            fontWeight="400"
+            size="2vw"
+            color="black"
+          />
+        ) : null}
+
+        <InputText
+          {...register('serie', { required: true })}
+          style={{ width: '20vw' }}
+          type="text"
+          max={1}
+        />
+      </div>
+
       <div
         style={{
           display: 'flex',
@@ -176,6 +218,8 @@ export function CadastrarRebanho(props: { token: string }) {
             textColor="white"
             type="submit"
             onClick={() => {
+              console.log()
+
               for (const componente in errors) {
                 const mensagem = errors[componente]
                 alert(mensagem?.message)

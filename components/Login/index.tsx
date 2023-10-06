@@ -63,6 +63,11 @@ export default function Login() {
 
     try {
       const response = await LoginAPI(data)
+      if (response.statusCode === 401) {
+        setLoading(false)
+        return alert('Senha ou login incorretos')
+      }
+
       const token = response.acessToken
       const pessoa = response.pessoa
 

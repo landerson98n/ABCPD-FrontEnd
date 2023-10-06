@@ -1,4 +1,8 @@
-export async function RebanhoAPI(data: { fazendaId: string; serie: string }) {
+export async function RebanhoAPI(data: {
+  fazendaId: string
+  serie: string
+  criadorId: string
+}) {
   const res = await fetch('http://localhost:3001/rebanho/cadastrar-rebanho', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -8,12 +12,15 @@ export async function RebanhoAPI(data: { fazendaId: string; serie: string }) {
   return res.json()
 }
 
-export async function getRebanhoByFazendaId(fazendaId: string) {
+export async function getRebanhoByFazendaId(fazendaId: string, token: string) {
   const res = await fetch(
     `http://localhost:3001/rebanho/rebanho-fazenda-id/${fazendaId}`,
     {
       method: 'GET',
-      headers: { 'Content-type': 'application/json; charset=UTF-8' },
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Authorization: `Bearer ${token}`,
+      },
     },
   )
   const resposta = await res.json()
@@ -60,7 +67,7 @@ export async function getRebanhoBySerie(serie: string, token: string) {
     )
 
     if (!res.ok) {
-      throw new Error(`HTTP Error! Status: ${res.status}`)
+      return res
     }
 
     const contentType = res.headers.get('content-type')

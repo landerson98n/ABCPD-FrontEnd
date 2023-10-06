@@ -60,7 +60,6 @@ import { getRebanhoByFazendaId, getRebanhosAll } from '@/actions/RebanhApi'
 import {
   getAnimaisByCriadorId,
   getTodosAnimais,
-  updateAnimal,
 } from '@/actions/animaisApi'
 import { CircularProgress } from '@mui/material'
 import { getCriadorById } from '@/actions/criadorApi'
@@ -190,7 +189,7 @@ export function TecnicoDashboard(data: { token: string }) {
 
     const response = await getFazendaCriador(data.token, criadorId)
     if (response) {
-      const rebanho = await getRebanhoByFazendaId(response[0].id)
+      const rebanho = await getRebanhoByFazendaId(response[0].id, data.token)
       setCriadorInfo((prev)=>({
         ...prev,
         fazendasCriador: response,
@@ -1344,6 +1343,10 @@ export function TecnicoDashboard(data: { token: string }) {
                         setAnimalBaseInfo((prev)=>({
                           ...prev,
                           solicitacoesAnimaisBaseSelecionada: index
+                        }))
+                        setCriadorInfo((prev)=>({
+                          ...prev,
+                          criadorId: index.criadorId
                         }))
                         , setTypeCadastro("animalBase")
                       }}

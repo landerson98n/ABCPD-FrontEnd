@@ -319,9 +319,7 @@ export function Register() {
 
       if (responseFazenda.id) {
         alert('Conta criada com sucesso', 'success')
-        setPageThreeX(!pageThreeX)
-        getPixImage(response?.id)
-        getBoleto(response?.id)
+        window.location.assign('/')
       }
     }
     setLoading(false)

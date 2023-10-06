@@ -83,6 +83,7 @@ import { getRegistrosAnimalBase } from '@/actions/animalBaseApi'
 import { SolicitacaoRegistroAnimalBaseDTO } from '@/utils/SolicitacaoDTO'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { sendEmail } from '@/actions/emailApi'
 
 export function SuperintendenteDashboard(data: { token: string }) {
   const decodedJwt = jsonWebTokenService.decode(data.token)
@@ -488,77 +489,101 @@ export function SuperintendenteDashboard(data: { token: string }) {
     return password
   }
 
-  async function registrarUsuario(data) {
-    if (await CPFEmailUsado(data.email)) {
+  async function registrarUsuario(dataUser) {
+    setPaginas((prev) => ({
+      ...prev,
+      loading: true,
+    }))
+    if (await CPFEmailUsado(dataUser.email)) {
       return alert('Email já foi utilizado')
     }
-    if (await CPFEmailUsado(data.cpf)) {
+    if (await CPFEmailUsado(dataUser.cpf)) {
       return alert('CPF já foi utilizado')
     }
     if (!isTecnico) {
-      const palavras = data.nomeCompleto.split(' ')
+      const palavras = dataUser.nomeCompleto.split(' ')
       const UserData = {
         dateJoined: new Date(Date.now()).toISOString(),
         nomePrimeiro: palavras[0],
         nomeUltimo: palavras[palavras.length - 1],
-        email: data.email,
-        cpf: data.cpf,
+        email: dataUser.email,
+        cpf: dataUser.cpf,
         username: palavras[0],
         senha: gerarSenha(),
-        telefone: data.telefone,
+        telefone: dataUser.telefone,
         ultimaConexao: new Date(Date.now()).toISOString(),
       }
       const CriadorData = {
-        cep: data.cep,
-        nomeBairro: data.nomeBairro,
-        nomeCidade: data.nomeCidade,
-        nomeCompleto: data.nomeCompleto,
-        nomeEstado: data.nomeEstado,
-        nomeRua: data.nomeRua,
-        rg: data.rg,
-        numeroCasa: data.numeroCasa,
+        cep: dataUser.cep,
+        nomeBairro: dataUser.nomeBairro,
+        nomeCidade: dataUser.nomeCidade,
+        nomeCompleto: dataUser.nomeCompleto,
+        nomeEstado: dataUser.nomeEstado,
+        nomeRua: dataUser.nomeRua,
+        rg: dataUser.rg,
+        numeroCasa: dataUser.numeroCasa,
       }
       const response = await CriarCriador({ ...CriadorData, ...UserData })
       if (!response.message) {
+        Object.keys(dataUser).forEach((fieldName) => {
+          setValue(fieldName, '')
+        })
+        await sendEmail(
+          { to: UserData.email, subject: `Senha ABCPD: ${password}` },
+          data.token,
+        )
         return alert('Criador registrado com sucesso', 'success')
       }
-      Object.keys(data).forEach((fieldName) => {
-        setValue(fieldName, '')
-      })
     } else {
-      const palavras = data.nomeCompleto.split(' ')
+      const palavras = dataUser.nomeCompleto.split(' ')
+      const password = gerarSenha()
       const UserData = {
         dateJoined: new Date(Date.now()).toISOString(),
         nomePrimeiro: palavras[0],
         nomeUltimo: palavras[palavras.length - 1],
-        email: data.email,
-        cpf: data.cpf,
+        email: dataUser.email,
+        cpf: dataUser.cpf,
         username: palavras[0],
-        senha: gerarSenha(),
-        telefone: data.telefone,
+        senha: password,
+        telefone: dataUser.telefone,
         ultimaConexao: new Date(Date.now()).toISOString(),
       }
       const TecnicoData = {
-        cep: data.cep,
-        nomeBairro: data.nomeBairro,
-        nomeCidade: data.nomeCidade,
-        nomeCompleto: data.nomeCompleto,
-        nomeEstado: data.nomeEstado,
-        nomeRua: data.nomeRua,
-        rg: data.rg,
-        numeroCasa: data.numeroCasa,
+        cep: dataUser.cep,
+        nomeBairro: dataUser.nomeBairro,
+        nomeCidade: dataUser.nomeCidade,
+        nomeCompleto: dataUser.nomeCompleto,
+        nomeEstado: dataUser.nomeEstado,
+        nomeRua: dataUser.nomeRua,
+        rg: dataUser.rg,
+        numeroCasa: dataUser.numeroCasa,
       }
       const response = await cadastrarTecnico(token, {
         ...TecnicoData,
         ...UserData,
       })
       if (!response.message) {
+        setPaginas((prev) => ({
+          ...prev,
+          loading: false,
+        }))
+        Object.keys(dataUser).forEach((fieldName) => {
+          setValue(fieldName, '')
+        })
+        await sendEmail(
+          { to: UserData.email, subject: `Senha ABCPD: ${password}` },
+          data.token,
+        )
         return alert('Tecnico registrado com sucesso', 'success')
       }
-      Object.keys(data).forEach((fieldName) => {
+      Object.keys(dataUser).forEach((fieldName) => {
         setValue(fieldName, '')
       })
     }
+    setPaginas((prev) => ({
+      ...prev,
+      loading: false,
+    }))
   }
 
   interface PaginationOptions {
@@ -4010,27 +4035,34 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 marginBottom: '10vw',
               }}
             >
-              <Button
-                colorButton="black"
-                heightButton="2vw"
-                textButton="← Voltar"
-                widthButton="7vw"
-                textColor="white"
-                type="button"
-              />
-              <Button
-                colorButton="green"
-                heightButton="2vw"
-                textButton="Registrar"
-                widthButton="12vw"
-                textColor="white"
-                onClick={() => {
-                  for (const componente in errors) {
-                    const mensagem = errors[componente]
-                    alert(mensagem.message)
-                  }
-                }}
-              />
+              {loading ? (
+                <CircularProgress />
+              ) : (
+                <>
+                  {' '}
+                  <Button
+                    colorButton="black"
+                    heightButton="2vw"
+                    textButton="← Voltar"
+                    widthButton="7vw"
+                    textColor="white"
+                    type="button"
+                  />
+                  <Button
+                    colorButton="green"
+                    heightButton="2vw"
+                    textButton="Registrar"
+                    widthButton="12vw"
+                    textColor="white"
+                    onClick={() => {
+                      for (const componente in errors) {
+                        const mensagem = errors[componente]
+                        alert(mensagem.message)
+                      }
+                    }}
+                  />
+                </>
+              )}
             </div>
           </>
         </TelaRegistroUsuario>

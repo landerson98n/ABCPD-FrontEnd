@@ -87,6 +87,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
   })
 
   const [loading, setLoading] = useState(false)
+  const [fazendaSelecionada, setFazendaSelecionada] = useState(false)
   const [isCG, setIsCG] = useState(false)
   const {
     register,
@@ -251,7 +252,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     })
   }
 
-  async function send(animalData) {
+  async function send(animalData: AnimalDTO) {
     const animalPai = animaisCriador.find((index: AnimalDTO) => {
       return index.id === animalData.pai
     })
@@ -368,6 +369,16 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     const base64Image04 = await convertToBase64(
       new Blob([images.selectedImage4]),
     )
+    if (typeCadastro == 'animalBase') {
+      animalData.nomeAnimal = `${
+        (
+          rebanhos.find((reb: RebanhoDTO) => {
+            return reb.id == solicitacaoBase.rebanhoId
+          }) || {}
+        ).serie
+      }${animalData.nomeAnimal}`
+    }
+    console.log(animalData.nomeAnimal)
 
     const animal: AnimalDTO = {
       ...animalData,
@@ -386,6 +397,8 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
       flag: 0,
     }
     const response = await CreateAnimal(animal, token)
+    console.log(criadorId)
+
     if (!response?.message) {
       alert('Animal criado com sucesso', 'success')
       Object.keys(animalData).forEach((fieldName) => {
@@ -560,7 +573,12 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
               color="black"
               fontWeight="300"
             />
-            <SelectBox {...register('fazenda', { required: true })}>
+            <SelectBox
+              {...register('fazenda', { required: true })}
+              onChange={(e) => {
+                setFazendaSelecionada(e.target.value)
+              }}
+            >
               <option value="" disabled selected>
                 Selecione uma fazenda
               </option>
@@ -590,11 +608,13 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
               </option>
               {rebanhos
                 ? rebanhos.map((data: RebanhoDTO) => {
-                    return (
-                      <option value={data.id} key={data.id}>
-                        {data.serie}
-                      </option>
-                    )
+                    if (data.fazendaId === fazendaSelecionada) {
+                      return (
+                        <option value={data.id} key={data.id}>
+                          {data.serie}
+                        </option>
+                      )
+                    }
                   })
                 : null}
             </SelectBox>

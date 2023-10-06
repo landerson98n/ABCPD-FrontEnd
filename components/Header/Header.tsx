@@ -49,13 +49,16 @@ export function Header(props: HeaderProps) {
             alignItems: 'center',
           }}
         >
-          <Text
-            fontFamily="pop"
-            size={'1.5vw'}
-            text="Certificados"
-            color="black"
-            fontWeight="300"
-          />
+          <a href="/VerificarCertificado" style={{ textDecoration: 'none' }}>
+            <Text
+              fontFamily="pop"
+              size={'1.5vw'}
+              text="Certificados"
+              color="black"
+              fontWeight="300"
+            />
+          </a>
+
           <Button
             widthButton="9vw"
             heightButton="3.3vw"

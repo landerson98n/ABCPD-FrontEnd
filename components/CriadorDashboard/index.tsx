@@ -60,7 +60,7 @@ import { useForm } from 'react-hook-form'
 import { Checkbox, CircularProgress, LinearProgress } from '@mui/material'
 import { SolicitacaoRegistroAnimalBaseDTO } from '@/utils/SolicitacaoDTO'
 import { registrarAnimaisBase } from '@/actions/animalBaseApi'
-import { getCriadorByUserId } from '@/actions/criadorApi'
+import { getCriadorByUserId, getCriadorTransferencia } from '@/actions/criadorApi'
 import ComunicacaoCoberturaDto from '@/utils/CoberturaDTO'
 import { ArvoreGenealogica } from '../ArvoreGenealogica'
 import { Tree } from 'react-organizational-chart'
@@ -80,21 +80,28 @@ import UserDTO from '@/utils/UserDTO'
 export function CriadorDashboard(data: { token: string }) {
   const decodedJwt = jsonWebTokenService.decode(data.token)
 
-  const { data: criador, isLoading: isLoadingCriador } = useQuery(
+  const { data: criador, isLoading: isLoadingCriador } = useQuery<CriadorDTO>(
     'criadores',
     async () => getCriadorByUserId(decodedJwt?.sub, data.token),
+  )
+
+  const { data: criadorAdquirente, isLoading: isLoadingCriadorAdquirente } = useQuery<CriadorDTO>(
+    'adquirente',
+    async () => getCriadorTransferencia(data.token),
   )
 
   const [fazendaID, setFazendaID] = useState('')
   const { data: rebanhos, isLoading: isLoadingRebanho } = useQuery(
     'rebanhos',
-    async () => getRebanhoByFazendaId(fazendaID),
+    async () => getRebanhoByFazendaId(fazendaID, data.token),
+    
     { enabled: fazendaID != '' },
   )
 
   const { isLoading: isLoadingFazendas, data: fazendas } = useQuery(
     'fazendas',
-    async () => getFazendaCriador(data.token, decodedJwt.sub),
+    async () => getFazendaCriador(data.token, criador.id),
+    {enabled: criador !== undefined}
   )
 
   const { isLoading: isLoadingTecnicos, data: tecnicos } = useQuery(
@@ -114,17 +121,39 @@ export function CriadorDashboard(data: { token: string }) {
     fazendaCobertura: z.string().min(1, 'Selecione uma fazenda'),
   })
 
+  const schemaTransferencia = z.object({
+    adquirente: z.string().min(1, 'Selecione adquirente'),
+    animal: z.string().min(1, 'Selecione um animal'),
+    fazendaAdquirente: z.string().min(1, 'Selecione uma fazenda'),
+  })
+
+  useEffect(() => {
+    
+  }, [fazendaID]);
+
   const {
     register: registerCobertura,
     handleSubmit: handleCobertura,
     formState: { errors: errorsCobertura },
+    setValue: setValueCobertura
   } = useForm({
     criteriaMode: 'all',
     mode: 'all',
     resolver: zodResolver(schemaCobertura),
   })
 
-  const { register: registerAnimalBase, handleSubmit: handleAnimalBase } =
+  const {
+    register: registerTransferencia,
+    handleSubmit: handleTransferencia,
+    formState: { errors: errorsTransferencia },
+    setValue: setValueTransferencia
+  } = useForm({
+    criteriaMode: 'all',
+    mode: 'all',
+    resolver: zodResolver(schemaTransferencia),
+  })
+
+  const { register: registerAnimalBase, handleSubmit: handleAnimalBase, setValue: setValueAnimalBase } =
     useForm({
       criteriaMode: 'all',
       mode: 'all',
@@ -166,6 +195,8 @@ export function CriadorDashboard(data: { token: string }) {
     loading: false,
     options: false,
     menu: false,
+    comunicObito:false,
+    transferirPage: false
   })
 
   const [animalInfos, setAnimalInfos] = useState({
@@ -177,7 +208,7 @@ export function CriadorDashboard(data: { token: string }) {
     resgistro: false
   })
   const {animalSelecionado} = animalInfos
-  
+  const [adquirente, setAdquirente] = useState('')
   const {
     animalBasePage,
     animalPage,
@@ -190,6 +221,8 @@ export function CriadorDashboard(data: { token: string }) {
     options,
     verAnimalPage,
     verComunicNascPage,
+    comunicObito,
+    transferirPage
   } = paginas
 
   const [search, setSearch] = useState({
@@ -300,15 +333,23 @@ export function CriadorDashboard(data: { token: string }) {
     try {
       const response = await ComunicarCobertura(dataCoberturaApi, data.token)
       if (response.status == 201) {
+        Object.keys(dataCobertura).forEach((fieldName) => {
+          setValueCobertura(fieldName, '')
+        })
         alert('Solicitação de cobertura cadastrada com sucesso', 'success')
       }
     } catch (e) {
-      console.log(e)
+ 
     }
     setAnimaisSelecionadosCobertura((prev)=>({
       animaisSelecionados: [],
       animaisSelecionadosMatriz: []
     }))
+  }
+
+  async function submitTransferencia(data){
+    console.log(data);
+    
   }
 
   async function handleSubmitNascimento(e) {
@@ -401,7 +442,15 @@ export function CriadorDashboard(data: { token: string }) {
     const response = await registrarAnimaisBase(dataAPI, data.token)
 
     if (!response.message) {
+      setPaginas((prev) => ({
+        ...prev,
+        loading: false,
+      }))
       const tecnicoUser = await getTecnicoEmail(data.token,dataSolicitacao.tecnicoId)
+      Object.keys(dataSolicitacao).forEach((fieldName) => {
+        setValueAnimalBase(fieldName, '')
+      })
+      console.log(tecnicoUser);
       
       alert('Solicitação criada com sucesso', 'success')
       await sendEmail({to:`${tecnicoUser.user.email}`, subject:"Nova solicitação de registro de animais puros por adjudicação foi criada"}, data.token)
@@ -595,7 +644,8 @@ export function CriadorDashboard(data: { token: string }) {
                 animalBasePage ||
                 comunicCoberturaPage ||
                 comunicNascPage ||
-                verComunicNascPage
+                verComunicNascPage||
+                comunicObito
                   ? 'black'
                   : '#9E4B00'
               }
@@ -610,7 +660,9 @@ export function CriadorDashboard(data: { token: string }) {
                   animalBasePage ||
                   comunicCoberturaPage ||
                   comunicNascPage ||
-                  verComunicNascPage
+                  verComunicNascPage||
+                  comunicObito|| 
+                  transferirPage
                     ? 0
                     : -50,
                 opacity:
@@ -618,7 +670,9 @@ export function CriadorDashboard(data: { token: string }) {
                   animalBasePage ||
                   comunicCoberturaPage ||
                   comunicNascPage ||
-                  verComunicNascPage
+                  verComunicNascPage||
+                  comunicObito||
+                  transferirPage
                     ? 1
                     : 0,
               }}
@@ -629,7 +683,9 @@ export function CriadorDashboard(data: { token: string }) {
                   animalBasePage ||
                   comunicCoberturaPage ||
                   comunicNascPage ||
-                  verComunicNascPage
+                  verComunicNascPage ||
+                  comunicObito|| 
+                  transferirPage
                     ? 'auto'
                     : 'none'
                 }`,
@@ -671,6 +727,7 @@ export function CriadorDashboard(data: { token: string }) {
                 colorButton={comunicCoberturaPage ? 'black' : 'white'}
                 textButton="Comunicações de Cobertura"
               />
+
               <Button
                 marginRightImage="0.6vw"
                 marginLeftImage={'0.6vw'}
@@ -693,6 +750,54 @@ export function CriadorDashboard(data: { token: string }) {
                   comunicNascPage || verComunicNascPage ? 'black' : 'white'
                 }
                 textButton="Comunicações de Nascimento"
+              />
+
+              <Button
+                marginRightImage="0.6vw"
+                marginLeftImage={'0.6vw'}
+                textSize="0.9vw"
+                textColor={
+                  comunicObito ? 'white' : 'black'
+                }
+                widthButton="100%"
+                widthImage="0.5vw"
+                src={arrowLeft}
+                heightButton="3.3vw"
+                onClick={() => {
+                  setPaginas((prev) => ({
+                    ...updatedPages,
+                    comunicObito: !prev.comunicObito,
+                  }))
+                  getCoberturas()
+                }}
+                colorButton={
+                  comunicObito ? 'black' : 'white'
+                }
+                textButton="Comunicar Óbito"
+              />
+
+              <Button
+                marginRightImage="0.6vw"
+                marginLeftImage={'0.6vw'}
+                textSize="0.9vw"
+                textColor={
+                  transferirPage ? 'white' : 'black'
+                }
+                widthButton="100%"
+                widthImage="0.5vw"
+                src={arrowLeft}
+                heightButton="3.3vw"
+                onClick={() => {
+                  setPaginas((prev) => ({
+                    ...updatedPages,
+                    transferirPage: !prev.transferirPage,
+                  }))
+                  getCoberturas()
+                }}
+                colorButton={
+                  transferirPage ? 'black' : 'white'
+                }
+                textButton="Transferir Animal"
               />
             </DropdownMenu>
           </div>
@@ -1361,9 +1466,9 @@ export function CriadorDashboard(data: { token: string }) {
                       }))
                     }}
                   />
-
+                  <div style={{overflowY:'scroll', height:'20vw'}}>
                   {animaisCriador.map((data: AnimalDTO) => {
-                    if (data.nomeAnimal == numeroProcuradoF) {
+                    if (data.nomeAnimal.toLocaleLowerCase().includes(numeroProcuradoF.toLocaleLowerCase()) && data.sexoAnimal=="Fêmea" ) {
                       return (
                         <div style={{ display: 'flex' }} key={data.id}>
                           <Text
@@ -1382,6 +1487,8 @@ export function CriadorDashboard(data: { token: string }) {
                       )
                     }
                   })}
+                </div>
+                  
                 </div>
                 <div>
                   <Text
@@ -1402,8 +1509,9 @@ export function CriadorDashboard(data: { token: string }) {
                       }))
                     }}
                   />
-                  {animaisCriador.map((data: AnimalDTO) => {
-                    if (data.nomeAnimal == numeroProcuradoM) {
+                   <div style={{overflowY:'scroll', height:'20vw'}}>
+                   {animaisCriador.map((data: AnimalDTO) => {
+                    if (data.nomeAnimal.toLocaleLowerCase().includes(numeroProcuradoM.toLocaleLowerCase()) && data.sexoAnimal=="Macho") {
                       return (
                         <div style={{ display: 'flex' }} key={data.id}>
                           <Text
@@ -1422,6 +1530,9 @@ export function CriadorDashboard(data: { token: string }) {
                       )
                     }
                   })}
+
+                   </div>
+                  
                 </div>
               </div>
             </InputPlace>
@@ -1654,6 +1765,153 @@ export function CriadorDashboard(data: { token: string }) {
             />
           </div>
         </ComunicNascimento>
+
+
+        <ComunicCobertura
+          initial={{ opacity: 0 }}
+          animate={{
+            y: transferirPage ? 0 : -50,
+            opacity: transferirPage ? 1 : 0,
+          }}
+          transition={{ duration: 0.5 }}
+          style={{
+            display: `${transferirPage ? 'flex' : 'none'}`,
+            pointerEvents: `${transferirPage ? 'auto' : 'none'}`,
+          }}
+          onSubmit={handleTransferencia(submitTransferencia)}
+        >
+          <div style={{ width: '10vw' }}>
+            <Image
+              src={logo2Branca}
+              alt="logoAnimal"
+              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+            />
+          </div>
+          <Text
+            text="Transferir Animal | ABCPD"
+            fontFamily="pop"
+            fontWeight="700"
+            size="1.8vw"
+            color="black"
+          />
+          <div style={{ width: '100%' }}>
+            <Text
+              fontFamily="pop"
+              size={'1.5vw'}
+              text={'Animal'}
+              color="black"
+              fontWeight="300"
+            />
+            <Select
+              style={{ width: '92%' }}
+              {...registerTransferencia('animal')}
+              width="67.5vw"
+            >
+              <option selected disabled value="">
+                Selecione um animal
+              </option>
+              {animaisCriador.map((data: AnimalDTO) => {
+                return (
+                  <option value={data.id} key={data.id}>
+                    {data.nomeAnimal}
+                  </option>
+                )
+              })}
+            </Select>
+            
+
+            
+          </div>
+
+          <div style={{ width: '100%' }}>
+            <Text
+              fontFamily="pop"
+              size={'1.5vw'}
+              text={'Criador adquirente'}
+              color="black"
+              fontWeight="300"
+            />
+            <Select
+              style={{ width: '92%' }}
+              {...registerTransferencia('adquirente')}
+              width="67.5vw"
+              onChange={(e) =>{setAdquirente(e.target.value)}}
+            >
+              <option selected disabled value="">
+                Selecione um criador adquirente
+              </option>
+              {criadorAdquirente?.map((data: CriadorDTO) => {
+                return (
+                  <option  value={data.id} key={data.id}>
+                    {data.nomeCompleto}
+                  </option>
+                )
+              })}
+            </Select>
+            
+
+            
+          </div>
+
+          <div style={{ width: '100%' }}>
+            <Text
+              fontFamily="pop"
+              size={'1.5vw'}
+              text={'Fazenda adquirente'}
+              color="black"
+              fontWeight="300"
+            />
+            <Select
+              style={{ width: '92%' }}
+              {...registerTransferencia('fazendaAdquirente')}
+              width="67.5vw"
+            >
+              <option selected disabled value="">
+                Selecione uma fazenda adquirente
+              </option>
+              {criadorAdquirente?.map((data: CriadorDTO) => {
+                if (data.id === adquirente) {
+                  return data.fazenda.map((fazenda: FazendaDTO) => (
+                    <option value={fazenda.id} key={fazenda.id}>
+                      {fazenda.nomeFazenda}
+                    </option>
+                  ));
+                }
+                return null; 
+              })}
+            </Select>
+            
+
+            
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '1vw',
+              justifyContent: 'end',
+              width: '92%',
+              marginBottom: '10vw',
+            }}
+          >
+            <Button
+              colorButton="#9E4B00"
+              heightButton="2vw"
+              textButton="Transferir"
+              widthButton="13vw"
+              textColor="white"
+              type="submit"
+              onClick={() => {
+                for (const componente in errorsTransferencia) {
+                  const mensagem = errorsTransferencia[componente]
+                  alert(mensagem?.message)
+                }
+               
+                
+              }}
+            />
+          </div>
+        </ComunicCobertura>
+
 
         <VerComunicNascimento
           initial={{ opacity: 0 }}
