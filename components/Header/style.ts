@@ -1,14 +1,17 @@
 'use client'
 
-import styled from "styled-components"
+import styled from 'styled-components'
 
-export const Container = styled.div `
-    width: 100%;
-    height: 10vh;
-    background-color: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: row;
-    box-shadow: 0.1vw 0.1vw 0.6vw #D6D6D6;
+export const Container = styled.div`
+  width: 100%;
+  height: 10vh;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  box-shadow: 0.1vw 0.1vw 0.6vw #d6d6d6;
+  @media print {
+    display: none;
+  }
 `

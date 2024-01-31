@@ -1,11 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
 import { vaca, gado, touros, logo2Branca, logoBranca, social } from '@/assets'
-import { Text } from '../Text'
+import { Text } from '../../Text'
 import { Container, About, GreenBackground, AboutSecond } from './style'
-import { Header } from '../Header/Header'
-import { Login } from '..'
-import { Button } from '../Button'
+import { Header } from '../../Header/Header'
+import { Login } from '../..'
+import { Button } from '../../Button'
 
 export default function InitialPage() {
   return (
@@ -192,19 +192,19 @@ export default function InitialPage() {
           }}
         >
           <div style={{ width: '6vw', height: '6vw' }}>
-            <Image
+            {/* <Image
               src={logo2Branca}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
+            /> */}
           </div>
 
           <div style={{ width: '15vw', height: '6vw' }}>
-            <Image
+            {/* <Image
               src={logoBranca}
               alt="Logo"
               style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-            />
+            /> */}
           </div>
         </div>
       </GreenBackground>

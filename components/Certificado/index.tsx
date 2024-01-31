@@ -1,7 +1,7 @@
 import Image from 'next/legacy/image'
 import { Container, Border } from './style'
 import { logo, logo2, logoCert } from '@/assets'
-import { InputPair, InputPlace } from '../Register/style'
+import { InputPair, InputPlace } from '../Screens/Register/style'
 import { Text } from '../Text'
 import { InputText } from '../InputText'
 import { Tree, TreeNode } from 'react-organizational-chart'

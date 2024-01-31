@@ -1,6 +1,6 @@
 'use client'
 import React, { useContext, useEffect, useState } from 'react'
-import { Text } from '../Text'
+import { Text } from '../../Text'
 import {
   Container,
   GreenBackground,
@@ -21,9 +21,9 @@ import {
   CreditCard,
   Input,
 } from './style'
-import { Header } from '../Header/Header'
-import { Button } from '../Button'
-import { WhiteBackground } from '../WhiteBackground'
+import { Header } from '../../Header/Header'
+import { Button } from '../../Button'
+import { WhiteBackground } from '../../WhiteBackground'
 import { boleto, card, cartao, logo, logo2, pix } from '@/assets'
 import Image from 'next/legacy/image'
 import * as z from 'zod'

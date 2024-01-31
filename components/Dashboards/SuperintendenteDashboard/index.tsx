@@ -1,5 +1,6 @@
 /* eslint-disable no-sequences */
 /* eslint-disable no-unused-expressions */
+import React from 'react';
 import {
   Home,
   add,
@@ -17,7 +18,7 @@ import {
   waiting,
   animalBlue,
   done,
-} from '@/assets'
+} from '@/assets';
 import {
   Container,
   Menu,
@@ -43,85 +44,85 @@ import {
   TelaFazendasCriador,
   InputText,
   TelaRegistroUsuario,
-} from './style'
-import Image from 'next/legacy/image'
-import { Button } from '../Button'
-import { Text } from '../Text'
-import { useContext, useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import { getAllUsers, getUserById, getUserCPFEmail } from '@/actions/user'
-import { getAnimaisByCriadorId, getTodosAnimais } from '@/actions/animaisApi'
-import { getRebanhosAll } from '@/actions/RebanhApi'
-import { getFazendaById, getTodasFazendas } from '@/actions/fazendaApi'
-import { useQuery } from 'react-query'
-import UserDTO from '@/utils/UserDTO'
-import jsonWebTokenService from 'jsonwebtoken'
-import AnimalDTO from '@/utils/AnimalDTO'
-import { CircularProgress } from '@mui/material'
-import CriadorDTO from '@/utils/CriadorDTO'
-import FazendaDTO from '@/utils/FazendaDTO'
-import { ComunicacaoNascimentoDto } from '@/utils/ComunicacaoNascimentoDTO'
+} from './style';
+import Image from 'next/legacy/image';
+import { Button } from '../../Button';
+import { Text } from '../../Text';
+import { useContext, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { getAllUsers, getUserById, getUserCPFEmail } from '@/actions/user';
+import { getAnimaisByCriadorId, getTodosAnimais } from '@/actions/animaisApi';
+import { getRebanhosAll } from '@/actions/RebanhApi';
+import { getFazendaById, getTodasFazendas } from '@/actions/fazendaApi';
+import { useQuery } from 'react-query';
+import UserDTO from '@/utils/UserDTO';
+import jsonWebTokenService from 'jsonwebtoken';
+import AnimalDTO from '@/utils/AnimalDTO';
+import { CircularProgress } from '@mui/material';
+import CriadorDTO from '@/utils/CriadorDTO';
+import FazendaDTO from '@/utils/FazendaDTO';
+import { ComunicacaoNascimentoDto } from '@/utils/ComunicacaoNascimentoDTO';
 import {
   getComunicacoesNascimentoCriador,
   updateComunicacaoNascimento,
-} from '@/actions/comunicacaoNascimento'
-import format from 'date-fns/format'
-import { CriarCriador, getCriadorById } from '@/actions/criadorApi'
-import { DetalhesAnimal } from '../DetalhesAnimal'
-import RebanhoDTO from '@/utils/RebanhoDTO'
-import { allTecnicos, cadastrarTecnico } from '@/actions/tecnicoApi'
-import { AlertContext } from '@/context/AlertContextProvider'
+} from '@/actions/comunicacaoNascimento';
+import format from 'date-fns/format';
+import { CriarCriador, getCriadorById } from '@/actions/criadorApi';
+import { DetalhesAnimal } from '../../Screens/DetalhesAnimal';
+import RebanhoDTO from '@/utils/RebanhoDTO';
+import { allTecnicos, cadastrarTecnico } from '@/actions/tecnicoApi';
+import { AlertContext } from '@/context/AlertContextProvider';
 import {
   getAllCoberturas,
   getCoberturas,
   updateComunicCobertura,
-} from '@/actions/coberturaApi'
-import * as z from 'zod'
-import ComunicacaoCoberturaDto from '@/utils/CoberturaDTO'
-import TecnicoDTO from '@/utils/TecnicoDTO'
-import { getRegistrosAnimalBase } from '@/actions/animalBaseApi'
-import { SolicitacaoRegistroAnimalBaseDTO } from '@/utils/SolicitacaoDTO'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { sendEmail } from '@/actions/emailApi'
+} from '@/actions/coberturaApi';
+import * as z from 'zod';
+import ComunicacaoCoberturaDto from '@/utils/CoberturaDTO';
+import TecnicoDTO from '@/utils/TecnicoDTO';
+import { getRegistrosAnimalBase } from '@/actions/animalBaseApi';
+import { SolicitacaoRegistroAnimalBaseDTO } from '@/utils/SolicitacaoDTO';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { sendEmail } from '@/actions/emailApi';
 
 export function SuperintendenteDashboard(data: { token: string }) {
-  const decodedJwt = jsonWebTokenService.decode(data.token)
-  const { token } = data
+  const decodedJwt = jsonWebTokenService.decode(data.token);
+  const { token } = data;
   const { isLoading: isLoadingSuperintendenteUser, data: superintendenteUser } =
     useQuery<UserDTO>('superintendente', async () =>
       getUserById(decodedJwt.sub, data.token),
-    )
+    );
 
   const { isLoading: isLoadingAnimais, data: todosAnimais } = useQuery<[]>(
     'animais',
     async () => getTodosAnimais(data.token),
-  )
+  );
 
   const { isLoading: isLoadingTecnicos, data: todosTecnicos } = useQuery(
     'tecnicos',
     async () => allTecnicos(data.token),
-  )
+  );
 
   const { isLoading: isLoadingRebanhos, data: todosRebanhos } = useQuery(
     'rebanhos',
     async () => getRebanhosAll(data.token),
-  )
+  );
 
   const { data: todasFazendas, isLoading: isLoadingFazendas } = useQuery(
     'fazendas',
     async () => getTodasFazendas(data.token),
-  )
+  );
 
   const { data: todasCoberturas, isLoading: isLoadingCobertura } = useQuery(
     'coberturas',
     async () => getCoberturas(data.token),
-  )
+  );
 
   const { data: todosUsuarios, isLoading: isLoadingUsuarios } = useQuery(
     'usuarios',
     async () => getAllUsers(data.token),
-  )
+  );
 
   const { isLoading, data: criadores } = useQuery('criadores', async () =>
     fetch('http://localhost:3001/criador/get-criadores', {
@@ -130,7 +131,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
       },
       method: 'GET',
     }).then((res) => res.json()),
-  )
+  );
 
   const [paginas, setPaginas] = useState({
     animalPage: false,
@@ -157,17 +158,17 @@ export function SuperintendenteDashboard(data: { token: string }) {
     loading: false,
     userRegister: false,
     options: false,
-  })
+  });
 
   useEffect(() => {
-    setPage(1)
-  }, [paginas])
+    setPage(1);
+  }, [paginas]);
 
-  const { alert } = useContext(AlertContext)
-  const [nascimentos, setNascimentos] = useState([])
-  const [cobertura, setCobertura] = useState<ComunicacaoCoberturaDto>([])
-  const [criadorSelecionado, setCriadorSelecionado] = useState<CriadorDTO>([])
-  const [tecnicoSelecionado, setTecnicoSelecionado] = useState<TecnicoDTO>([])
+  const { alert } = useContext(AlertContext);
+  const [nascimentos, setNascimentos] = useState([]);
+  const [cobertura, setCobertura] = useState<ComunicacaoCoberturaDto>([]);
+  const [criadorSelecionado, setCriadorSelecionado] = useState<CriadorDTO>([]);
+  const [tecnicoSelecionado, setTecnicoSelecionado] = useState<TecnicoDTO>([]);
   const {
     loading,
     RGD,
@@ -193,7 +194,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
     verAnimaisCriador,
     userRegister,
     options,
-  } = paginas
+  } = paginas;
 
   const [animalInfos, setAnimalInfos] = useState({
     animalSelecionado: {} as AnimalDTO,
@@ -204,83 +205,83 @@ export function SuperintendenteDashboard(data: { token: string }) {
     resgistro: false,
     rgn: false,
     rgd: false,
-  })
+  });
 
   const [nascimentoSelecionado, setNascimentoSelecionado] =
-    useState<ComunicacaoNascimentoDto>({})
+    useState<ComunicacaoNascimentoDto>({});
 
   const [criadorInfo, setCriadorInfo] = useState({
     animaisCriador: [] as AnimalDTO[],
     fazendasCriador: [] as FazendaDTO[],
     rebanhosCriador: [] as RebanhoDTO[],
     criadorId: '',
-  })
-  const [isTecnico, setIsTecnico] = useState(false)
-  const [page, setPage] = useState(1)
-  const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false)
+  });
+  const [isTecnico, setIsTecnico] = useState(false);
+  const [page, setPage] = useState(1);
+  const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
   const { animaisCriador, fazendasCriador, rebanhosCriador, criadorId } =
-    criadorInfo
-  const { resgistro, rgn, rgd } = animalInfos
-  const updatedPages = { ...paginas }
+    criadorInfo;
+  const { resgistro, rgn, rgd } = animalInfos;
+  const updatedPages = { ...paginas };
 
   for (const key in updatedPages) {
     if (key !== 'menu') {
-      updatedPages[key] = false
+      updatedPages[key] = false;
     }
   }
 
   const [animalBaseInfo, setAnimalBaseInfo] = useState({
     solicitacoesAnimaisBase: [] as SolicitacaoRegistroAnimalBaseDTO[],
     solicitacoesAnimaisBaseSelecionada: {} as SolicitacaoRegistroAnimalBaseDTO,
-  })
+  });
   const { solicitacoesAnimaisBase, solicitacoesAnimaisBaseSelecionada } =
-    animalBaseInfo
+    animalBaseInfo;
 
   function validarCPF(cpf: string): boolean {
     // Removendo pontos e traços para obter apenas os dígitos
-    const cpfLimpo = cpf.replace(/[.-]/g, '')
+    const cpfLimpo = cpf.replace(/[.-]/g, '');
 
     // Verificando o formato do CPF (11 dígitos)
-    const regexCPF = /^[0-9]{11}$/
+    const regexCPF = /^[0-9]{11}$/;
     if (!regexCPF.test(cpfLimpo)) {
-      return false
+      return false;
     }
 
     // Verificando dígitos repetidos (uma característica de CPF inválido)
-    const digitosRepetidos = /^(.)\1+$/
+    const digitosRepetidos = /^(.)\1+$/;
     if (digitosRepetidos.test(cpfLimpo)) {
-      return false
+      return false;
     }
 
     // Aplicando a fórmula de verificação do dígito
-    const digitos = cpfLimpo.split('').map(Number)
+    const digitos = cpfLimpo.split('').map(Number);
 
-    let soma = 0
-    let peso = 10
+    let soma = 0;
+    let peso = 10;
 
     for (let i = 0; i < 9; i++) {
-      soma += digitos[i] * peso
-      peso--
+      soma += digitos[i] * peso;
+      peso--;
     }
 
-    let resto = soma % 11
-    const digitoVerificador1 = resto < 2 ? 0 : 11 - resto
+    let resto = soma % 11;
+    const digitoVerificador1 = resto < 2 ? 0 : 11 - resto;
 
     if (digitoVerificador1 !== digitos[9]) {
-      return false
+      return false;
     }
 
-    soma = 0
-    peso = 11
+    soma = 0;
+    peso = 11;
 
     for (let i = 0; i < 10; i++) {
-      soma += digitos[i] * peso
-      peso--
+      soma += digitos[i] * peso;
+      peso--;
     }
 
-    resto = soma % 11
-    const digitoVerificador2 = resto < 2 ? 0 : 11 - resto
-    return digitoVerificador2 === digitos[10]
+    resto = soma % 11;
+    const digitoVerificador2 = resto < 2 ? 0 : 11 - resto;
+    return digitoVerificador2 === digitos[10];
   }
 
   const schema = z
@@ -289,7 +290,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
       email: z
         .string({
           errorMap: () => {
-            return { message: 'Email não é válido' }
+            return { message: 'Email não é válido' };
           },
         })
         .min(1, 'Email é obrigatório')
@@ -300,7 +301,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
       nomeBairro: z
         .string({
           errorMap: () => {
-            return { message: 'Bairro não é válido' }
+            return { message: 'Bairro não é válido' };
           },
         })
         .min(1, 'Bairro é um campo obrigatório'),
@@ -318,7 +319,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
     .refine((fields) => validarCPF(fields.cpf) === true, {
       path: ['cpf'],
       message: 'CPF inválido',
-    })
+    });
 
   const {
     register,
@@ -329,26 +330,26 @@ export function SuperintendenteDashboard(data: { token: string }) {
     criteriaMode: 'all',
     mode: 'onSubmit',
     resolver: zodResolver(schema),
-  })
+  });
 
   async function getSolicitacoes() {
     setPaginas((prev) => ({
       ...prev,
       loading: true,
-    }))
-    const response = await getRegistrosAnimalBase(data.token)
-    const reponseJson = await response.json()
+    }));
+    const response = await getRegistrosAnimalBase(data.token);
+    const reponseJson = await response.json();
     if (response.status == 200) {
       setAnimalBaseInfo((prev) => ({
         ...prev,
         solicitacoesAnimaisBase: reponseJson,
-      }))
+      }));
     }
 
     setPaginas((prev) => ({
       ...prev,
       loading: false,
-    }))
+    }));
   }
 
   if (
@@ -370,20 +371,20 @@ export function SuperintendenteDashboard(data: { token: string }) {
       >
         <CircularProgress />
       </div>
-    )
+    );
   }
 
   async function getInformacoesAnimal(animal: AnimalDTO) {
     setPaginas((prev) => ({
       ...prev,
       loading: true,
-    }))
+    }));
 
-    const fazenda: FazendaDTO = await getFazendaById(data.token, animal.fazenda)
+    const fazenda: FazendaDTO = await getFazendaById(data.token, animal.fazenda);
     const criador: CriadorDTO = await getCriadorById(
       animal.criadorAnimal,
       data.token,
-    )
+    );
 
     setAnimalInfos((prevAnimal) => ({
       ...prevAnimal,
@@ -391,117 +392,117 @@ export function SuperintendenteDashboard(data: { token: string }) {
       criadorSelecionado: criador,
       maeSelecionado:
         todosAnimais.find((index: AnimalDTO) => {
-          return index.id === animal.mae
+          return index.id === animal.mae;
         }) || ({} as AnimalDTO),
       paiSelecionado:
         todosAnimais.find((index: AnimalDTO) => {
-          return index.id === animal.pai
+          return index.id === animal.pai;
         }) || ({} as AnimalDTO),
-    }))
+    }));
 
     const animais = await getAnimaisByCriadorId(
       animal.criadorAnimal,
       data.token,
-    )
+    );
 
     setCriadorInfo((prev) => ({
       ...prev,
       animaisCriador: animais,
-    }))
+    }));
 
     setPaginas((prev) => ({
       ...prev,
       loading: false,
-    }))
+    }));
   }
 
   async function getNascimentos(id: string) {
     const nascimentoData = await getComunicacoesNascimentoCriador(
       data.token,
       id,
-    )
-    setNascimentos(nascimentoData)
+    );
+    setNascimentos(nascimentoData);
   }
 
   async function updateNascimento(decisao: string) {
     setPaginas((prev) => ({
       ...prev,
       loading: true,
-    }))
-    nascimentoSelecionado.statusNascimento = decisao
+    }));
+    nascimentoSelecionado.statusNascimento = decisao;
     const resposta = await updateComunicacaoNascimento(
       nascimentoSelecionado,
       data.token,
       nascimentoSelecionado.id,
-    )
+    );
 
     if (resposta.status === 200) {
-      alert('Decisão salva com sucesso', 'success')
+      alert('Decisão salva com sucesso', 'success');
     } else {
-      alert('Houve um erro ao salvar a decisão')
+      alert('Houve um erro ao salvar a decisão');
     }
 
     setPaginas((prev) => ({
       ...prev,
       loading: false,
-    }))
+    }));
   }
 
   async function updateCobertura(decisao: string) {
     setPaginas((prev) => ({
       ...prev,
       loading: true,
-    }))
-    cobertura.statusCobertura = decisao
+    }));
+    cobertura.statusCobertura = decisao;
     const resposta = await updateComunicCobertura(
       data.token,
       cobertura,
       cobertura.id,
-    )
+    );
 
     if (resposta.status === 200) {
-      alert('Decisão salva com sucesso', 'success')
+      alert('Decisão salva com sucesso', 'success');
     } else {
-      alert('Houve um erro ao salvar a decisão')
+      alert('Houve um erro ao salvar a decisão');
     }
 
     setPaginas((prev) => ({
       ...prev,
       loading: false,
-    }))
+    }));
   }
 
   async function CPFEmailUsado(cpf: string) {
-    const response = await getUserCPFEmail(cpf)
-    return response
+    const response = await getUserCPFEmail(cpf);
+    return response;
   }
 
   function gerarSenha() {
     const chars =
-      '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJLMNOPQRSTUVWXYZ!@#$%^&*()+?><:{}[]'
-    const passwordLength = 16
-    let password = ''
+      '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJLMNOPQRSTUVWXYZ!@#$%^&*()+?><:{}[]';
+    const passwordLength = 16;
+    let password = '';
 
     for (let i = 0; i < passwordLength; i++) {
-      const randomNumber = Math.floor(Math.random() * chars.length)
-      password += chars.substring(randomNumber, randomNumber + 1)
+      const randomNumber = Math.floor(Math.random() * chars.length);
+      password += chars.substring(randomNumber, randomNumber + 1);
     }
-    return password
+    return password;
   }
 
   async function registrarUsuario(dataUser) {
     setPaginas((prev) => ({
       ...prev,
       loading: true,
-    }))
+    }));
     if (await CPFEmailUsado(dataUser.email)) {
-      return alert('Email já foi utilizado')
+      return alert('Email já foi utilizado');
     }
     if (await CPFEmailUsado(dataUser.cpf)) {
-      return alert('CPF já foi utilizado')
+      return alert('CPF já foi utilizado');
     }
     if (!isTecnico) {
-      const palavras = dataUser.nomeCompleto.split(' ')
+      const palavras = dataUser.nomeCompleto.split(' ');
       const UserData = {
         dateJoined: new Date(Date.now()).toISOString(),
         nomePrimeiro: palavras[0],
@@ -512,7 +513,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
         senha: gerarSenha(),
         telefone: dataUser.telefone,
         ultimaConexao: new Date(Date.now()).toISOString(),
-      }
+      };
       const CriadorData = {
         cep: dataUser.cep,
         nomeBairro: dataUser.nomeBairro,
@@ -522,21 +523,21 @@ export function SuperintendenteDashboard(data: { token: string }) {
         nomeRua: dataUser.nomeRua,
         rg: dataUser.rg,
         numeroCasa: dataUser.numeroCasa,
-      }
-      const response = await CriarCriador({ ...CriadorData, ...UserData })
+      };
+      const response = await CriarCriador({ ...CriadorData, ...UserData });
       if (!response.message) {
         Object.keys(dataUser).forEach((fieldName) => {
-          setValue(fieldName, '')
-        })
+          setValue(fieldName, '');
+        });
         await sendEmail(
           { to: UserData.email, subject: `Senha ABCPD: ${password}` },
           data.token,
-        )
-        return alert('Criador registrado com sucesso', 'success')
+        );
+        return alert('Criador registrado com sucesso', 'success');
       }
     } else {
-      const palavras = dataUser.nomeCompleto.split(' ')
-      const password = gerarSenha()
+      const palavras = dataUser.nomeCompleto.split(' ');
+      const password = gerarSenha();
       const UserData = {
         dateJoined: new Date(Date.now()).toISOString(),
         nomePrimeiro: palavras[0],
@@ -547,7 +548,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
         senha: password,
         telefone: dataUser.telefone,
         ultimaConexao: new Date(Date.now()).toISOString(),
-      }
+      };
       const TecnicoData = {
         cep: dataUser.cep,
         nomeBairro: dataUser.nomeBairro,
@@ -557,33 +558,33 @@ export function SuperintendenteDashboard(data: { token: string }) {
         nomeRua: dataUser.nomeRua,
         rg: dataUser.rg,
         numeroCasa: dataUser.numeroCasa,
-      }
+      };
       const response = await cadastrarTecnico(token, {
         ...TecnicoData,
         ...UserData,
-      })
+      });
       if (!response.message) {
         setPaginas((prev) => ({
           ...prev,
           loading: false,
-        }))
+        }));
         Object.keys(dataUser).forEach((fieldName) => {
-          setValue(fieldName, '')
-        })
+          setValue(fieldName, '');
+        });
         await sendEmail(
           { to: UserData.email, subject: `Senha ABCPD: ${password}` },
           data.token,
-        )
-        return alert('Tecnico registrado com sucesso', 'success')
+        );
+        return alert('Tecnico registrado com sucesso', 'success');
       }
       Object.keys(dataUser).forEach((fieldName) => {
-        setValue(fieldName, '')
-      })
+        setValue(fieldName, '');
+      });
     }
     setPaginas((prev) => ({
       ...prev,
       loading: false,
-    }))
+    }));
   }
 
   interface PaginationOptions {
@@ -592,18 +593,18 @@ export function SuperintendenteDashboard(data: { token: string }) {
   }
 
   function paginate({ items, currentPage }: PaginationOptions) {
-    const itemsPerPage = 4
+    const itemsPerPage = 4;
     if (!Array.isArray(items) || itemsPerPage <= 0 || currentPage <= 0) {
-      throw new Error('Invalid input parameters')
+      throw new Error('Invalid input parameters');
     }
-    const startIndex = (currentPage - 1) * itemsPerPage
-    let endIndex = startIndex + itemsPerPage
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    let endIndex = startIndex + itemsPerPage;
 
     if (endIndex > items.length) {
-      endIndex = items.length
+      endIndex = items.length;
     }
 
-    return items.slice(startIndex, endIndex)
+    return items.slice(startIndex, endIndex);
   }
 
   return (
@@ -621,7 +622,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
             setPaginas((prev) => ({
               ...updatedPages,
               menu: !prev.menu,
-            }))
+            }));
           }}
           style={{ width: '100%', display: 'flex', marginTop: '1vw' }}
         >
@@ -655,19 +656,19 @@ export function SuperintendenteDashboard(data: { token: string }) {
             }}
           >
             <div style={{ width: '4vw' }}>
-              <Image
+              {/* <Image
                 src={logo2Branca}
                 alt="Logo"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-              />
+              /> */}
             </div>
 
             <div style={{ width: '10vw' }}>
-              <Image
+              {/* <Image
                 src={logoBranca}
                 alt="Logo"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-              />
+              /> */}
             </div>
           </div>
 
@@ -689,7 +690,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 setPaginas(() => ({
                   ...updatedPages,
                   initialPage: true,
-                }))
+                }));
               }}
               colorButton={initialPage ? 'black' : '#9E4B00'}
               textButton="Pagina Inicial"
@@ -703,7 +704,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 setPaginas((prev) => ({
                   ...updatedPages,
                   RGN: !prev.RGN,
-                }))
+                }));
               }}
               colorButton={RGN || RGD ? 'black' : '#9E4B00'}
               textButton="Animais"
@@ -717,7 +718,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 setPaginas((prev) => ({
                   ...updatedPages,
                   usersPage: !prev.usersPage,
-                }))
+                }));
               }}
               colorButton={
                 usersPage || criadorPage || tecnicoPage ? 'black' : '#9E4B00'
@@ -733,7 +734,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 setPaginas((prev) => ({
                   ...updatedPages,
                   comunicPage: !prev.comunicPage,
-                }))
+                }));
               }}
               colorButton={
                 comunicPage ||
@@ -752,11 +753,11 @@ export function SuperintendenteDashboard(data: { token: string }) {
               src={comunic}
               heightButton="3.3vw"
               onClick={() => {
-                getSolicitacoes()
+                getSolicitacoes();
                 setPaginas((prev) => ({
                   ...updatedPages,
                   solicitacao: !prev.solicitacao,
-                }))
+                }));
               }}
               colorButton={solicitacao || animalBasePage ? 'black' : '#9E4B00'}
               textButton="Solicitações "
@@ -786,7 +787,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setPaginas((prev) => ({
                     ...updatedPages,
                     RGD: !prev.RGD,
-                  }))
+                  }));
                 }}
                 colorButton={RGD ? 'black' : 'white'}
                 textButton="RGD"
@@ -798,7 +799,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               animate={{
                 y:
                   comunicPage || comunicNascPage || comunicCoberPage
-                    ? '-6vw'
+                    ? '-4vw'
                     : '-12vw',
                 opacity:
                   comunicPage || comunicNascPage || comunicCoberPage ? 1 : 0,
@@ -829,7 +830,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setPaginas((prev) => ({
                     ...updatedPages,
                     comunicNascPage: !prev.comunicNascPage,
-                  }))
+                  }));
                 }}
                 colorButton={
                   comunicNascPage || todasComunicNascPage || verComunicNascPage
@@ -851,7 +852,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setPaginas((prev) => ({
                     ...updatedPages,
                     comunicCoberPage: !prev.comunicCoberPage,
-                  }))
+                  }));
                 }}
                 colorButton={comunicCoberPage ? 'black' : 'white'}
                 textButton="Comunicações de Cobertura"
@@ -861,7 +862,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
             <DropdownMenu
               initial={{ opacity: 0 }}
               animate={{
-                y: usersPage || tecnicoPage || criadorPage ? '-16vw' : '-20vw',
+                y: usersPage || tecnicoPage || criadorPage ? '-8vw' : '-15vw',
                 opacity: usersPage || tecnicoPage || criadorPage ? 1 : 0,
               }}
               transition={{ duration: 0.5 }}
@@ -884,7 +885,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setPaginas((prev) => ({
                     ...updatedPages,
                     tecnicoPage: !prev.tecnicoPage,
-                  }))
+                  }));
                 }}
                 colorButton={tecnicoPage ? 'black' : 'white'}
                 textButton="Tecnicos"
@@ -902,7 +903,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setPaginas((prev) => ({
                     ...updatedPages,
                     criadorPage: !prev.criadorPage,
-                  }))
+                  }));
                 }}
                 colorButton={criadorPage ? 'black' : 'white'}
                 textButton="Criadores"
@@ -912,7 +913,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
             <DropdownMenu
               initial={{ opacity: 0 }}
               animate={{
-                y: solicitacao || animalBasePage ? '-16vw' : '-20vw',
+                y: solicitacao || animalBasePage ? '-2.5vw' : '-20vw',
                 opacity: solicitacao || animalBasePage ? 1 : 0,
               }}
               transition={{ duration: 0.5 }}
@@ -935,7 +936,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   setPaginas((prev) => ({
                     ...updatedPages,
                     animalBasePage: !prev.animalBasePage,
-                  }))
+                  }));
                 }}
                 colorButton={animalBasePage ? 'black' : 'white'}
                 textButton="Solicitações Animais Base"
@@ -950,17 +951,17 @@ export function SuperintendenteDashboard(data: { token: string }) {
           <DropdownMenu
             initial={{ opacity: 0 }}
             animate={{
-              y: options ? 0 : -50,
+              y: options ? 0 : -40,
               opacity: options ? 1 : 0,
             }}
             transition={{ duration: 0.5 }}
             style={{
               pointerEvents: `${options ? 'auto' : 'none'}`,
-              marginTop: '18vw',
+              marginTop: '10vw',
               marginLeft: '80vw',
               width: '20vw',
               position: 'absolute',
-              height: '10vw',
+              height: '5vw',
             }}
           >
             <Button
@@ -974,7 +975,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               heightButton="3.3vw"
               textColor="black"
               onClick={() => {
-                window.location.assign(`/`)
+                window.location.assign('/');
               }}
               textButton="Logout"
             />
@@ -992,7 +993,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 setPaginas((prev) => ({
                   ...prev,
                   options: !prev.options,
-                }))
+                }));
               }}
               style={{ cursor: 'pointer', width: '16vw' }}
             >
@@ -1125,120 +1126,120 @@ export function SuperintendenteDashboard(data: { token: string }) {
             </TableHeader>
             {todosAnimais
               ? paginate({ items: todosAnimais, currentPage: page }).map(
-                  (index: AnimalDTO) => {
-                    if (!index.decisaoAnimalTecnicoRGD) {
-                      return (
-                        <TableContent key={index.id}>
-                          <td style={{ width: '20%' }}>
-                            <Text
-                              textAlign="center"
-                              fontFamily="rob"
-                              size={'1vw'}
-                              text={index.nomeAnimal}
-                              color="black"
-                              fontWeight="400"
-                            />
-                          </td>
+                (index: AnimalDTO) => {
+                  if (!index.decisaoAnimalSuperRGD) {
+                    return (
+                      <TableContent key={index.id}>
+                        <td style={{ width: '20%' }}>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={index.nomeAnimal}
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
 
-                          <td>
-                            <Text
-                              textAlign="center"
-                              fontFamily="rob"
-                              size={'1vw'}
-                              text={
-                                criadores
-                                  ? (
-                                      criadores.find(
-                                        (indexFind: CriadorDTO) => {
-                                          return (
-                                            indexFind.id === index.criadorAnimal
-                                          )
-                                        },
-                                      ) || {}
-                                    ).nomeCompleto
-                                  : ''
-                              }
-                              color="black"
-                              fontWeight="400"
-                            />
-                          </td>
+                        <td>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={
+                              criadores
+                                ? (
+                                  criadores.find(
+                                    (indexFind: CriadorDTO) => {
+                                      return (
+                                        indexFind.id === index.criadorAnimal
+                                      );
+                                    },
+                                  ) || {}
+                                ).nomeCompleto
+                                : ''
+                            }
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
 
-                          <td style={{ width: '25%' }}>
-                            <Text
-                              textAlign="center"
-                              fontFamily="rob"
-                              size={'1vw'}
-                              text={
-                                todasFazendas
-                                  ? (
-                                      todasFazendas.find(
-                                        (indexFind: FazendaDTO) => {
-                                          return indexFind.id === index.fazenda
-                                        },
-                                      ) || {}
-                                    ).nomeFazenda
-                                  : ''
-                              }
-                              color="black"
-                              fontWeight="400"
-                            />
-                          </td>
+                        <td style={{ width: '25%' }}>
+                          <Text
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={
+                              todasFazendas
+                                ? (
+                                  todasFazendas.find(
+                                    (indexFind: FazendaDTO) => {
+                                      return indexFind.id === index.fazenda;
+                                    },
+                                  ) || {}
+                                ).nomeFazenda
+                                : ''
+                            }
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
 
-                          <td style={{ width: '25%' }}>
-                            <Text
-                              widthImage="1.5vw"
-                              src={index.decisaoAnimalSuperRGD ? add : waiting}
-                              textAlign="center"
-                              fontFamily="rob"
-                              size={'1vw'}
-                              text={index.decisaoAnimalSuperRGD || 'Em análise'}
-                              color="black"
-                              fontWeight="400"
-                            />
-                          </td>
+                        <td style={{ width: '25%' }}>
+                          <Text
+                            widthImage="1.5vw"
+                            src={index.decisaoAnimalSuperRGD ? add : waiting}
+                            textAlign="center"
+                            fontFamily="rob"
+                            size={'1vw'}
+                            text={index.decisaoAnimalSuperRGD || 'Em análise'}
+                            color="black"
+                            fontWeight="400"
+                          />
+                        </td>
 
-                          <td>
-                            <div
-                              style={{
-                                display: 'flex',
-                                width: '100%',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                height: '100%',
+                        <td>
+                          <div
+                            style={{
+                              display: 'flex',
+                              width: '100%',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              height: '100%',
+                            }}
+                          >
+                            <Button
+                              radius="2vw"
+                              marginLeftImage="0vw"
+                              marginRightImage="0vw"
+                              src={seta}
+                              colorButton="white"
+                              heightButton="3vw"
+                              widthImage="65%"
+                              widthButton="4vw"
+                              textColor="white"
+                              onClick={() => {
+                                getInformacoesAnimal(index);
+                                setAnimalInfos((prev) => ({
+                                  ...prev,
+                                  animalSelecionado: index,
+                                  resgistro: true,
+                                  rgn: false,
+                                  rgd: true,
+                                }));
+                                setPaginas(() => ({
+                                  ...updatedPages,
+                                  verAnimalPage: true,
+                                }));
                               }}
-                            >
-                              <Button
-                                radius="2vw"
-                                marginLeftImage="0vw"
-                                marginRightImage="0vw"
-                                src={seta}
-                                colorButton="white"
-                                heightButton="3vw"
-                                widthImage="65%"
-                                widthButton="4vw"
-                                textColor="white"
-                                onClick={() => {
-                                  getInformacoesAnimal(index)
-                                  setAnimalInfos((prev) => ({
-                                    ...prev,
-                                    animalSelecionado: index,
-                                    resgistro: true,
-                                    rgn: false,
-                                    rgd: true,
-                                  }))
-                                  setPaginas(() => ({
-                                    ...updatedPages,
-                                    verAnimalPage: true,
-                                  }))
-                                }}
-                              />
-                            </div>
-                          </td>
-                        </TableContent>
-                      )
-                    }
-                  },
-                )
+                            />
+                          </div>
+                        </td>
+                      </TableContent>
+                    );
+                  }
+                },
+              )
               : null}
           </Table>
           <div
@@ -1258,7 +1259,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 onClick={() => {
                   setPage((prevPage) =>
                     prevPage > 1 ? prevPage - 1 : prevPage,
-                  )
+                  );
                 }}
               />
             </div>
@@ -1269,7 +1270,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
               widthButton="3vw"
               textButton=">"
               onClick={() => {
-                setPage((prevPage) => prevPage + 1)
+                setPage((prevPage) => prevPage + 1);
               }}
             />
           </div>
@@ -1377,132 +1378,132 @@ export function SuperintendenteDashboard(data: { token: string }) {
 
                 {todosAnimais
                   ? paginate({
-                      items: todosAnimais,
-                      currentPage: page,
-                    }).map((index: AnimalDTO) => {
-                      if (!index.decisaoAnimalSuperRGN) {
-                        return (
-                          <TableContent key={index.id}>
-                            <td style={{ width: '20%' }}>
-                              <Text
-                                textAlign="center"
-                                fontFamily="rob"
-                                size={'1vw'}
-                                text={index.nomeAnimal}
-                                color="black"
-                                fontWeight="400"
-                              />
-                            </td>
+                    items: todosAnimais,
+                    currentPage: page,
+                  }).map((index: AnimalDTO) => {
+                    if (!index.decisaoAnimalSuperRGN) {
+                      return (
+                        <TableContent key={index.id}>
+                          <td style={{ width: '20%' }}>
+                            <Text
+                              textAlign="center"
+                              fontFamily="rob"
+                              size={'1vw'}
+                              text={index.nomeAnimal}
+                              color="black"
+                              fontWeight="400"
+                            />
+                          </td>
 
-                            <td>
-                              <Text
-                                textAlign="center"
-                                fontFamily="rob"
-                                size={'1vw'}
-                                text={
-                                  criadores
-                                    ? (
-                                        criadores.find(
-                                          (indexFind: CriadorDTO) => {
-                                            return (
-                                              indexFind.id ===
+                          <td>
+                            <Text
+                              textAlign="center"
+                              fontFamily="rob"
+                              size={'1vw'}
+                              text={
+                                criadores
+                                  ? (
+                                    criadores.find(
+                                      (indexFind: CriadorDTO) => {
+                                        return (
+                                          indexFind.id ===
                                               index.criadorAnimal
-                                            )
-                                          },
-                                        ) || {}
-                                      ).nomeCompleto
-                                    : ''
-                                }
-                                color="black"
-                                fontWeight="400"
-                              />
-                            </td>
+                                        );
+                                      },
+                                    ) || {}
+                                  ).nomeCompleto
+                                  : ''
+                              }
+                              color="black"
+                              fontWeight="400"
+                            />
+                          </td>
 
-                            <td style={{ width: '25%' }}>
-                              <Text
-                                textAlign="center"
-                                fontFamily="rob"
-                                size={'1vw'}
-                                text={
-                                  todasFazendas
-                                    ? (
-                                        todasFazendas.find(
-                                          (indexFind: FazendaDTO) => {
-                                            return (
-                                              indexFind.id === index.fazenda
-                                            )
-                                          },
-                                        ) || {}
-                                      ).nomeFazenda
-                                    : ''
-                                }
-                                color="black"
-                                fontWeight="400"
-                              />
-                            </td>
+                          <td style={{ width: '25%' }}>
+                            <Text
+                              textAlign="center"
+                              fontFamily="rob"
+                              size={'1vw'}
+                              text={
+                                todasFazendas
+                                  ? (
+                                    todasFazendas.find(
+                                      (indexFind: FazendaDTO) => {
+                                        return (
+                                          indexFind.id === index.fazenda
+                                        );
+                                      },
+                                    ) || {}
+                                  ).nomeFazenda
+                                  : ''
+                              }
+                              color="black"
+                              fontWeight="400"
+                            />
+                          </td>
 
-                            <td style={{ width: '25%' }}>
-                              <Text
-                                widthImage="1.5vw"
-                                src={
-                                  index.decisaoAnimalSuperRGD ? add : waiting
-                                }
-                                textAlign="center"
-                                fontFamily="rob"
-                                size={'1vw'}
-                                text={
-                                  index.decisaoAnimalSuperRGD || 'Em análise'
-                                }
-                                color="black"
-                                fontWeight="400"
-                              />
-                            </td>
+                          <td style={{ width: '25%' }}>
+                            <Text
+                              widthImage="1.5vw"
+                              src={
+                                index.decisaoAnimalSuperRGD ? add : waiting
+                              }
+                              textAlign="center"
+                              fontFamily="rob"
+                              size={'1vw'}
+                              text={
+                                index.decisaoAnimalSuperRGD || 'Em análise'
+                              }
+                              color="black"
+                              fontWeight="400"
+                            />
+                          </td>
 
-                            <td>
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  width: '100%',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  height: '100%',
+                          <td>
+                            <div
+                              style={{
+                                display: 'flex',
+                                width: '100%',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                height: '100%',
+                              }}
+                            >
+                              <Button
+                                radius="2vw"
+                                marginLeftImage="0vw"
+                                marginRightImage="0vw"
+                                src={seta}
+                                colorButton="white"
+                                heightButton="3vw"
+                                widthImage="65%"
+                                widthButton="4vw"
+                                textColor="white"
+                                onClick={() => {
+                                  getInformacoesAnimal(index);
+                                  setAnimalInfos((prev) => ({
+                                    ...prev,
+                                    animalSelecionado: index,
+                                    resgistro: true,
+                                    rgn: true,
+                                    rgd: false,
+                                  }));
+                                  setCriadorInfo((prev) => ({
+                                    ...prev,
+                                    criadorId: index.criadorAnimal,
+                                  }));
+                                  setPaginas(() => ({
+                                    ...updatedPages,
+                                    verAnimalPage: true,
+                                  }));
                                 }}
-                              >
-                                <Button
-                                  radius="2vw"
-                                  marginLeftImage="0vw"
-                                  marginRightImage="0vw"
-                                  src={seta}
-                                  colorButton="white"
-                                  heightButton="3vw"
-                                  widthImage="65%"
-                                  widthButton="4vw"
-                                  textColor="white"
-                                  onClick={() => {
-                                    getInformacoesAnimal(index)
-                                    setAnimalInfos((prev) => ({
-                                      ...prev,
-                                      animalSelecionado: index,
-                                      resgistro: true,
-                                      rgn: true,
-                                      rgd: false,
-                                    }))
-                                    setCriadorInfo((prev) => ({
-                                      ...prev,
-                                      criadorId: index.criadorAnimal,
-                                    }))
-                                    setPaginas(() => ({
-                                      ...updatedPages,
-                                      verAnimalPage: true,
-                                    }))
-                                  }}
-                                />
-                              </div>
-                            </td>
-                          </TableContent>
-                        )
-                      }
-                    })
+                              />
+                            </div>
+                          </td>
+                        </TableContent>
+                      );
+                    }
+                  })
                   : null}
               </Table>
               <div
@@ -1522,7 +1523,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     onClick={() => {
                       setPage((prevPage) =>
                         prevPage > 1 ? prevPage - 1 : prevPage,
-                      )
+                      );
                     }}
                   />
                 </div>
@@ -1533,7 +1534,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   widthButton="3vw"
                   textButton=">"
                   onClick={() => {
-                    setPage((prevPage) => prevPage + 1)
+                    setPage((prevPage) => prevPage + 1);
                   }}
                 />
               </div>
@@ -1701,7 +1702,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                       setPaginas((prev) => ({
                         ...updatedPages,
                         verAnimaisCriador: !prev.verAnimaisCriador,
-                      }))
+                      }));
                     }}
                   />
                 </div>
@@ -1766,7 +1767,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 setPaginas((prev) => ({
                   ...updatedPages,
                   verAnimalPage: !prev.verAnimalPage,
-                }))
+                }));
               }}
             />
           </div>
@@ -1892,7 +1893,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                       setPaginas(() => ({
                         ...updatedPages,
                         verAnimalPage: true,
-                      }))
+                      }));
                     }}
                   />
                 </div>
@@ -1995,113 +1996,113 @@ export function SuperintendenteDashboard(data: { token: string }) {
             </TableHeader>
             {solicitacoesAnimaisBase
               ? solicitacoesAnimaisBase.map(
-                  (index: SolicitacaoRegistroAnimalBaseDTO) => {
-                    return (
-                      <TableContent key={index.criadorId}>
-                        <td style={{ width: '20%' }}>
-                          <Text
-                            textAlign="center"
-                            fontFamily="rob"
-                            size={'1vw'}
-                            text={
-                              todosRebanhos
-                                ? (
-                                    todosRebanhos.find((reb: RebanhoDTO) => {
-                                      return reb.id == index.rebanhoId
-                                    }) || {}
-                                  ).serie
-                                : ''
-                            }
-                            color="black"
-                            fontWeight="400"
-                          />
-                        </td>
-                        <td>
-                          <Text
-                            textAlign="center"
-                            fontFamily="rob"
-                            size={'1vw'}
-                            text={
-                              criadores
-                                ? (
-                                    criadores?.find((cr: CriadorDTO) => {
-                                      return cr.id == index.criadorId
-                                    }) || {}
-                                  ).nomeCompleto
-                                : null
-                            }
-                            color="black"
-                            fontWeight="400"
-                          />
-                        </td>
-                        <td style={{ width: '25%' }}>
-                          <Text
-                            widthImage="1.5vw"
-                            src={
-                              index.estadoSolicitacao == 'Em análise'
-                                ? waiting
-                                : done
-                            }
-                            textAlign="center"
-                            fontFamily="rob"
-                            size={'1vw'}
-                            text={index.estadoSolicitacao}
-                            color="black"
-                            fontWeight="400"
-                          />
-                        </td>
+                (index: SolicitacaoRegistroAnimalBaseDTO) => {
+                  return (
+                    <TableContent key={index.criadorId}>
+                      <td style={{ width: '20%' }}>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={
+                            todosRebanhos
+                              ? (
+                                todosRebanhos.find((reb: RebanhoDTO) => {
+                                  return reb.id == index.rebanhoId;
+                                }) || {}
+                              ).serie
+                              : ''
+                          }
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td>
+                        <Text
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={
+                            criadores
+                              ? (
+                                criadores?.find((cr: CriadorDTO) => {
+                                  return cr.id == index.criadorId;
+                                }) || {}
+                              ).nomeCompleto
+                              : null
+                          }
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
+                      <td style={{ width: '25%' }}>
+                        <Text
+                          widthImage="1.5vw"
+                          src={
+                            index.estadoSolicitacao == 'Em análise'
+                              ? waiting
+                              : done
+                          }
+                          textAlign="center"
+                          fontFamily="rob"
+                          size={'1vw'}
+                          text={index.estadoSolicitacao}
+                          color="black"
+                          fontWeight="400"
+                        />
+                      </td>
 
-                        <td>
-                          <div
-                            style={{
-                              display: 'flex',
-                              width: '100%',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              height: '100%',
-                            }}
-                          >
+                      <td>
+                        <div
+                          style={{
+                            display: 'flex',
+                            width: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%',
+                          }}
+                        >
+                          <Button
+                            marginTopImage="0.3vw"
+                            textButton="Marcar Como Finalizado"
+                            radius="2vw"
+                            marginLeftImage="0vw"
+                            marginRightImage="0vw"
+                            colorButton="#0B7AB8"
+                            heightButton="3vw"
+                            widthButton="16vw"
+                            textColor="white"
+                          />
+                          <div style={{ marginLeft: '1vw' }}>
                             <Button
                               marginTopImage="0.3vw"
-                              textButton="Marcar Como Finalizado"
+                              src={searchIcon}
                               radius="2vw"
                               marginLeftImage="0vw"
                               marginRightImage="0vw"
                               colorButton="#0B7AB8"
                               heightButton="3vw"
-                              widthButton="16vw"
+                              widthButton="3vw"
                               textColor="white"
+                              onClick={() => {
+                                setPaginas(() => ({
+                                  ...updatedPages,
+                                  verAnimalPage: true,
+                                })),
+                                setAnimalBaseInfo((prev) => ({
+                                  ...prev,
+                                  solicitacoesAnimaisBaseSelecionada: index,
+                                })),
+                                setTypeCadastro('animalBase');
+                              }}
                             />
-                            <div style={{ marginLeft: '1vw' }}>
-                              <Button
-                                marginTopImage="0.3vw"
-                                src={searchIcon}
-                                radius="2vw"
-                                marginLeftImage="0vw"
-                                marginRightImage="0vw"
-                                colorButton="#0B7AB8"
-                                heightButton="3vw"
-                                widthButton="3vw"
-                                textColor="white"
-                                onClick={() => {
-                                  setPaginas(() => ({
-                                    ...updatedPages,
-                                    verAnimalPage: true,
-                                  })),
-                                    setAnimalBaseInfo((prev) => ({
-                                      ...prev,
-                                      solicitacoesAnimaisBaseSelecionada: index,
-                                    })),
-                                    setTypeCadastro('animalBase')
-                                }}
-                              />
-                            </div>
                           </div>
-                        </td>
-                      </TableContent>
-                    )
-                  },
-                )
+                        </div>
+                      </td>
+                    </TableContent>
+                  );
+                },
+              )
               : null}
           </Table>
 
@@ -2201,76 +2202,76 @@ export function SuperintendenteDashboard(data: { token: string }) {
             </TableHeader>
             {todasFazendas
               ? todasFazendas.map((index: FazendaDTO) => {
-                  return (
-                    <TableContent key={index.id}>
-                      <td>
-                        <Text
-                          textAlign="center"
-                          fontFamily="rob"
-                          size={'1vw'}
-                          text={index.nomeFazenda}
-                          color="black"
-                          fontWeight="400"
-                        />
-                      </td>
-                      <td>
-                        <Text
-                          textAlign="center"
-                          fontFamily="rob"
-                          size={'1vw'}
-                          text={
-                            (
-                              criadores?.find((indexFind: CriadorDTO) => {
-                                return indexFind.id === index.criadorFazenda
-                              }) || {}
-                            ).nomeCompleto || ''
-                          }
-                          color="black"
-                          fontWeight="400"
-                        />
-                      </td>
-                      <td>
-                        <Text
-                          textAlign="center"
-                          fontFamily="rob"
-                          size={'1vw'}
-                          text={index.telefoneFazenda}
-                          color="black"
-                          fontWeight="400"
-                        />
-                      </td>
-                      <td>
-                        <div
-                          style={{
-                            display: 'flex',
-                            width: '100%',
-                            justifyContent: 'center',
+                return (
+                  <TableContent key={index.id}>
+                    <td>
+                      <Text
+                        textAlign="center"
+                        fontFamily="rob"
+                        size={'1vw'}
+                        text={index.nomeFazenda}
+                        color="black"
+                        fontWeight="400"
+                      />
+                    </td>
+                    <td>
+                      <Text
+                        textAlign="center"
+                        fontFamily="rob"
+                        size={'1vw'}
+                        text={
+                          (
+                            criadores?.find((indexFind: CriadorDTO) => {
+                              return indexFind.id === index.criadorFazenda;
+                            }) || {}
+                          ).nomeCompleto || ''
+                        }
+                        color="black"
+                        fontWeight="400"
+                      />
+                    </td>
+                    <td>
+                      <Text
+                        textAlign="center"
+                        fontFamily="rob"
+                        size={'1vw'}
+                        text={index.telefoneFazenda}
+                        color="black"
+                        fontWeight="400"
+                      />
+                    </td>
+                    <td>
+                      <div
+                        style={{
+                          display: 'flex',
+                          width: '100%',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            getNascimentos(index.criadorFazenda);
+                            setPaginas(() => ({
+                              ...updatedPages,
+                              todasComunicNascPage: true,
+                            }));
                           }}
-                        >
-                          <Button
-                            onClick={() => {
-                              getNascimentos(index.criadorFazenda)
-                              setPaginas(() => ({
-                                ...updatedPages,
-                                todasComunicNascPage: true,
-                              }))
-                            }}
-                            marginTopImage="0.6vw"
-                            radius="2.5vw"
-                            marginLeftImage="0vw"
-                            marginRightImage="0vw"
-                            src={seta}
-                            colorButton="white"
-                            heightButton="2.8vw"
-                            widthImage="100%"
-                            widthButton="3vw"
-                            textColor="white"
-                          />
-                        </div>
-                      </td>
-                    </TableContent>
-                  )
-                })
+                          marginTopImage="0.6vw"
+                          radius="2.5vw"
+                          marginLeftImage="0vw"
+                          marginRightImage="0vw"
+                          src={seta}
+                          colorButton="white"
+                          heightButton="2.8vw"
+                          widthImage="100%"
+                          widthButton="3vw"
+                          textColor="white"
+                        />
+                      </div>
+                    </td>
+                  </TableContent>
+                );
+              })
               : null}
           </Table>
 
@@ -2370,79 +2371,79 @@ export function SuperintendenteDashboard(data: { token: string }) {
             </TableHeader>
             {nascimentos
               ? nascimentos.map((index: ComunicacaoNascimentoDto) => {
-                  return (
-                    <TableContent key={index.id}>
-                      <td>
-                        <Text
-                          textAlign="center"
-                          fontFamily="rob"
-                          size={'1vw'}
-                          text={format(
-                            new Date(index.dataComunicacao),
-                            'dd/ MM/ yyyy',
-                          )}
-                          color="black"
-                          fontWeight="400"
-                        />
-                      </td>
-                      <td>
-                        <Text
-                          textAlign="center"
-                          fontFamily="rob"
-                          size={'1vw'}
-                          text={
-                            (
-                              todosAnimais.find((indexAnimal) => {
-                                return index.matrizAnimalId == indexAnimal.id
-                              }) || {}
-                            ).nomeAnimal || ''
-                          }
-                          color="black"
-                          fontWeight="400"
-                        />
-                      </td>
-                      <td>
-                        <Text
-                          textAlign="center"
-                          fontFamily="rob"
-                          size={'1vw'}
-                          text={index.animalBezerro}
-                          color="black"
-                          fontWeight="400"
-                        />
-                      </td>
-                      <td>
-                        <div
-                          style={{
-                            display: 'flex',
-                            width: '100%',
-                            justifyContent: 'center',
+                return (
+                  <TableContent key={index.id}>
+                    <td>
+                      <Text
+                        textAlign="center"
+                        fontFamily="rob"
+                        size={'1vw'}
+                        text={format(
+                          new Date(index.dataComunicacao),
+                          'dd/ MM/ yyyy',
+                        )}
+                        color="black"
+                        fontWeight="400"
+                      />
+                    </td>
+                    <td>
+                      <Text
+                        textAlign="center"
+                        fontFamily="rob"
+                        size={'1vw'}
+                        text={
+                          (
+                            todosAnimais.find((indexAnimal) => {
+                              return index.matrizAnimalId == indexAnimal.id;
+                            }) || {}
+                          ).nomeAnimal || ''
+                        }
+                        color="black"
+                        fontWeight="400"
+                      />
+                    </td>
+                    <td>
+                      <Text
+                        textAlign="center"
+                        fontFamily="rob"
+                        size={'1vw'}
+                        text={index.animalBezerro}
+                        color="black"
+                        fontWeight="400"
+                      />
+                    </td>
+                    <td>
+                      <div
+                        style={{
+                          display: 'flex',
+                          width: '100%',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            setNascimentoSelecionado(index);
+                            setPaginas(() => ({
+                              ...updatedPages,
+                              verComunicNascPage: true,
+                            }));
                           }}
-                        >
-                          <Button
-                            onClick={() => {
-                              setNascimentoSelecionado(index)
-                              setPaginas(() => ({
-                                ...updatedPages,
-                                verComunicNascPage: true,
-                              }))
-                            }}
-                            marginTopImage="0.6vw"
-                            radius="2.5vw"
-                            marginLeftImage="0vw"
-                            marginRightImage="0vw"
-                            src={add}
-                            colorButton="white"
-                            heightButton="2.8vw"
-                            widthImage="100%"
-                            widthButton="3vw"
-                            textColor="white"
-                          />
-                        </div>
-                      </td>
-                    </TableContent>
-                  )
-                })
+                          marginTopImage="0.6vw"
+                          radius="2.5vw"
+                          marginLeftImage="0vw"
+                          marginRightImage="0vw"
+                          src={add}
+                          colorButton="white"
+                          heightButton="2.8vw"
+                          widthImage="100%"
+                          widthButton="3vw"
+                          textColor="white"
+                        />
+                      </div>
+                    </td>
+                  </TableContent>
+                );
+              })
               : null}
           </Table>
 
@@ -2511,7 +2512,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                       todasFazendas.find((index) => {
                         return (
                           index.id === nascimentoSelecionado.fazendaNascimentoId
-                        )
+                        );
                       }).nomeFazenda
                     }
                   />
@@ -2530,7 +2531,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                       criadores.find((index) => {
                         return (
                           index.id === nascimentoSelecionado.criadorNascimentoId
-                        )
+                        );
                       }).nomeCompleto
                     }
                   />
@@ -2549,7 +2550,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   <InputText
                     value={
                       todosAnimais.find((index) => {
-                        return index.id === nascimentoSelecionado.matrizAnimalId
+                        return index.id === nascimentoSelecionado.matrizAnimalId;
                       }).nomeAnimal
                     }
                   />
@@ -2568,7 +2569,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                       todosAnimais.find((index) => {
                         return (
                           index.id === nascimentoSelecionado.reprodutorAnimalId
-                        )
+                        );
                       }).nomeAnimal
                     }
                   />
@@ -2589,7 +2590,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                       todosTecnicos.find((index) => {
                         return (
                           index.id === nascimentoSelecionado.tecnicoNascimentoId
-                        )
+                        );
                       }).nomeCompleto
                     }
                   />
@@ -2646,7 +2647,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                         widthButton="15vw"
                         textColor="white"
                         onClick={() => {
-                          updateNascimento('Reprovar')
+                          updateNascimento('Reprovar');
                         }}
                       />
                       <Button
@@ -2656,7 +2657,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                         widthButton="17vw"
                         textColor="white"
                         onClick={() => {
-                          updateNascimento('Aprovar')
+                          updateNascimento('Aprovar');
                         }}
                       />
                     </div>
@@ -2785,7 +2786,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                           size={'1vw'}
                           text={
                             todasFazendas.find((data) => {
-                              return data.id === index.fazendaCobertura
+                              return data.id === index.fazendaCobertura;
                             }).nomeFazenda
                           }
                           color="black"
@@ -2799,7 +2800,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                           size={'1vw'}
                           text={
                             criadores.find((data) => {
-                              return data.id === index.criadorCobertura
+                              return data.id === index.criadorCobertura;
                             }).nomeCompleto
                           }
                           color="black"
@@ -2830,8 +2831,8 @@ export function SuperintendenteDashboard(data: { token: string }) {
                               setPaginas(() => ({
                                 ...updatedPages,
                                 verComunicCoberPage: true,
-                              }))
-                              setCobertura(index)
+                              }));
+                              setCobertura(index);
                             }}
                             marginTopImage="0.6vw"
                             radius="2.5vw"
@@ -2847,7 +2848,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                         </div>
                       </td>
                     </TableContent>
-                  )
+                  );
                 })}
               </Table>
 
@@ -2915,7 +2916,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     if (index.sexoAnimal === 'Macho') {
                       return (
                         <InputText key={index.id} value={index.nomeAnimal} />
-                      )
+                      );
                     }
                   })}
                 </InputPlace>
@@ -2932,7 +2933,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     if (index.sexoAnimal === 'Fêmea') {
                       return (
                         <InputText key={index.id} value={index.nomeAnimal} />
-                      )
+                      );
                     }
                   })}
                 </InputPlace>
@@ -2979,7 +2980,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   <InputText
                     value={
                       criadores.find((index) => {
-                        return index.id === cobertura.criadorCobertura
+                        return index.id === cobertura.criadorCobertura;
                       }).nomeCompleto
                     }
                   />
@@ -3009,7 +3010,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   <InputText
                     value={
                       todasFazendas.find((index) => {
-                        return index.id === cobertura.fazendaCobertura
+                        return index.id === cobertura.fazendaCobertura;
                       }).nomeFazenda
                     }
                   />
@@ -3050,7 +3051,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                       widthButton="7vw"
                       textColor="white"
                       onClick={() => {
-                        updateCobertura('Reprovado')
+                        updateCobertura('Reprovado');
                       }}
                     />
 
@@ -3061,7 +3062,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                       widthButton="7vw"
                       textColor="white"
                       onClick={() => {
-                        updateCobertura('Aprovado')
+                        updateCobertura('Aprovado');
                       }}
                     />
                   </div>
@@ -3178,8 +3179,8 @@ export function SuperintendenteDashboard(data: { token: string }) {
                               setPaginas((prev) => ({
                                 ...updatedPages,
                                 tecnicoRegister: !prev.tecnicoRegister,
-                              }))
-                              setTecnicoSelecionado(index)
+                              }));
+                              setTecnicoSelecionado(index);
                             }}
                             marginTopImage="0.6vw"
                             radius="2.5vw"
@@ -3195,7 +3196,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                         </div>
                       </td>
                     </TableContent>
-                  )
+                  );
                 })}
               </Table>
 
@@ -3221,11 +3222,11 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   widthButton="20vw"
                   textColor="white"
                   onClick={() => {
-                    setIsTecnico(true)
+                    setIsTecnico(true);
                     setPaginas(() => ({
                       ...updatedPages,
                       userRegister: true,
-                    }))
+                    }));
                   }}
                 />
               </div>
@@ -3339,9 +3340,9 @@ export function SuperintendenteDashboard(data: { token: string }) {
                           setPaginas((prev) => ({
                             ...updatedPages,
                             criadorRegister: !prev.criadorRegister,
-                          }))
+                          }));
 
-                          setCriadorSelecionado(index)
+                          setCriadorSelecionado(index);
                         }}
                         marginTopImage="0.6vw"
                         radius="2.5vw"
@@ -3357,7 +3358,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     </div>
                   </td>
                 </TableContent>
-              )
+              );
             })}
           </Table>
 
@@ -3383,11 +3384,11 @@ export function SuperintendenteDashboard(data: { token: string }) {
               widthButton="20vw"
               textColor="white"
               onClick={() => {
-                setIsTecnico(false)
+                setIsTecnico(false);
                 setPaginas(() => ({
                   ...updatedPages,
                   userRegister: true,
-                }))
+                }));
               }}
             />
           </div>
@@ -3455,7 +3456,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     style={{ fontSize: '1.3vw' }}
                     value={
                       todosUsuarios.find((index) => {
-                        return index.id === criadorSelecionado.userId
+                        return index.id === criadorSelecionado.userId;
                       }).email
                     }
                   />
@@ -3475,7 +3476,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     style={{ fontSize: '1.3vw' }}
                     value={
                       todosUsuarios.find((index) => {
-                        return index.id === criadorSelecionado.userId
+                        return index.id === criadorSelecionado.userId;
                       }).cpf
                     }
                   />
@@ -3583,7 +3584,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     style={{ fontSize: '1.3vw' }}
                     value={
                       todosUsuarios.find((index) => {
-                        return index.id === criadorSelecionado.userId
+                        return index.id === criadorSelecionado.userId;
                       }).telefone
                     }
                   />
@@ -3684,7 +3685,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   <InputText
                     value={
                       todosUsuarios.find((index) => {
-                        return index.id === tecnicoSelecionado.userId
+                        return index.id === tecnicoSelecionado.userId;
                       }).email
                     }
                   />
@@ -3703,7 +3704,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   <InputText
                     value={
                       todosUsuarios.find((index) => {
-                        return index.id === tecnicoSelecionado.userId
+                        return index.id === tecnicoSelecionado.userId;
                       }).cpf
                     }
                   />
@@ -3781,7 +3782,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                   <InputText
                     value={
                       todosUsuarios.find((index) => {
-                        return index.id === tecnicoSelecionado.userId
+                        return index.id === tecnicoSelecionado.userId;
                       }).telefone
                     }
                   />
@@ -4056,8 +4057,8 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     textColor="white"
                     onClick={() => {
                       for (const componente in errors) {
-                        const mensagem = errors[componente]
-                        alert(mensagem.message)
+                        const mensagem = errors[componente];
+                        alert(mensagem.message);
                       }
                     }}
                   />
@@ -4068,5 +4069,5 @@ export function SuperintendenteDashboard(data: { token: string }) {
         </TelaRegistroUsuario>
       </Content>
     </Container>
-  )
+  );
 }

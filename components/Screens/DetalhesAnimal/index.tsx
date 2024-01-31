@@ -1,21 +1,22 @@
-import Image from 'next/image'
-import { InputPlace, InputPair, InputText, Container } from './style'
-import { Text } from '../Text'
-import { animal, logo2Branca } from '@/assets'
-import { Button } from '../Button'
-import { CircularProgress } from '@mui/material'
-import AnimalDTO from '@/utils/AnimalDTO'
-import FazendaDTO from '@/utils/FazendaDTO'
-import CriadorDTO from '@/utils/CriadorDTO'
-import { useContext, useState } from 'react'
-import format from 'date-fns/format'
-import { updateAnimal } from '@/actions/animaisApi'
-import { AlertContext } from '@/context/AlertContextProvider'
-import { Tree } from 'react-organizational-chart'
-import { ArvoreGenealogica } from '../ArvoreGenealogica'
-import { Certificado } from '../Certificado'
-import { Router, useRouter, useSearchParams } from 'next/navigation'
-import { AnimalContext } from '@/context/AnimalContextProvider'
+import React from 'react';
+import Image from 'next/image';
+import { InputPlace, InputPair, InputText, Container } from './style';
+import { Text } from '../../Text';
+import { animal, logo2Branca } from '@/assets';
+import { Button } from '../../Button';
+import { CircularProgress } from '@mui/material';
+import AnimalDTO from '@/utils/AnimalDTO';
+import FazendaDTO from '@/utils/FazendaDTO';
+import CriadorDTO from '@/utils/CriadorDTO';
+import { useContext, useState } from 'react';
+import format from 'date-fns/format';
+import { updateAnimal } from '@/actions/animaisApi';
+import { AlertContext } from '@/context/AlertContextProvider';
+import { Tree } from 'react-organizational-chart';
+import { ArvoreGenealogica } from '../../ArvoreGenealogica';
+import { Certificado } from '../../Certificado';
+import { Router, useRouter, useSearchParams } from 'next/navigation';
+import { AnimalContext } from '@/context/AnimalContextProvider';
 
 interface DetalheAnimal {
   animalInfos: {
@@ -35,8 +36,8 @@ interface DetalheAnimal {
 }
 
 export function DetalhesAnimal(props: DetalheAnimal) {
-  const { alert } = useContext(AlertContext)
-  const { animal } = useContext(AnimalContext)
+  const { alert } = useContext(AlertContext);
+  const { animal } = useContext(AnimalContext);
   const {
     animalInfos,
     registro,
@@ -46,27 +47,29 @@ export function DetalhesAnimal(props: DetalheAnimal) {
     SuperRGD,
     SuperRGN,
     TecnicoRGN,
-  } = props
+  } = props;
   const {
     criadorSelecionado,
     fazendaSelecionado,
     maeSelecionado,
     paiSelecionado,
     animalSelecionado,
-  } = animalInfos
+  } = animalInfos;
 
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  let updateAnimalData: AnimalDTO
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  let updateAnimalData: AnimalDTO;
   async function updateAnimalRGD(decisao: string) {
-    setLoading(true)
+    setLoading(true);
 
     if (TecnicoRGD) {
       updateAnimalData = {
         ...animalSelecionado,
         decisaoAnimalTecnicoRGD: decisao,
         registradoRGDTecnico: true,
-      }
+        dataRGDAnimalTecnico: new Date().toISOString(),
+      };
     }
 
     if (TecnicoRGN) {
@@ -74,7 +77,8 @@ export function DetalhesAnimal(props: DetalheAnimal) {
         ...animalSelecionado,
         decisaoAnimalTecnicoRGN: decisao,
         registradoRGNTecnico: true,
-      }
+        dataRGNAnimalTecnico: new Date().toISOString(),
+      };
     }
 
     if (SuperRGN) {
@@ -82,7 +86,8 @@ export function DetalhesAnimal(props: DetalheAnimal) {
         ...animalSelecionado,
         decisaoAnimalSuperRGN: decisao,
         registradoRGNSuper: true,
-      }
+        dataRGNAnimalSuper: new Date().toISOString(),
+      };
     }
 
     if (SuperRGD) {
@@ -90,19 +95,20 @@ export function DetalhesAnimal(props: DetalheAnimal) {
         ...animalSelecionado,
         decisaoAnimalSuperRGD: decisao,
         registradoRGDSuper: true,
-      }
+        dataRGDAnimalTecnico: new Date().toISOString(),
+      };
     }
 
     const animal = await updateAnimal(
       updateAnimalData,
       token,
       animalSelecionado.id,
-    )
+    );
 
-    if (!animal.messages) {
-      alert('A decisão foi salva com sucesso', 'success')
+    if (!animal.message) {
+      alert('A decisão foi salva com sucesso', 'success');
     }
-    setLoading(false)
+    setLoading(false);
   }
 
   return (
@@ -136,6 +142,16 @@ export function DetalhesAnimal(props: DetalheAnimal) {
           color="black"
         />
 
+        <InputPlace style={{ width: '47%' }}>
+          <Text
+            fontFamily="pop"
+            size={'1.5vw'}
+            text="Nome Fantasia"
+            color="black"
+            fontWeight="300"
+          />
+          <InputText value={'Teteu'} disabled />
+        </InputPlace>
         <InputPair style={{ width: '90%' }}>
           <InputPlace style={{ width: '47%' }}>
             <Text
@@ -285,9 +301,9 @@ export function DetalhesAnimal(props: DetalheAnimal) {
               value={
                 animalSelecionado.dataRGNAnimalTecnico
                   ? format(
-                      new Date(animalSelecionado.dataRGNAnimalTecnico),
-                      'dd/MM/yyyy',
-                    )
+                    new Date(animalSelecionado.dataRGNAnimalTecnico),
+                    'dd/MM/yyyy',
+                  )
                   : ''
               }
               disabled
@@ -322,9 +338,9 @@ export function DetalhesAnimal(props: DetalheAnimal) {
               value={
                 animalSelecionado.dataRGDAnimalTecnico
                   ? format(
-                      new Date(animalSelecionado.dataRGDAnimalTecnico),
-                      'dd/MM/yyyy',
-                    )
+                    new Date(animalSelecionado.dataRGDAnimalTecnico),
+                    'dd/MM/yyyy',
+                  )
                   : ''
               }
               disabled
@@ -380,9 +396,9 @@ export function DetalhesAnimal(props: DetalheAnimal) {
               value={
                 animalSelecionado.dataRGNAnimalSuper
                   ? format(
-                      new Date(animalSelecionado.dataRGNAnimalSuper),
-                      'dd/MM/yyyy',
-                    )
+                    new Date(animalSelecionado.dataRGNAnimalSuper),
+                    'dd/MM/yyyy',
+                  )
                   : ''
               }
               disabled
@@ -417,9 +433,9 @@ export function DetalhesAnimal(props: DetalheAnimal) {
               value={
                 animalSelecionado.dataRGDAnimalSuper
                   ? format(
-                      new Date(animalSelecionado.dataRGDAnimalSuper),
-                      'dd/MM/yyyy',
-                    )
+                    new Date(animalSelecionado.dataRGDAnimalSuper),
+                    'dd/MM/yyyy',
+                  )
                   : ''
               }
               disabled
@@ -542,7 +558,7 @@ export function DetalhesAnimal(props: DetalheAnimal) {
                     widthButton="8vw"
                     textColor="white"
                     onClick={() => {
-                      updateAnimalRGD('Reprovado')
+                      updateAnimalRGD('Reprovado');
                     }}
                   />
                   <Button
@@ -552,7 +568,7 @@ export function DetalhesAnimal(props: DetalheAnimal) {
                     widthButton="7vw"
                     textColor="white"
                     onClick={() => {
-                      updateAnimalRGD('Aprovado')
+                      updateAnimalRGD('Aprovado');
                     }}
                   />
                   <Button
@@ -563,8 +579,8 @@ export function DetalhesAnimal(props: DetalheAnimal) {
                     textColor="white"
                     onClick={() => {
                       window.setTimeout(function () {
-                        window.print()
-                      }, 800)
+                        window.print();
+                      }, 800);
                     }}
                   />
                 </>
@@ -580,8 +596,8 @@ export function DetalhesAnimal(props: DetalheAnimal) {
                 textColor="white"
                 onClick={() => {
                   window.setTimeout(function () {
-                    window.print()
-                  }, 400)
+                    window.print();
+                  }, 1000);
                 }}
               />
             </div>
@@ -589,5 +605,5 @@ export function DetalhesAnimal(props: DetalheAnimal) {
         </div>
       </Container>
     </>
-  )
+  );
 }

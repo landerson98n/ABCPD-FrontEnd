@@ -1,24 +1,25 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable eqeqeq */
-import { CircularProgress } from '@mui/material'
-import { Container, InputPair, InputPlace, InputText, SelectBox } from './style'
-import { Button } from '../Button'
-import Image from 'next/image'
-import { Text } from '../Text'
-import { logo2Branca } from '@/assets'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import AnimalDTO from '@/utils/AnimalDTO'
-import RebanhoDTO from '@/utils/RebanhoDTO'
-import { useContext, useEffect, useState } from 'react'
-import FazendaDTO from '@/utils/FazendaDTO'
-import { CreateAnimal } from '@/actions/animaisApi'
-import { AlertContext } from '@/context/AlertContextProvider'
+import React from 'react';
+import { CircularProgress } from '@mui/material';
+import { Container, InputPair, InputPlace, InputText, SelectBox } from './style';
+import { Button } from '../../Button';
+import Image from 'next/image';
+import { Text } from '../../Text';
+import { logo2Branca } from '@/assets';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import AnimalDTO from '@/utils/AnimalDTO';
+import RebanhoDTO from '@/utils/RebanhoDTO';
+import { useContext, useEffect, useState } from 'react';
+import FazendaDTO from '@/utils/FazendaDTO';
+import { CreateAnimal } from '@/actions/animaisApi';
+import { AlertContext } from '@/context/AlertContextProvider';
 
 interface CadastrarAnimal {
-  animaisCriador: [] | never[]
-  fazendas: [] | never[]
+  animaisCriador: AnimalDTO[] | never[]
+  fazendas: FazendaDTO[] | never[]
   rebanhos: [] | never[]
   solicitacaoBase: {} | never[]
   criadorId: string
@@ -35,15 +36,15 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     token,
     typeCadastro,
     solicitacaoBase,
-  } = props
+  } = props;
 
-  const { alert } = useContext(AlertContext)
+  const { alert } = useContext(AlertContext);
   const [images, setImages] = useState({
     selectedImage: {} as File | null,
     selectedImage2: {} as File | null,
     selectedImage3: {} as File | null,
     selectedImage4: {} as File | null,
-  })
+  });
 
   const animalSchema = z.object({
     mae: z.string().optional(),
@@ -84,17 +85,17 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     testiculoUbere: z.number(),
     membrosPosteriores: z.number(),
     mucosa: z.number(),
-  })
+  });
 
-  const [loading, setLoading] = useState(false)
-  const [fazendaSelecionada, setFazendaSelecionada] = useState(false)
-  const [isCG, setIsCG] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [fazendaSelecionada, setFazendaSelecionada] = useState(false);
+  const [isCG, setIsCG] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm({ resolver: zodResolver(animalSchema) })
+  } = useForm({ resolver: zodResolver(animalSchema) });
 
   const [values, setValues] = useState({
     aparenciaGeral: 0,
@@ -117,20 +118,20 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     umbigo: 0,
     testiculoUbere: 0,
     mucosa: 0,
-  })
+  });
 
-  const [average, setAverage] = useState(0)
+  const [average, setAverage] = useState(0);
 
   useEffect(() => {
     const calculateAverage = () => {
-      const valueArray = Object.values(values)
-      const total = valueArray.reduce((acc, val) => acc + parseFloat(val), 0)
-      const avg = total / valueArray.length
-      setAverage(avg.toFixed(2))
-    }
+      const valueArray = Object.values(values);
+      const total = valueArray.reduce((acc, val) => acc + parseFloat(val), 0);
+      const avg = total / valueArray.length;
+      setAverage(avg.toFixed(2));
+    };
 
-    calculateAverage()
-  }, [values])
+    calculateAverage();
+  }, [values]);
 
   const initialComunicacaoCobertura = {
     aparenciaGeral: 0,
@@ -139,7 +140,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     barbelaPescoco: 0,
     insercaoPescoco: 0,
     membrosAnterioresRacial: 0,
-  }
+  };
 
   const initialComunicacaoCobertura2 = {
     peso: 0,
@@ -147,35 +148,35 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     formaPescoco: 0,
     morrilhoPescoco: 0,
     membrosAnterioresZoot: 0,
-  }
+  };
 
   const initialComunicacaoCobertura3 = {
     profundidadeTorax: 0,
     dorsoTorax: 0,
-  }
+  };
 
   const initialComunicacaoCobertura4 = {
     lomboFlancoTorax: 0,
-  }
+  };
 
   const initialComunicacaoCobertura5 = {
     traseira: 0,
     testiculoZoot: 0,
     membrosPosteriores: 0,
-  }
+  };
 
   const initialComunicacaoCobertura6 = {
     umbigo: 0,
     testiculoUbere: 0,
     mucosa: 0,
-  }
+  };
 
-  const fieldNames = Object.keys(initialComunicacaoCobertura)
-  const fieldNames2 = Object.keys(initialComunicacaoCobertura2)
-  const fieldNames3 = Object.keys(initialComunicacaoCobertura3)
-  const fieldNames4 = Object.keys(initialComunicacaoCobertura4)
-  const fieldNames5 = Object.keys(initialComunicacaoCobertura5)
-  const fieldNames6 = Object.keys(initialComunicacaoCobertura6)
+  const fieldNames = Object.keys(initialComunicacaoCobertura);
+  const fieldNames2 = Object.keys(initialComunicacaoCobertura2);
+  const fieldNames3 = Object.keys(initialComunicacaoCobertura3);
+  const fieldNames4 = Object.keys(initialComunicacaoCobertura4);
+  const fieldNames5 = Object.keys(initialComunicacaoCobertura5);
+  const fieldNames6 = Object.keys(initialComunicacaoCobertura6);
 
   const fieldDisplayNames = {
     formaCabeca: 'Forma da Cabeça',
@@ -184,7 +185,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     insercaoPescoco: 'Inserção do Pescoço',
     aparenciaGeral: 'Aparência Geral',
     membrosAnterioresRacial: 'Membros Anteriores Racial',
-  }
+  };
 
   const fieldDisplayNames2 = {
     peso: 'Peso',
@@ -201,77 +202,77 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     testiculoUbere: 'Testículo Ubere',
     membrosPosteriores: 'Membros Posteriores',
     mucosa: 'Mucosa',
-  }
+  };
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files && event.target.files[0]
+    const file = event.target.files && event.target.files[0];
     if (file) {
       setImages((images) => ({
         ...images,
         selectedImage: file,
-      }))
+      }));
     }
-  }
+  };
 
   const handleImageChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files && event.target.files[0]
+    const file = event.target.files && event.target.files[0];
     if (file) {
       setImages((images) => ({
         ...images,
         selectedImage2: file,
-      }))
+      }));
     }
-  }
+  };
 
   const handleImageChange3 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files && event.target.files[0]
+    const file = event.target.files && event.target.files[0];
     if (file) {
       setImages((images) => ({
         ...images,
         selectedImage3: file,
-      }))
+      }));
     }
-  }
+  };
 
   const handleImageChange4 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files && event.target.files[0]
+    const file = event.target.files && event.target.files[0];
 
     if (file) {
       setImages((images) => ({
         ...images,
         selectedImage4: file,
-      }))
+      }));
     }
-  }
+  };
 
   const convertToBase64 = async (file) => {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => resolve(reader.result)
-      reader.onerror = (error) => reject(error)
-    })
-  }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   async function send(animalData: AnimalDTO) {
     const animalPai = animaisCriador.find((index: AnimalDTO) => {
-      return index.id === animalData.pai
-    })
+      return index.id === animalData.pai;
+    });
 
     const animalMatriz = animaisCriador.find((index: AnimalDTO) => {
-      return index.id === animalData.mae
-    })
+      return index.id === animalData.mae;
+    });
 
     if (typeCadastro == 'animalBase') {
-      animalData.rebanho = solicitacaoBase.rebanhoId
-      animalData.fazenda = solicitacaoBase.fazendaId
+      animalData.rebanho = solicitacaoBase.rebanhoId;
+      animalData.fazenda = solicitacaoBase.fazendaId;
     }
 
     if (animalData.registro === '') {
-      return alert('Selecione um tipo de registro')
+      return alert('Selecione um tipo de registro');
     }
 
     if (animalData.mae !== '' && animalData.pai === '') {
-      return alert('Selecione um animal reprodutor')
+      return alert('Selecione um animal reprodutor');
     }
 
     if (animalData.registro === 'Puro Controlado') {
@@ -282,20 +283,20 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
         animalMatriz?.registro ===
           'Produtos do Cruzamento Sob Controle de Genealogia'
       ) {
-        true
+        true;
       } else {
         return alert(
           'Para ser puro controlado o animal deve seguir um dos requisitos: -Ser filho de animal Puro Controlado, -Ser filho de matriz com registro Produtos do Cruzamento Sob Controle de Genealogia -Ser filho de matriz com registro Produtos do Cruzamento Sob Controle de Genealogia',
-        )
+        );
       }
     }
 
     if (animalData.rebanho == '') {
-      return alert('Selecione um rebanho')
+      return alert('Selecione um rebanho');
     }
 
     if (animalData.fazenda == '') {
-      return alert('Selecione uma fazenda')
+      return alert('Selecione uma fazenda');
     }
 
     if (
@@ -304,7 +305,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
       !images.selectedImage3 ||
       !images.selectedImage4
     ) {
-      return alert('Selecione 4 imagens para o animal')
+      return alert('Selecione 4 imagens para o animal');
     }
 
     if (
@@ -313,26 +314,26 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
       animalData.registro !==
         'Produtos do Cruzamento Sob Controle de Genealogia'
     ) {
-      return alert('Selecione um animal matriz')
+      return alert('Selecione um animal matriz');
     }
 
     if (animalData.racaAnimalMatriz === '' && isCG) {
-      return alert('Selecione uma raça para o animal matriz')
+      return alert('Selecione uma raça para o animal matriz');
     }
 
     if (
       animalData.registro ===
       'Produtos do Cruzamento Sob Controle de Genealogia'
     ) {
-      animalData.composicaoGenetica = '50'
+      animalData.composicaoGenetica = '50';
     } else {
       if (animalData.pai === '' && animalData.mae == '') {
-        animalData.composicaoGenetica = '100'
+        animalData.composicaoGenetica = '100';
       } else {
         animalData.composicaoGenetica = (
           parseInt(animalMatriz.composicaoGenetica) / 2 +
           parseInt(animalPai.composicaoGenetica) / 2
-        ).toString()
+        ).toString();
       }
     }
 
@@ -345,40 +346,39 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
     ) {
       return alert(
         'O tipo de registro selecionado só é permitido para fêmeas (Puro de Origem por Adjudicação e Produtos do Cruzamento Sob Controle de Genealogia)',
-      )
+      );
     }
 
-    setLoading(true)
+    setLoading(true);
     if (animalData.mae == '') {
-      animalData.mae = null
+      animalData.mae = null;
     }
 
     if (animalData.pai == '') {
-      animalData.pai = null
+      animalData.pai = null;
     }
 
     const base64Image01 = await convertToBase64(
       new Blob([images.selectedImage]),
-    )
+    );
     const base64Image02 = await convertToBase64(
       new Blob([images.selectedImage2]),
-    )
+    );
     const base64Image03 = await convertToBase64(
       new Blob([images.selectedImage3]),
-    )
+    );
     const base64Image04 = await convertToBase64(
       new Blob([images.selectedImage4]),
-    )
+    );
     if (typeCadastro == 'animalBase') {
       animalData.nomeAnimal = `${
         (
           rebanhos.find((reb: RebanhoDTO) => {
-            return reb.id == solicitacaoBase.rebanhoId
+            return reb.id == solicitacaoBase.rebanhoId;
           }) || {}
-        ).serie
-      }${animalData.nomeAnimal}`
+        ).serie.toUpperCase()
+      }${ animalData.nomeAnimal}`;
     }
-    console.log(animalData.nomeAnimal)
 
     const animal: AnimalDTO = {
       ...animalData,
@@ -395,16 +395,15 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
       image03: base64Image03,
       image04: base64Image04,
       flag: 0,
-    }
-    const response = await CreateAnimal(animal, token)
-    console.log(criadorId)
+    };
+    const response = await CreateAnimal(animal, token);
 
     if (!response?.message) {
-      alert('Animal criado com sucesso', 'success')
+      alert('Animal criado com sucesso', 'success');
       Object.keys(animalData).forEach((fieldName) => {
-        setValue(fieldName, '')
-      })
-      setLoading(false)
+        setValue(fieldName, '');
+      });
+      setLoading(false);
     }
   }
 
@@ -445,10 +444,10 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
               <label>
                 {rebanhos
                   ? (
-                      rebanhos.find((reb: RebanhoDTO) => {
-                        return reb.id == solicitacaoBase.rebanhoId
-                      }) || {}
-                    ).serie
+                    rebanhos.find((reb: RebanhoDTO) => {
+                      return reb.id == solicitacaoBase.rebanhoId;
+                    }) || {}
+                  ).serie
                   : null}
               </label>
             ) : null}
@@ -479,7 +478,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                   <option value={data.id} key={data.id}>
                     {data.nomeAnimal}
                   </option>
-                )
+                );
               }
             })}
           </SelectBox>
@@ -505,7 +504,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                   <option value={data.id} key={data.id}>
                     {data.nomeAnimal}
                   </option>
-                )
+                );
               }
             })}
           </SelectBox>
@@ -576,7 +575,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
             <SelectBox
               {...register('fazenda', { required: true })}
               onChange={(e) => {
-                setFazendaSelecionada(e.target.value)
+                setFazendaSelecionada(e.target.value);
               }}
             >
               <option value="" disabled selected>
@@ -587,7 +586,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                   <option value={data.id} key={data.id}>
                     {data.nomeFazenda}
                   </option>
-                )
+                );
               })}
             </SelectBox>
           </InputPlace>
@@ -608,14 +607,14 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
               </option>
               {rebanhos
                 ? rebanhos.map((data: RebanhoDTO) => {
-                    if (data.fazendaId === fazendaSelecionada) {
-                      return (
-                        <option value={data.id} key={data.id}>
-                          {data.serie}
-                        </option>
-                      )
-                    }
-                  })
+                  if (data.fazendaId === fazendaSelecionada) {
+                    return (
+                      <option value={data.id} key={data.id}>
+                        {data.serie}
+                      </option>
+                    );
+                  }
+                })
                 : null}
             </SelectBox>
           </InputPlace>
@@ -692,7 +691,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                     setValues((prev) => ({
                       ...prev,
                       [fieldName]: e.target.value,
-                    }))
+                    }));
                   }}
                 />
               </InputPlace>
@@ -724,7 +723,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                     setValues((prev) => ({
                       ...prev,
                       [fieldName]: e.target.value,
-                    }))
+                    }));
                   }}
                 />
               </InputPlace>
@@ -773,7 +772,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                     setValues((prev) => ({
                       ...prev,
                       [fieldName]: e.target.value,
-                    }))
+                    }));
                   }}
                 />
               </InputPlace>
@@ -805,7 +804,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                     setValues((prev) => ({
                       ...prev,
                       [fieldName]: e.target.value,
-                    }))
+                    }));
                   }}
                 />
               </InputPlace>
@@ -855,7 +854,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                     setValues((prev) => ({
                       ...prev,
                       [fieldName]: e.target.value,
-                    }))
+                    }));
                   }}
                 />
               </InputPlace>
@@ -887,7 +886,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
                     setValues((prev) => ({
                       ...prev,
                       [fieldName]: e.target.value,
-                    }))
+                    }));
                   }}
                 />
               </InputPlace>
@@ -1062,7 +1061,7 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
             textColor="white"
             type="button"
             onClick={() => {
-              setIsCG(!isCG)
+              setIsCG(!isCG);
             }}
           />
 
@@ -1078,8 +1077,8 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
               type="submit"
               onClick={() => {
                 for (const componente in errors) {
-                  const mensagem = errors[componente]
-                  alert(mensagem?.message)
+                  const mensagem = errors[componente];
+                  alert(mensagem?.message);
                 }
               }}
             />
@@ -1087,5 +1086,5 @@ export function CadastrarAnimal(props: CadastrarAnimal) {
         </div>
       </div>
     </Container>
-  )
+  );
 }

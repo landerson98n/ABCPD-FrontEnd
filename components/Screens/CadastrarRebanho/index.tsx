@@ -1,50 +1,51 @@
-import { Container, Select, InputText } from './style'
-import Image from 'next/image'
-import { Text } from '../Text'
-import { logo2Branca } from '@/assets'
-import { CircularProgress } from '@mui/material'
-import { Button } from '../Button'
-import jsonWebTokenService from 'jsonwebtoken'
-import FazendaDTO from '@/utils/FazendaDTO'
-import RebanhoDTO from '@/utils/RebanhoDTO'
-import { useQuery } from 'react-query'
-import { getFazendaCriador } from '@/actions/fazendaApi'
-import { useForm } from 'react-hook-form'
-import { useContext, useEffect, useState } from 'react'
-import { RebanhoAPI, getRebanhoBySerie } from '@/actions/RebanhApi'
-import { AlertContext } from '@/context/AlertContextProvider'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { getCriadorByUserId } from '@/actions/criadorApi'
+import React from 'react';
+import { Container, Select, InputText } from './style';
+import Image from 'next/image';
+import { Text } from '../../Text';
+import { logo2Branca } from '@/assets';
+import { CircularProgress } from '@mui/material';
+import { Button } from '../../Button';
+import jsonWebTokenService from 'jsonwebtoken';
+import FazendaDTO from '@/utils/FazendaDTO';
+import RebanhoDTO from '@/utils/RebanhoDTO';
+import { useQuery } from 'react-query';
+import { getFazendaCriador } from '@/actions/fazendaApi';
+import { useForm } from 'react-hook-form';
+import { useContext, useEffect, useState } from 'react';
+import { RebanhoAPI, getRebanhoBySerie } from '@/actions/RebanhApi';
+import { AlertContext } from '@/context/AlertContextProvider';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { getCriadorByUserId } from '@/actions/criadorApi';
 
 export function CadastrarRebanho(props: { token: string }) {
-  const [loading, setLoading] = useState(false)
-  const decodedJwt = jsonWebTokenService.decode(props?.token)
+  const [loading, setLoading] = useState(false);
+  const decodedJwt = jsonWebTokenService.decode(props?.token);
 
   const { data: criador, isLoading: isLoadingCriador } = useQuery(
     'criadores',
     async () => getCriadorByUserId(decodedJwt?.sub, props.token),
-  )
+  );
 
   const { isLoading: isLoadingFazendas, data: fazendas } = useQuery(
     'fazendas',
     async () => getFazendaCriador(props.token, criador.id),
     { enabled: criador !== undefined },
-  )
+  );
 
   const schema = z.object({
     serie:
       criador?.rebanhos.length === 0
         ? z
-            .string()
-            .min(3, 'Rebanho deve ter no mínimo 3 caracteres')
-            .max(3, 'Rebanho deve ter no máximo 3 caracteres')
+          .string()
+          .min(3, 'Rebanho deve ter no mínimo 3 caracteres')
+          .max(3, 'Rebanho deve ter no máximo 3 caracteres')
         : z
-            .string()
-            .min(1, 'Rebanho deve ter no mínimo 1 caracter')
-            .max(1, 'Rebanho deve ter no máximo 1 caracter'),
+          .string()
+          .min(1, 'Rebanho deve ter no mínimo 1 caracter')
+          .max(1, 'Rebanho deve ter no máximo 1 caracter'),
     fazendaId: z.string().nonempty('Selecione uma fazenda'),
-  })
+  });
   const {
     register,
     handleSubmit,
@@ -53,24 +54,23 @@ export function CadastrarRebanho(props: { token: string }) {
     criteriaMode: 'all',
     mode: 'all',
     resolver: zodResolver(schema),
-  })
-  const { alert } = useContext(AlertContext)
+  });
+  const { alert } = useContext(AlertContext);
 
   async function cadastrarRebanho(data) {
-    const rebanho: RebanhoDTO = data
-    setLoading(true)
+    const rebanho: RebanhoDTO = data;
+    setLoading(true);
 
     const serieUsada = await getRebanhoBySerie(
       criador.rebanhos.length !== 0
         ? `${criador.rebanhos[0].serie}${rebanho.serie}`
         : rebanho.serie,
       props.token,
-    )
-    console.log(serieUsada)
+    );
 
     if (serieUsada.status !== 404) {
-      setLoading(false)
-      return alert('Serie alfabetica já foi utilizada')
+      setLoading(false);
+      return alert('Serie alfabetica já foi utilizada');
     }
 
     const responseRebanho = await RebanhoAPI({
@@ -78,18 +78,18 @@ export function CadastrarRebanho(props: { token: string }) {
       serie:
         criador.rebanhos.length !== 0
           ? `${criador.rebanhos[0].serie}${rebanho.serie}`
-          : rebanho.serie,
+          : rebanho.serie.toUpperCase(),
       criadorId: criador.id,
-    })
+    });
 
     if (responseRebanho.serie) {
       if (criador.rebanhos.length === 0) {
-        window.location.assign(`/CadastrarRebanho/${props.token}`)
+        window.location.assign(`/CadastrarRebanho/${props.token}`);
       }
-      setLoading(false)
-      return alert('Rebanho cadastrado com sucesso!', 'success')
+      setLoading(false);
+      return alert('Rebanho cadastrado com sucesso!', 'success');
     }
-    setLoading(false)
+    setLoading(false);
   }
 
   if (isLoadingFazendas || isLoadingCriador) {
@@ -105,7 +105,7 @@ export function CadastrarRebanho(props: { token: string }) {
       >
         <CircularProgress />
       </div>
-    )
+    );
   }
   return (
     <Container onSubmit={handleSubmit(cadastrarRebanho)}>
@@ -123,7 +123,7 @@ export function CadastrarRebanho(props: { token: string }) {
           colorButton="black"
           textButton="← "
           onClick={() => {
-            window.location.assign(`/CriadorPage/${props.token}`)
+            window.location.assign(`/CriadorPage/${props.token}`);
           }}
           type="button"
         />
@@ -162,7 +162,7 @@ export function CadastrarRebanho(props: { token: string }) {
             <option value={data.id} key={data.nomeFazenda}>
               {data.nomeFazenda}
             </option>
-          )
+          );
         })}
       </Select>
 
@@ -218,16 +218,16 @@ export function CadastrarRebanho(props: { token: string }) {
             textColor="white"
             type="submit"
             onClick={() => {
-              console.log()
+              console.log();
 
               for (const componente in errors) {
-                const mensagem = errors[componente]
-                alert(mensagem?.message)
+                const mensagem = errors[componente];
+                alert(mensagem?.message);
               }
             }}
           />
         )}
       </div>
     </Container>
-  )
+  );
 }

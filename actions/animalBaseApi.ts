@@ -19,6 +19,26 @@ export async function registrarAnimaisBase(
   return res.json()
 }
 
+export async function updateAnimaisPA(
+  data: SolicitacaoRegistroAnimalBaseDTO,
+  token: string,
+  id: string,
+) {
+  const res = await fetch(
+    `http://localhost:3001/animal-base/update-solicitacao-registro-animal-base/${id}`,
+    {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+
+  return res.json()
+}
+
 export async function getRegistrosAnimalBase(token: string) {
   const res = await fetch(
     'http://localhost:3001/animal-base/get-solicitacoes-registros-animais-base',

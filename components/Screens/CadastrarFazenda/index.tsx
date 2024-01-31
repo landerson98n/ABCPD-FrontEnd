@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   ScreenThree,
   RegisterPainel,
@@ -11,30 +12,30 @@ import {
   Input,
   TextBox,
   GrayBackground,
-} from './style'
-import { WhiteBackground } from '../WhiteBackground'
-import { Button } from '../Button'
-import { Text } from '../Text'
-import { CircularProgress } from '@mui/material'
-import * as z from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { CriarFazenda } from '@/actions/fazendaApi'
-import { RebanhoAPI } from '@/actions/RebanhApi'
-import FazendaDTO from '@/utils/FazendaDTO'
-import { useContext, useState } from 'react'
-import { AlertContext } from '@/context/AlertContextProvider'
-import { useQuery } from 'react-query'
-import { getCriadorByUserId } from '@/actions/criadorApi'
-import jsonWebTokenService from 'jsonwebtoken'
+} from './style';
+import { WhiteBackground } from '../../WhiteBackground';
+import { Button } from '../../Button';
+import { Text } from '../../Text';
+import { CircularProgress } from '@mui/material';
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CriarFazenda } from '@/actions/fazendaApi';
+import { RebanhoAPI } from '@/actions/RebanhApi';
+import FazendaDTO from '@/utils/FazendaDTO';
+import { useContext, useState } from 'react';
+import { AlertContext } from '@/context/AlertContextProvider';
+import { useQuery } from 'react-query';
+import { getCriadorByUserId } from '@/actions/criadorApi';
+import jsonWebTokenService from 'jsonwebtoken';
 
 export function CadastrarFazenda(props: { token: string }) {
-  const decodedJwt = jsonWebTokenService.decode(props.token)
+  const decodedJwt = jsonWebTokenService.decode(props.token);
 
   const { data: criador, isLoading: isLoadingCriador } = useQuery(
     'criadores',
     async () => getCriadorByUserId(decodedJwt?.sub, props.token),
-  )
+  );
 
   const schema = z.object({
     nomeFazenda: z.string().min(1, 'Nome fazenda é um campo obrigatório'),
@@ -54,10 +55,10 @@ export function CadastrarFazenda(props: { token: string }) {
     macho2436Fazenda: z.number(),
     macho36Fazenda: z.number(),
     macho412Fazenda: z.number(),
-  })
+  });
 
-  const { alert } = useContext(AlertContext)
-  const [loading, setLoading] = useState(false)
+  const { alert } = useContext(AlertContext);
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -67,17 +68,17 @@ export function CadastrarFazenda(props: { token: string }) {
     criteriaMode: 'all',
     mode: 'all',
     resolver: zodResolver(schema),
-  })
+  });
 
   const handle3 = (data) => {
     if (data) {
-      Enviar(data)
+      Enviar(data);
     } else {
-      alert('Formulário inválido')
+      alert('Formulário inválido');
     }
-  }
+  };
   const Enviar = async (fazenda: FazendaDTO) => {
-    setLoading(true)
+    setLoading(true);
 
     const FazendaData = {
       criadorFazenda: criador?.id,
@@ -100,19 +101,19 @@ export function CadastrarFazenda(props: { token: string }) {
       outrasEspecies: fazenda.outrasEspecies,
       telefoneFazenda: fazenda.telefoneFazenda,
       fazendaCadastrada: false,
-    }
-    const responseFazenda = await CriarFazenda(FazendaData)
+    };
+    const responseFazenda = await CriarFazenda(FazendaData);
 
     if (responseFazenda.id) {
-      setLoading(false)
+      setLoading(false);
       Object.keys(fazenda).forEach((fieldName) => {
-        setValue(fieldName, '')
-      })
-      return alert('Fazenda criada com sucesso', 'success')
+        setValue(fieldName, '');
+      });
+      return alert('Fazenda criada com sucesso', 'success');
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
   return (
     <ScreenThree onSubmit={handleSubmit(handle3)}>
       <RegisterPainel>
@@ -120,7 +121,7 @@ export function CadastrarFazenda(props: { token: string }) {
           <Content>
             <Button
               onClick={() => {
-                window.location.assign(`/CriadorPage/${props.token}`)
+                window.location.assign(`/CriadorPage/${props.token}`);
               }}
               widthButton="10%"
               heightButton="3vw"
@@ -459,8 +460,8 @@ export function CadastrarFazenda(props: { token: string }) {
             <Button
               onClick={() => {
                 for (const componente in errors) {
-                  const mensagem = errors[componente]
-                  alert(mensagem?.message)
+                  const mensagem = errors[componente];
+                  alert(mensagem?.message);
                 }
               }}
               widthButton="80%"
@@ -472,5 +473,5 @@ export function CadastrarFazenda(props: { token: string }) {
         </GrayBackground>
       </ButtonPanel>
     </ScreenThree>
-  )
+  );
 }

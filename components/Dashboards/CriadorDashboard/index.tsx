@@ -42,11 +42,11 @@ import {
 } from './style'
 import { format } from 'date-fns'
 import Image from 'next/legacy/image'
-import { Button } from '../Button'
-import { Text } from '../Text'
+import { Button } from '../../Button'
+import { Text } from '../../Text'
 import { useContext, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { SelectBox } from '../SelectBox'
+import { SelectBox } from '../../SelectBox'
 import * as z from 'zod'
 import AnimalDTO from '@/utils/AnimalDTO'
 import TecnicoDTO from '@/utils/TecnicoDTO'
@@ -62,7 +62,7 @@ import { SolicitacaoRegistroAnimalBaseDTO } from '@/utils/SolicitacaoDTO'
 import { registrarAnimaisBase } from '@/actions/animalBaseApi'
 import { getCriadorByUserId, getCriadorTransferencia } from '@/actions/criadorApi'
 import ComunicacaoCoberturaDto from '@/utils/CoberturaDTO'
-import { ArvoreGenealogica } from '../ArvoreGenealogica'
+import { ArvoreGenealogica } from '../../ArvoreGenealogica'
 import { Tree } from 'react-organizational-chart'
 import { ComunicacaoNascimentoDto } from '@/utils/ComunicacaoNascimentoDTO'
 import { criarComunicacaoNacimento } from '@/actions/comunicacaoNascimento'
@@ -71,7 +71,7 @@ import { getRebanhoByFazendaId } from '@/actions/RebanhApi'
 import { getFazendaCriador } from '@/actions/fazendaApi'
 import { getTecnicoEmail, getTecnicos } from '@/actions/tecnicoApi'
 import { getAnimaisCriador } from '@/actions/animaisApi'
-import { DetalhesAnimal } from '../DetalhesAnimal'
+import { DetalhesAnimal } from '../../Screens/DetalhesAnimal'
 import CriadorDTO from '@/utils/CriadorDTO'
 import { sendEmail } from '@/actions/emailApi'
 import { getUserById } from '@/actions/user'
@@ -353,6 +353,9 @@ export function CriadorDashboard(data: { token: string }) {
   }
 
   async function handleSubmitNascimento(e) {
+    if(coberturaSelecionada.statusCobertura === 'Em análise'){
+      return alert("Cobertura ainda não foi aprovada")
+    }
     if (animaisSelecionadosMatriz.length > 1) {
       return alert('Selecione somente um animal matriz')
     }
@@ -450,7 +453,6 @@ export function CriadorDashboard(data: { token: string }) {
       Object.keys(dataSolicitacao).forEach((fieldName) => {
         setValueAnimalBase(fieldName, '')
       })
-      console.log(tecnicoUser);
       
       alert('Solicitação criada com sucesso', 'success')
       await sendEmail({to:`${tecnicoUser.user.email}`, subject:"Nova solicitação de registro de animais puros por adjudicação foi criada"}, data.token)
@@ -483,9 +485,7 @@ export function CriadorDashboard(data: { token: string }) {
 
   function paginate({ items, currentPage }: PaginationOptions) {
     const itemsPerPage = 4
-    if (!Array.isArray(items) || itemsPerPage <= 0 || currentPage <= 0) {
-      throw new Error('Invalid input parameters')
-    }
+ 
     const startIndex = (currentPage - 1) * itemsPerPage
     let endIndex = startIndex + itemsPerPage
 
@@ -527,6 +527,7 @@ export function CriadorDashboard(data: { token: string }) {
 
   return (
     <Container>
+
       <Menu
         initial={{ width: '20%' }}
         animate={{ width: menu ? '20%' : '5%' }}
@@ -575,19 +576,19 @@ export function CriadorDashboard(data: { token: string }) {
             }}
           >
             <div style={{ width: '4vw' }}>
-              <Image
+              {/* <Image
                 src={logo2Branca}
                 alt="Logo"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-              />
+              /> */}
             </div>
 
             <div style={{ width: '10vw' }}>
-              <Image
+              {/* <Image
                 src={logoBranca}
                 alt="Logo"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-              />
+              /> */}
             </div>
           </div>
 
@@ -707,7 +708,7 @@ export function CriadorDashboard(data: { token: string }) {
                   }))
                 }}
                 colorButton={animalBasePage ? 'black' : 'white'}
-                textButton="Registrar PA"
+                textButton="Registrar POA"
               />
               <Button
                 marginRightImage="0.6vw"
@@ -805,6 +806,7 @@ export function CriadorDashboard(data: { token: string }) {
       </Menu>
 
       <Content>
+        
         <Header>
           <DropdownMenu
             initial={{ opacity: 0 }}
@@ -1235,7 +1237,7 @@ export function CriadorDashboard(data: { token: string }) {
             />
           </div>
           <Text
-            text="Solicitação de Registro de PA | ABCPD"
+            text="Solicitação de Registro de POA | ABCPD"
             fontFamily="pop"
             fontWeight="700"
             size="2vw"
@@ -1437,6 +1439,9 @@ export function CriadorDashboard(data: { token: string }) {
                       </option>
                       <option>Monta Natural</option>
                       <option>Inseminação Artificial</option>
+                      <option>Transferência de Embrião</option>
+                      <option>Fertilização in vitro</option>
+                      <option>Transferência Nuclear</option>
                     </Select>
                   ) : (
                     <InputText {...registerCobertura(fieldName)} />
@@ -1766,7 +1771,6 @@ export function CriadorDashboard(data: { token: string }) {
           </div>
         </ComunicNascimento>
 
-
         <ComunicCobertura
           initial={{ opacity: 0 }}
           animate={{
@@ -1911,7 +1915,6 @@ export function CriadorDashboard(data: { token: string }) {
             />
           </div>
         </ComunicCobertura>
-
 
         <VerComunicNascimento
           initial={{ opacity: 0 }}

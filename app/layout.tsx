@@ -24,7 +24,7 @@ export default function RootLayout({
           <StyledComponentsRegistry>
             <html lang="pt-br">
               <head>
-                <title>ABCPD</title>
+                <title>Registro</title>
               </head>
               <body style={{ margin: 0, overflowX: 'hidden' }}>{children}</body>
             </html>
