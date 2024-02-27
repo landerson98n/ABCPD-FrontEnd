@@ -4,4 +4,4 @@ type RebanhoDTO = {
   serie: string
 }
 
-export default RebanhoDTO
+export default RebanhoDTO;

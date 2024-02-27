@@ -1,8 +1,8 @@
-import { Input } from './style'
-import { Poppins } from 'next/font/google'
-import React, { InputHTMLAttributes } from 'react'
+"use client";
+import {Input} from "./style";
+import {Poppins} from "next/font/google";
+import React, {InputHTMLAttributes} from "react";
 
-const poppins = Poppins({ weight: ['300'], subsets: ['latin'] })
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string
@@ -17,36 +17,37 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   fontSize?: string
 }
 
-export function InputText(props: InputProps) {
-  const {
-    fontSize,
-    height,
-    placeholder,
-    type,
-    width,
-    border,
-    borderColor,
-    borderTop,
-    borderLeft,
-    borderRight,
-    ...rest
-  } = props
-  return (
-    <Input
-      {...rest}
-      style={{
+export function InputText (props: InputProps) {
+
+    const {
         fontSize,
         height,
+        placeholder,
+        type,
         width,
         border,
-        borderColor: `${borderColor ?? '#9E4B00'}`,
+        borderColor,
         borderTop,
         borderLeft,
         borderRight,
-      }}
-      type={type}
-      placeholder={placeholder}
-      className={poppins.className}
-    ></Input>
-  )
+        ...rest
+    } = props;
+    return (
+        <Input
+            {...rest}
+            style={{
+                fontSize,
+                height,
+                width,
+                border,
+                "borderColor": `${borderColor ?? "#9E4B00"}`,
+                borderTop,
+                borderLeft,
+                borderRight
+            }}
+            type={type}
+            placeholder={placeholder}
+        ></Input>
+    );
+
 }

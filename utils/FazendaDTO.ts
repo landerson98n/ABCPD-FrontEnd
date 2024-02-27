@@ -51,4 +51,4 @@ type FazendaDTO = {
   telefoneFazenda: string
 }
 
-export default FazendaDTO
+export default FazendaDTO;

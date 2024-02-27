@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 80%;
@@ -14,4 +14,4 @@ export const Container = styled.div`
   padding-left: 5vw;
   padding-right: 5vw;
   padding-bottom: 7vw;
-`
+`;

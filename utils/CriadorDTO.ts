@@ -11,4 +11,4 @@ type CriadorDTO = {
   numeroCasa: string
 }
 
-export default CriadorDTO
+export default CriadorDTO;

@@ -16,4 +16,4 @@ type PaymentDTO = {
   billingType?: string
 }
 
-export default PaymentDTO
+export default PaymentDTO;

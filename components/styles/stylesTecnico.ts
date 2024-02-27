@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import {motion} from "framer-motion";
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
@@ -39,7 +39,6 @@ export const SelectBox = styled.select`
   padding-left: 1vw;
   overflow-y: scroll;
 `;
-
 
 
 export const Header = styled.div`

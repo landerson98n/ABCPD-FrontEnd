@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const InputPlace = styled.div`
   width: 90%;
-`
+`;
 
 export const Container = styled.div`
   @media print {
     display: none;
   }
-`
+`;
 
 export const InputText = styled.input`
   width: 100%;
@@ -21,11 +21,11 @@ export const InputText = styled.input`
   padding-left: 1vw;
   outline: none;
   display: flex;
-`
+`;
 
 export const InputPair = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-`
+`;

@@ -24,4 +24,4 @@ type UserDTO = {
   ultimaConexao: string
 }
 
-export default UserDTO
+export default UserDTO;

@@ -20,4 +20,4 @@ type ComunicacaoCoberturaDto = {
   dataCobertura: string
 }
 
-export default ComunicacaoCoberturaDto
+export default ComunicacaoCoberturaDto;

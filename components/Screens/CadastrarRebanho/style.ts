@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import styled from 'styled-components'
+import {motion} from "framer-motion";
+import styled from "styled-components";
 
 export const Container = styled(motion.form)`
   width: 100%;
@@ -14,7 +14,7 @@ export const Container = styled(motion.form)`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-`
+`;
 
 export const Select = styled.select`
   width: 100%;
@@ -25,7 +25,7 @@ export const Select = styled.select`
   font-size: 1.7vw;
   padding-left: 1vw;
   overflow-y: scroll;
-`
+`;
 
 export const InputText = styled.input`
   width: 100%;
@@ -36,4 +36,4 @@ export const InputText = styled.input`
   padding-left: 1vw;
   outline: none;
   display: flex;
-`
+`;

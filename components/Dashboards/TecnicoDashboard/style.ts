@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import {motion} from "framer-motion";
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
@@ -86,10 +86,6 @@ export const Screen = styled(motion.div)`
   background-color: white;
   margin-top: 2vw;
 `;
-
-
-
-
 
 
 export const VerComunicNascimento = styled(motion.div)`

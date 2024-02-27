@@ -1,9 +1,11 @@
-'use client'
+/* eslint-disable no-empty-pattern */
+"use client";
 
-import { Certificado } from '@/components/Certificado'
-import InitialPage from '@/components/Screens/InitialPage'
-import { VerificarCertificado } from '@/components/Screens/VerificarCertificado'
+import InitialPage from "@/components/Screens/InitialPage";
 
-export default function Home() {
-  return <InitialPage />
+export default function Home () {
+
+    return <InitialPage />;
+
 }
+

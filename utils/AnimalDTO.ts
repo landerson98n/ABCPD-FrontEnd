@@ -1,4 +1,9 @@
 type AnimalDTO = {
+  maeAnimal: any
+  paiAnimal: any
+  statusCode: number
+  criador: any
+  fazendaAnimal: any
   id: string
   criadorAnimal: string
   fazenda: string
@@ -35,4 +40,4 @@ type AnimalDTO = {
   flag: number
 }
 
-export default AnimalDTO
+export default AnimalDTO;

@@ -16,4 +16,4 @@ type TecnicoDTO = {
   id: string
 }
 
-export default TecnicoDTO
+export default TecnicoDTO;

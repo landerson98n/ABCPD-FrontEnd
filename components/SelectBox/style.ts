@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Select = styled.select`
   width: 100%;
@@ -11,4 +11,4 @@ export const Select = styled.select`
   font-size: 1.7vw;
   padding-left: 1vw;
   overflow-y: scroll;
-`
+`;

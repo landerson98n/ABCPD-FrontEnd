@@ -1,10 +1,12 @@
-'use client'
-import { SuperintendenteDashboard } from '@/components'
+"use client";
+import {SuperintendenteDashboard} from "@/components";
 
-export default function SuperintendentePage({
-  params,
+export default function SuperintendentePage ({
+    params
 }: {
   params: { token: string }
 }) {
-  return <SuperintendenteDashboard token={params.token} />
+
+    return <SuperintendenteDashboard token={params.token} />;
+
 }

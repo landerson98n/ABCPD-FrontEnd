@@ -1,61 +1,63 @@
-import AnimalDTO from '@/utils/AnimalDTO'
-import { Tree, TreeNode } from 'react-organizational-chart'
-import { Text } from '../Text'
+import AnimalDTO from "@/utils/AnimalDTO";
+import {Tree, TreeNode} from "react-organizational-chart";
+import {Text} from "../Text";
 interface ArvoreGenealogica {
   animais: AnimalDTO[]
   animalSelecionado: AnimalDTO
 }
 
-export function ArvoreGenealogica(props: ArvoreGenealogica) {
-  const { animais, animalSelecionado } = props
+export function ArvoreGenealogica (props: ArvoreGenealogica) {
 
-  const pai: AnimalDTO | undefined =
-    animais?.find((index: AnimalDTO) => {
-      return index.id === animalSelecionado.pai
-    }) || undefined
+    const {animais, animalSelecionado} = props;
 
-  const mae: AnimalDTO | undefined =
-    animais?.find((index: AnimalDTO) => {
-      return index.id === animalSelecionado.mae
-    }) || undefined
+    const pai: AnimalDTO | undefined =
+    animais?.find((index: AnimalDTO) => index.id === animalSelecionado.pai) || undefined;
 
-  return (
-    <>
-      {pai ? (
-        <TreeNode
-          label={
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Text
-                text={pai.nomeAnimal}
-                fontFamily="rob"
-                fontWeight="600"
-                size="1.6vw"
-                color="black"
-              />
-            </div>
-          }
-        >
-          {ArvoreGenealogica({ animais, animalSelecionado: pai })}
-        </TreeNode>
-      ) : null}
+    const mae: AnimalDTO | undefined =
+    animais?.find((index: AnimalDTO) => index.id === animalSelecionado.mae) || undefined;
 
-      {mae ? (
-        <TreeNode
-          label={
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Text
-                text={mae.nomeAnimal}
-                fontFamily="rob"
-                fontWeight="600"
-                size="1.6vw"
-                color="black"
-              />
-            </div>
-          }
-        >
-          {ArvoreGenealogica({ animais, animalSelecionado: mae })}
-        </TreeNode>
-      ) : null}
-    </>
-  )
+    return (
+        <>
+            {pai
+                ? <TreeNode
+                    label={
+                        <div style={{"display": "flex",
+                            "justifyContent": "center"}}>
+                            <Text
+                                text={pai.nomeAnimal}
+                                fontFamily="rob"
+                                fontWeight="600"
+                                size="1.6vw"
+                                color="black"
+                            />
+                        </div>
+                    }
+                >
+                    {ArvoreGenealogica({animais,
+                        "animalSelecionado": pai})}
+                </TreeNode>
+                : null}
+
+            {mae
+                ? <TreeNode
+                    label={
+                        <div style={{"display": "flex",
+                            "justifyContent": "center"}}>
+                            <Text
+                                text={mae.nomeAnimal}
+                                fontFamily="rob"
+                                fontWeight="600"
+                                size="1.6vw"
+                                color="black"
+                            />
+                        </div>
+                    }
+                >
+                    {ArvoreGenealogica({animais,
+                        "animalSelecionado": mae})}
+                </TreeNode>
+                : null}
+        </>
+    );
+
 }

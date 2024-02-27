@@ -1,37 +1,50 @@
-'use client'
-import React, { useState } from 'react'
-import { AlertComponent } from '@/components/Alert'
+"use client";
+import React, {useState} from "react";
+import {AlertComponent} from "@/components/Alert";
 export type AlertContentProps = {
   alert: Function
 }
 
 export const AlertContext = React.createContext<AlertContentProps>({
-  alert: () => {},
-})
+    "alert": () => {}
+});
 
 export type ProviderProps = {
   children?: React.ReactNode
 }
-export const AlertContextProvider: React.FC<ProviderProps> = ({ children }) => {
-  const [alertMessage, setAlertMessage] = useState<string>('')
-  const [alertIsOpen, setAlertIsOpen] = useState<boolean>(false)
-  const [alertType, setAlertType] = useState<string>('warning')
+export const AlertContextProvider: React.FC<ProviderProps> = ({children}) => {
 
-  function alert(message: string, type?: string) {
-    setAlertMessage(message)
-    setAlertIsOpen(true)
-    setAlertType(type || 'warning')
-  }
+    const [
+        alertMessage,
+        setAlertMessage
+    ] = useState<string>("");
+    const [
+        alertIsOpen,
+        setAlertIsOpen
+    ] = useState<boolean>(false);
+    const [
+        alertType,
+        setAlertType
+    ] = useState<string>("warning");
 
-  return (
-    <AlertContext.Provider value={{ alert }}>
-      {children}
-      <AlertComponent
-        isOpen={alertIsOpen}
-        message={alertMessage}
-        onClose={() => setAlertIsOpen(false)}
-        type={alertType}
-      />
-    </AlertContext.Provider>
-  )
-}
+    function alert (message: string, type?: string) {
+
+        setAlertMessage(message);
+        setAlertIsOpen(true);
+        setAlertType(type || "warning");
+
+    }
+
+    return (
+        <AlertContext.Provider value={{alert}}>
+            {children}
+            <AlertComponent
+                isOpen={alertIsOpen}
+                message={alertMessage}
+                onClose={() => setAlertIsOpen(false)}
+                type={alertType}
+            />
+        </AlertContext.Provider>
+    );
+
+};

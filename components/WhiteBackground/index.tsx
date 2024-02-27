@@ -1,4 +1,5 @@
-import { Container } from './style'
+/* eslint-disable no-undef */
+import {Container} from "./style";
 
 interface WhiteBackgroundProps {
   height: string
@@ -9,12 +10,18 @@ interface WhiteBackgroundProps {
   alignItems?: string
 }
 
-export function WhiteBackground(contenProps: WhiteBackgroundProps) {
-  const { height, width, children, boxShadow, padding, alignItems } =
-    contenProps
-  return (
-    <Container style={{ height, width, boxShadow, padding, alignItems }}>
-      {children}
-    </Container>
-  )
+export function WhiteBackground (contenProps: WhiteBackgroundProps) {
+
+    const {height, width, children, boxShadow, padding, alignItems} =
+    contenProps;
+    return (
+        <Container style={{height,
+            width,
+            boxShadow,
+            padding,
+            alignItems}}>
+            {children}
+        </Container>
+    );
+
 }
