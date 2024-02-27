@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 23vw;
@@ -11,7 +11,7 @@ export const Container = styled.div`
   margin-left: 60vw;
   border-radius: 0.8vw;
   padding: 3vw;
-`
+`;
 export const InputText = styled.input`
   width: 100%;
   height: 4vw;
@@ -21,4 +21,4 @@ export const InputText = styled.input`
   padding-left: 1vw;
   outline: none;
   display: flex;
-`
+`;

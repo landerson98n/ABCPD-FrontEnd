@@ -8,7 +8,6 @@ import {AnimalContextProvider} from "@/context/AnimalContextProvider";
 const queryClient = new QueryClient();
 
 
-
 export default function RootLayout ({
     children
 }: {
@@ -24,7 +23,7 @@ export default function RootLayout ({
                             <head>
                                 <title>Registro</title>
                             </head>
-                            <body  style={{"margin": 0,
+                            <body style={{"margin": 0,
                                 "overflowX": "hidden"}}>{children}</body>
                         </html>
                     </StyledComponentsRegistry>
