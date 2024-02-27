@@ -3,7 +3,7 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}`;
 export async function LoginAPI (data: { email: string; senha: string }) {
 
     const res = await fetch(
-        "http://localhost:3001/auth/login",
+        "https://abcpd-backend.onrender.com/auth/login",
         {
             "method": "POST",
             "body": JSON.stringify(data),

@@ -1,125 +1,25 @@
 "use client";
 
-import React, {useContext} from "react";
+import React from "react";
 import Image from "next/image";
 import {vaca, gado, touros, logo2Branca, logoBranca, social, logo2, logo} from "@/assets";
 import {Text} from "../../Text";
-import {Container, About, GreenBackground, AboutSecond, Login} from "./style";
+import {Container, About, GreenBackground, AboutSecond} from "./style";
 import {Header} from "../../Header/Header";
 import {Button} from "../../Button";
-import {AlertContext} from "@/context/AlertContextProvider";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {LoginAPI} from "@/actions/loginApi";
-import {CircularProgress} from "@mui/material";
-import {InputText} from "@/components/InputText";
-import * as z from "zod";
+import dynamic from "next/dynamic";
+
+
+const LoginComponent = dynamic(
+    () => import("../Login"),
+    {
+        "ssr": false
+    }
+);
 
 export default function InitialPage () {
 
-    // Const router = useRouter();
 
-    const initialValues = {
-        "email": "",
-        "senha": ""
-    };
-
-    const [
-        formValues,
-        setFormValues
-    ] = React.useState(initialValues);
-    const [
-        loading,
-        setLoading
-    ] = React.useState(false);
-    const {alert} = useContext(AlertContext);
-    const handleInputChange = (e: any) => {
-
-        const {name, value} = e.target;
-        setFormValues({...formValues,
-            [name]: value});
-
-    };
-
-    const schema = z.object({
-        "email": z.
-            string({
-                "errorMap": () => ({
-                    "message": "Email inválido"
-                })
-            }).
-            email().
-            nonempty("Email não preenchido"),
-        "senha": z.string().nonempty("Senha não preenchida")
-    });
-
-    const {
-        register,
-        handleSubmit,
-        "formState": {errors}
-    } = useForm({
-        "criteriaMode": "all",
-        "mode": "all",
-        "resolver": zodResolver(schema)
-    });
-
-    const Enviar = async (dataForm: any) => {
-
-        setLoading(true);
-        setFormValues({...formValues,
-            ...dataForm});
-        const data = {
-            "email": formValues.email,
-            "senha": formValues.senha
-        };
-
-        try {
-
-            const response = await LoginAPI(data);
-            if (response.statusCode === 401) {
-
-                setLoading(false);
-                return alert("Senha ou login incorretos");
-
-            }
-
-            const token = response.acessToken;
-            const {pessoa} = response;
-
-
-            if (pessoa === "Criador") {
-
-                if (window !== undefined) {
-
-                    window.location.assign(`/CriadorPage/${token}`);
-
-                }
-
-            }
-
-            if (pessoa === "Tecnico") {
-
-                if (window !== undefined) {
-
-                    window.location.assign(`/TecnicoPage/${token}`);
-
-                }
-
-            }
-
-            if (pessoa === "Superintendente") {
-
-                window.location.assign(`/SuperintendentePage/${token}`);
-
-            }
-
-        } catch (e) {
-
-            alert(e);
-
-        }
-
-    };
     return (
         <Container>
             <Header page="Home" />
@@ -128,105 +28,7 @@ export default function InitialPage () {
                 "height": "50vw"}}>
                 <Image src={gado} alt="Foto de gado" layout="fill" objectFit="cover" />
             </div>
-            <Login><div
-                style={{
-                    "width": "100%",
-                    "display": "flex",
-                    "justifyContent": "center",
-                    "flexDirection": "column",
-                    "alignItems": "center"
-                }}
-            >
-                <div style={{"width": "4vw",
-                    "height": "3vw"}}>
-                    <Image
-                        src={logo}
-                        alt="Logo"
-                        style={{"width": "100%",
-                            "height": "auto",
-                            "objectFit": "cover"}}
-                    />
-                </div>
-
-                <div style={{"width": "12vw",
-                    "height": "6vw"}}>
-                    <Image
-                        src={logo2}
-                        alt="Logo"
-                        style={{"width": "100%",
-                            "height": "auto",
-                            "objectFit": "cover"}}
-                    />
-                </div>
-            </div>
-
-            <form
-                onSubmit={handleSubmit(Enviar)}
-                style={{
-                    "marginTop": "2vw",
-                    "height": "20vw",
-                    "display": "flex",
-                    "alignItems": "center",
-                    "flexDirection": "column",
-                    "justifyContent": "space-between"
-                }}
-            >
-                <InputText
-                    {...register(
-                        "email",
-                        {"required": true}
-                    )}
-                    placeholder="E-mail"
-                    value={formValues.email}
-                    onChange={handleInputChange}
-                    name="email"
-                    type="email"
-                />
-                <InputText
-                    placeholder="Senha"
-                    {...register(
-                        "senha",
-                        {"required": true}
-                    )}
-                    value={formValues.senha}
-                    onChange={handleInputChange}
-                    name="senha"
-                    type="password"
-                />
-                <a
-                    href="#"
-                    style={{
-                        "marginTop": "-2vw",
-                        "fontSize": "1.1vw",
-                        "width": "100%",
-                        "justifyContent": "end",
-                        "display": "flex"
-                    }} >
-          Esqueceu a senha?
-                </a>
-                {loading
-                    ? <CircularProgress />
-                    : <Button
-                        onClick={() => {
-
-                            for (const componente in errors) {
-
-                                const mensagem = errors[componente];
-                                alert(mensagem?.message);
-
-                            }
-
-                        }}
-                        type="submit"
-                        widthButton="20vw"
-                        heightButton="3.3vw"
-                        colorButton="#9E4B00"
-                        textButton="Entrar"
-                    />
-                }
-            </form></Login>
-
-
+            <LoginComponent/>
             <About>
                 <div
                     style={{

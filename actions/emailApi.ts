@@ -4,7 +4,7 @@ export async function sendEmail (
 ) {
 
     const res = await fetch(
-        "http://localhost:3001/user/sendEmail",
+        "https://abcpd-backend.onrender.com/user/sendEmail",
         {
             "method": "POST",
             "body": JSON.stringify(data),

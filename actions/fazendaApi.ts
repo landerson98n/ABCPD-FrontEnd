@@ -1,7 +1,7 @@
 export async function CriarFazenda (data: any) {
 
     const res = await fetch(
-        "http://localhost:3001/fazenda/cadastrar-fazenda",
+        "https://abcpd-backend.onrender.com/fazenda/cadastrar-fazenda",
         {
             "method": "POST",
             "body": JSON.stringify(data),
@@ -16,7 +16,7 @@ export async function CriarFazenda (data: any) {
 export async function getFazendaCriador (token: string, id: string) {
 
     const response = await fetch(
-        `http://localhost:3001/fazenda/get-fazendas-criador/${id}`,
+        `https://abcpd-backend.onrender.com/fazenda/get-fazendas-criador/${id}`,
         {
             "headers": {
                 "Authorization": `Bearer ${token}`
@@ -32,7 +32,7 @@ export async function getFazendaCriador (token: string, id: string) {
 export async function getFazendaById (token: string, id: string) {
 
     const response = await fetch(
-        `http://localhost:3001/fazenda/get-fazenda/${id}`,
+        `https://abcpd-backend.onrender.com/fazenda/get-fazenda/${id}`,
         {
             "headers": {
                 "Authorization": `Bearer ${token}`
@@ -48,7 +48,7 @@ export async function getFazendaById (token: string, id: string) {
 export async function getTodasFazendas (token: string) {
 
     const response = await fetch(
-        "http://localhost:3001/fazenda/get-fazenda",
+        "https://abcpd-backend.onrender.com/fazenda/get-fazenda",
         {
             "headers": {
                 "Authorization": `Bearer ${token}`

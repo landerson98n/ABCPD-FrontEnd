@@ -6,7 +6,7 @@ export async function RebanhoAPI (data: {
 }) {
 
     const res = await fetch(
-        "http://localhost:3001/rebanho/cadastrar-rebanho",
+        "https://abcpd-backend.onrender.com/rebanho/cadastrar-rebanho",
         {
             "method": "POST",
             "body": JSON.stringify(data),
@@ -21,7 +21,7 @@ export async function RebanhoAPI (data: {
 export async function getRebanhoByFazendaId (fazendaId: string, token: string) {
 
     const res = await fetch(
-        `http://localhost:3001/rebanho/rebanho-fazenda-id/${fazendaId}`,
+        `https://abcpd-backend.onrender.com/rebanho/rebanho-fazenda-id/${fazendaId}`,
         {
             "method": "GET",
             "headers": {
@@ -39,7 +39,7 @@ export async function getRebanhoByFazendaId (fazendaId: string, token: string) {
 export async function getRebanhosAll (token: string) {
 
     const res = await fetch(
-        "http://localhost:3001/rebanho/get-rebanhos",
+        "https://abcpd-backend.onrender.com/rebanho/get-rebanhos",
         {
             "method": "GET",
             "headers": {
@@ -57,7 +57,7 @@ export async function getRebanhosAll (token: string) {
 export async function getRebanhoByCriadorId (fazendaId: string) {
 
     const res = await fetch(
-        `http://localhost:3001/rebanho/rebanho-fazenda-id/${fazendaId}`,
+        `https://abcpd-backend.onrender.com/rebanho/rebanho-fazenda-id/${fazendaId}`,
         {
             "method": "GET",
             "headers": {"Content-type": "application/json; charset=UTF-8"}
@@ -73,7 +73,7 @@ export async function getRebanhoBySerie (serie: string, token: string) {
     try {
 
         const res = await fetch(
-            `http://localhost:3001/rebanho/get-rebanho/${serie}`,
+            `https://abcpd-backend.onrender.com/rebanho/get-rebanho/${serie}`,
             {
                 "method": "GET",
                 "headers": {

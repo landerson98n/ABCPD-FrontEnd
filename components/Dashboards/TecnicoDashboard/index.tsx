@@ -159,7 +159,7 @@ export function TecnicoDashboard (data: { token: string }) {
     } = useQuery(
         "criadores",
         async () => fetch(
-            "http://localhost:3001/criador/get-criadores",
+            "https://abcpd-backend.onrender.com/criador/get-criadores",
             {
                 "headers": {
                     "Authorization": `Bearer ${data.token}`

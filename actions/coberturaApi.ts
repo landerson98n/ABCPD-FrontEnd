@@ -4,7 +4,7 @@ import ComunicacaoCoberturaDto from "@/utils/CoberturaDTO";
 export async function ComunicarCobertura (data: { criadorCobertura: string; fazendaCobertura: string; nomeCobertura: string; observacoes: string; statusCobertura: string; tipoCobertura: string; finalizadoCobertura: boolean; pago: boolean; animais: AnimalDTO[]; }, token: string) {
 
     const res = await fetch(
-        "http://localhost:3001/comunicacao-cobertura/cadastrar-cobertura",
+        "https://abcpd-backend.onrender.com/comunicacao-cobertura/cadastrar-cobertura",
         {
             "method": "POST",
             "body": JSON.stringify(data),
@@ -22,7 +22,7 @@ export async function ComunicarCobertura (data: { criadorCobertura: string; faze
 export async function getAllCoberturas (token: string, id: string) {
 
     const res = await fetch(
-        `http://localhost:3001/comunicacao-cobertura/get-coberturas-criador/${id}`,
+        `https://abcpd-backend.onrender.com/comunicacao-cobertura/get-coberturas-criador/${id}`,
         {
             "method": "GET",
             "headers": {
@@ -38,7 +38,7 @@ export async function getAllCoberturas (token: string, id: string) {
 export async function getCoberturas (token: string) {
 
     const res = await fetch(
-        "http://localhost:3001/comunicacao-cobertura/get-coberturas",
+        "https://abcpd-backend.onrender.com/comunicacao-cobertura/get-coberturas",
         {
             "method": "GET",
             "headers": {
@@ -58,7 +58,7 @@ export async function updateComunicCobertura (
 ) {
 
     const res = await fetch(
-        `http://localhost:3001/comunicacao-cobertura/update-cobertura/${id}`,
+        `https://abcpd-backend.onrender.com/comunicacao-cobertura/update-cobertura/${id}`,
         {
             "method": "PUT",
             "body": JSON.stringify(data),

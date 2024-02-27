@@ -1,7 +1,7 @@
 export async function getUserCPFEmail (data: string) {
 
     const response = await fetch(
-        `http://localhost:3001/user/getUserByEmailCpf/${data}`,
+        `https://abcpd-backend.onrender.com/user/getUserByEmailCpf/${data}`,
         {
             "method": "GET"
         }
@@ -13,7 +13,7 @@ export async function getUserCPFEmail (data: string) {
 export async function getUserById (data: string, token: string) {
 
     const response = await fetch(
-        `http://localhost:3001/user/getUserById/${data}`,
+        `https://abcpd-backend.onrender.com/user/getUserById/${data}`,
         {
             "method": "GET",
             "headers": {"Authorization": `Bearer ${token}`}
@@ -28,7 +28,7 @@ export async function getUserById (data: string, token: string) {
 export async function getAllUsers (token: string) {
 
     const response = await fetch(
-        "http://localhost:3001/user/getUsers/",
+        "https://abcpd-backend.onrender.com/user/getUsers/",
         {
             "method": "GET",
             "headers": {"Authorization": `Bearer ${token}`}
