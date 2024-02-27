@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-"use client";
 import StyledComponentsRegistry from "./registry";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {AlertContextProvider} from "@/context/AlertContextProvider";
