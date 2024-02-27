@@ -1,18 +1,20 @@
-"use client";
-import React, {useState} from "react";
+"use strict";
+import React, {useState, ReactNode, createContext, FunctionComponent} from "react";
 import {AlertComponent} from "@/components/Alert";
-export type AlertContentProps = {
-  alert: Function
-}
 
-export const AlertContext = React.createContext<AlertContentProps>({
+export type AlertContentProps = {
+    alert: Function;
+};
+
+export const AlertContext = createContext<AlertContentProps>({
     "alert": () => {}
 });
 
 export type ProviderProps = {
-  children?: React.ReactNode
-}
-export const AlertContextProvider: React.FC<ProviderProps> = ({children}) => {
+    children?: ReactNode;
+};
+
+export const AlertContextProvider: FunctionComponent<ProviderProps> = ({children}) => {
 
     const [
         alertMessage,

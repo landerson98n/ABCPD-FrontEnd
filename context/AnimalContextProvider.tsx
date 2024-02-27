@@ -1,27 +1,26 @@
 /* eslint-disable no-empty-function */
-"use client";
+"use strict";
 import AnimalDTO from "@/utils/AnimalDTO";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, FunctionComponent} from "react";
 
 export type AnimalContentProps = {
-  animal: Function
-}
+  animal: (data?: AnimalDTO) => void;
+};
 
 export const AnimalContext = React.createContext<AnimalContentProps>({
     "animal": () => {}
 });
 
 export type ProviderProps = {
-  children?: React.ReactNode
-}
-export const AnimalContextProvider: React.FC<ProviderProps> = ({
-    children
-}) => {
+  children?: React.ReactNode;
+};
+export const AnimalContextProvider: FunctionComponent<ProviderProps> = ({children}) => {
 
     const [
         animalData,
         setAnimalData
     ] = useState({});
+
     function animal (data?: AnimalDTO) {
 
         setAnimalData(data || {});
