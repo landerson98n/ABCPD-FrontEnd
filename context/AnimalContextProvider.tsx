@@ -1,5 +1,5 @@
 /* eslint-disable no-empty-function */
-"use strict";
+"use client";
 import AnimalDTO from "@/utils/AnimalDTO";
 import React, {useEffect, useState, FunctionComponent} from "react";
 

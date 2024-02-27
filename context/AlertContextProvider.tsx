@@ -1,4 +1,4 @@
-"use strict";
+"use client";
 import React, {useState, ReactNode, createContext, FunctionComponent} from "react";
 import {AlertComponent} from "@/components/Alert";
 
