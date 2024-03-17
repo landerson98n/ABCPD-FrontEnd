@@ -5,6 +5,7 @@ import styled from "styled-components";
 export const Container = styled.form`
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
 `;
 export const InputPair = styled.div`
   display: flex;

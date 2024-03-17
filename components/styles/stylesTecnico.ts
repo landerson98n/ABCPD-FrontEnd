@@ -103,6 +103,7 @@ export const Content = styled(motion.div)`
   height: 90%;
   background-color: white;
   margin-top: 2vw;
+  overflow-y: scroll;
 `;
 
 export const VerComunicNascimento = styled(motion.div)`

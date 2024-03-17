@@ -10,6 +10,7 @@ export const Container = styled.div`
   @media print {
     display: none;
   }
+  overflow-y: scroll;
 `;
 
 export const InputText = styled.input`

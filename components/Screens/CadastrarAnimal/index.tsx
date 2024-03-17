@@ -42,6 +42,7 @@ export function CadastrarAnimal (props: CadastrarAnimal) {
     } = props;
 
     const {alert} = useContext(AlertContext);
+
     const [
         images,
         setImages
@@ -246,6 +247,7 @@ export function CadastrarAnimal (props: CadastrarAnimal) {
         "membrosPosteriores": "Membros Posteriores",
         "mucosa": "Mucosa"
     };
+
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         const file = event.target.files && event.target.files[0];

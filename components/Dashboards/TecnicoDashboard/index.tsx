@@ -47,6 +47,7 @@ import {AnimaisCriador} from "@/components/Screens/AnimaisCriador";
 import {AnimaisRegistro} from "@/components/Screens/AnimaisSemRegistro";
 import {RegistroAnimal} from "@/components/Screens/RegistroAnimalPA";
 import {ViewComunicNascimento} from "@/components/Screens/ViewComunicNascimento";
+import {ComunicacaoNascimentoDto} from "@/utils/ComunicacaoNascimentoDTO";
 
 export function TecnicoDashboard (data: { token: string }) {
 
@@ -105,15 +106,22 @@ export function TecnicoDashboard (data: { token: string }) {
         criadores,
         setCriadores
     ] = useState([]);
-    const [
-        typeCadastro,
-        setTypeCadastro
-    ] = useState("");
 
     const [
         nascimentos,
         setNascimentos
     ] = useState([]);
+
+    const [
+        typeCadastro,
+        setTypeCadastro
+    ] = useState([]);
+
+    const [
+        nascimentoSelecionado,
+        setNascimentoSelecionado
+    ] = useState({} as ComunicacaoNascimentoDto);
+
     const {solicitacoesAnimaisBase, solicitacoesAnimaisBaseSelecionada} = animalBaseInfo;
     const {animaisCriador, fazendasCriador, rebanhosCriador, criadorId} = criadorInfo;
     const {options, loading} = paginas;
@@ -219,8 +227,9 @@ export function TecnicoDashboard (data: { token: string }) {
 
     };
 
-    const handlePageChange = (property: string) => {
+    const handlePageChange = (property: string, comunicData: ComunicacaoNascimentoDto) => {
 
+        setNascimentoSelecionado(comunicData);
         setPaginas((prevPaginas) => ({
             ...updatedPages,
             [property]: true
@@ -598,6 +607,7 @@ export function TecnicoDashboard (data: { token: string }) {
                                 textButton="Logout"
                             />
                         </DropdownMenu>
+
                         <div style={{"marginRight": "3vw",
                             "display": "flex"}}>
                             <div style={{"width": "4vw"}}>
@@ -719,7 +729,10 @@ export function TecnicoDashboard (data: { token: string }) {
                             token={data.token}
                             onPageChange={handlePageChange}
                             onCriadorChange={handleCriadorChange}
-                            animaisCriador={animaisCriador}/>
+                            animaisCriador={animaisCriador}
+                            criadorId={criadorId}
+                        />
+
                     </Screen>
 
                     {/* Animais Que Precisam de Registro */}
@@ -920,7 +933,7 @@ export function TecnicoDashboard (data: { token: string }) {
                                 : "none"}`
                         }}
                     >
-                        <ViewComunicNascimento/>
+                        <ViewComunicNascimento criadorNascimentoId={criadorId} token={data.token} data={nascimentoSelecionado}/>
                     </Screen>
 
                 </Content>

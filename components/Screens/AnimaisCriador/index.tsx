@@ -16,6 +16,7 @@ import CriadorDTO from "@/utils/CriadorDTO";
 interface CriadoresABCPDDTO {
     animaisCriador: AnimalDTO[]
     token: string
+    criadorId: string
     onPageChange: (page: any) => void;
     onCriadorChange: (property: string, data:any) => void;
     onAnimalChange: (property: string, data:any) => void;
@@ -23,7 +24,7 @@ interface CriadoresABCPDDTO {
 
 export function AnimaisCriador (data: CriadoresABCPDDTO) {
 
-    const {onPageChange, animaisCriador, onCriadorChange, onAnimalChange} = data;
+    const {onPageChange, animaisCriador, onCriadorChange, onAnimalChange, criadorId} = data;
     const [
         loading,
         setLoading
@@ -53,7 +54,6 @@ export function AnimaisCriador (data: CriadoresABCPDDTO) {
                 "rebanhosCriador",
                 rebanho
             );
-            setTypeCadastro("");
             onPageChange("verAnimalPage");
 
         }
@@ -123,7 +123,7 @@ export function AnimaisCriador (data: CriadoresABCPDDTO) {
             >
                 <InputText
                     style={{
-                        "width": "20vw",
+                        "width": "10vw",
                         "fontSize": "1.2vw",
                         "placeholder": "Buscar",
                         "height": "3vw",
