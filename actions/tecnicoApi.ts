@@ -1,7 +1,7 @@
 export async function allTecnicos (token: string) {
 
     const response = await fetch(
-        "https://abcpd-backend.onrender.com/tecnico/get-tecnicos",
+        "https://abcpd-backend-production.up.railway.app/tecnico/get-tecnicos",
         {
             "headers": {
                 "Authorization": `Bearer ${token}`
@@ -17,7 +17,7 @@ export async function allTecnicos (token: string) {
 export async function getTecnicos (token: string) {
 
     const response = await fetch(
-        "https://abcpd-backend.onrender.com/tecnico/get-tecnicos",
+        "https://abcpd-backend-production.up.railway.app/tecnico/get-tecnicos",
         {
             "headers": {
                 "Authorization": `Bearer ${token}`,
@@ -34,7 +34,7 @@ export async function getTecnicos (token: string) {
 export async function getTecnicoEmail (token: string, id: string) {
 
     const response = await fetch(
-        `https://abcpd-backend.onrender.com/tecnico/get-tecnico-email/${id}`,
+        `https://abcpd-backend-production.up.railway.app/tecnico/get-tecnico-email/${id}`,
         {
             "headers": {
                 "Authorization": `Bearer ${token}`,
@@ -51,7 +51,7 @@ export async function getTecnicoEmail (token: string, id: string) {
 export async function cadastrarTecnico (token: string, data: { dateJoined: string; nomePrimeiro: any; nomeUltimo: any; email: any; cpf: any; username: any; senha: string; telefone: any; ultimaConexao: string; cep: any; nomeBairro: any; nomeCidade: any; nomeCompleto: any; nomeEstado: any; nomeRua: any; rg: any; numeroCasa: any; }) {
 
     const response = await fetch(
-        "https://abcpd-backend.onrender.com/tecnico/cadastrar-tecnico",
+        "https://abcpd-backend-production.up.railway.app/tecnico/cadastrar-tecnico",
         {
             "headers": {
                 "Authorization": `Bearer ${token}`,

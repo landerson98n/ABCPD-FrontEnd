@@ -4,7 +4,7 @@ export async function sendEmail (
 ) {
 
     const res = await fetch(
-        "https://abcpd-backend.onrender.com/user/sendEmail",
+        "https://abcpd-backend-production.up.railway.app/user/sendEmail",
         {
             "method": "POST",
             "body": JSON.stringify(data),

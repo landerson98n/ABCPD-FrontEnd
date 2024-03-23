@@ -6,7 +6,7 @@ export async function registrarAnimaisBase (
 ) {
 
     const res = await fetch(
-        "https://abcpd-backend.onrender.com/animal-base/solicitacao-registro-animal-base",
+        "https://abcpd-backend-production.up.railway.app/animal-base/solicitacao-registro-animal-base",
         {
             "method": "POST",
             "body": JSON.stringify(data),
@@ -28,7 +28,7 @@ export async function updateAnimaisPA (
 ) {
 
     const res = await fetch(
-        `https://abcpd-backend.onrender.com/animal-base/update-solicitacao-registro-animal-base/${id}`,
+        `https://abcpd-backend-production.up.railway.app/animal-base/update-solicitacao-registro-animal-base/${id}`,
         {
             "method": "POST",
             "body": JSON.stringify(data),
@@ -46,7 +46,7 @@ export async function updateAnimaisPA (
 export async function getRegistrosAnimalBase (token: string) {
 
     const res = await fetch(
-        "https://abcpd-backend.onrender.com/animal-base/get-solicitacoes-registros-animais-base",
+        "https://abcpd-backend-production.up.railway.app/animal-base/get-solicitacoes-registros-animais-base",
         {
             "method": "GET",
             "headers": {

@@ -5,7 +5,7 @@ import AnimalDTO from "@/utils/AnimalDTO";
 export async function getAnimaisByCriadorId (criadorId: string, token: string) {
 
     const res = await fetch(
-        `https://abcpd-backend.onrender.com/animal/get-animal-criador/${criadorId}`,
+        `https://abcpd-backend-production.up.railway.app/animal/get-animal-criador/${criadorId}`,
         {
             "headers": {
                 "Authorization": `Bearer ${token}`
@@ -21,7 +21,7 @@ export async function getAnimaisByCriadorId (criadorId: string, token: string) {
 export async function getAnimaisCriador (token: string) {
 
     const res = await fetch(
-        "https://abcpd-backend.onrender.com/animal/get-animal-criador",
+        "https://abcpd-backend-production.up.railway.app/animal/get-animal-criador",
         {
             "headers": {
                 "Authorization": `Bearer ${token}`
@@ -39,7 +39,7 @@ export async function CreateAnimal (data: AnimalDTO, token: string) {
     try {
 
         const res = await fetch(
-            "https://abcpd-backend.onrender.com/animal/cadastrar-animal",
+            "https://abcpd-backend-production.up.railway.app/animal/cadastrar-animal",
             {
                 "method": "POST",
                 "body": JSON.stringify(data),
@@ -60,7 +60,7 @@ export async function getTodosAnimais (token: string) {
     try {
 
         const res = await fetch(
-            "https://abcpd-backend.onrender.com/animal/get-animal",
+            "https://abcpd-backend-production.up.railway.app/animal/get-animal",
             {
                 "method": "GET",
                 "headers": {
@@ -79,7 +79,7 @@ export async function updateAnimal (data: AnimalDTO, token: string, id: string) 
     try {
 
         const res = await fetch(
-            `https://abcpd-backend.onrender.com/animal/update-animal/${id}`,
+            `https://abcpd-backend-production.up.railway.app/animal/update-animal/${id}`,
             {
                 "method": "PUT",
                 "body": JSON.stringify(data),
@@ -100,7 +100,7 @@ export async function getAnimalById (id: string) {
     try {
 
         const res = await fetch(
-            `https://abcpd-backend.onrender.com/animal/get-animal/${id}`,
+            `https://abcpd-backend-production.up.railway.app/animal/get-animal/${id}`,
             {
                 "method": "GET",
                 "headers": {

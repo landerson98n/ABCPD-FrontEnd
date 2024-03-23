@@ -1,7 +1,7 @@
 export async function criarComunicacaoNacimento (data: any, token: string) {
 
     const res = await fetch(
-        "https://abcpd-backend.onrender.com/comunicacao-nascimento/cadastrar-nascimento",
+        "https://abcpd-backend-production.up.railway.app/comunicacao-nascimento/cadastrar-nascimento",
         {
             "method": "POST",
             "body": JSON.stringify(data),
@@ -22,7 +22,7 @@ export async function updateComunicacaoNascimento (
 ) {
 
     const res = await fetch(
-        `https://abcpd-backend.onrender.com/comunicacao-nascimento/update-comunicacoes-nascimentos/${id}`,
+        `https://abcpd-backend-production.up.railway.app/comunicacao-nascimento/update-comunicacoes-nascimentos/${id}`,
         {
             "method": "PUT",
             "body": JSON.stringify(data),
@@ -39,7 +39,7 @@ export async function updateComunicacaoNascimento (
 export async function getTodasComunicacoesNascimento (token: string) {
 
     const res = await fetch(
-        "https://abcpd-backend.onrender.com/comunicacao-nascimento/get-comunicacoes-nascimentos",
+        "https://abcpd-backend-production.up.railway.app/comunicacao-nascimento/get-comunicacoes-nascimentos",
         {
             "method": "GET",
             "headers": {
@@ -58,7 +58,7 @@ export async function getComunicacoesNascimentoCriador (
 ) {
 
     const res = await fetch(
-        `https://abcpd-backend.onrender.com/comunicacao-nascimento/get-comunicacoes-nascimentos-criador/${id}`,
+        `https://abcpd-backend-production.up.railway.app/comunicacao-nascimento/get-comunicacoes-nascimentos-criador/${id}`,
         {
             "method": "GET",
             "headers": {

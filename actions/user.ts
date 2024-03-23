@@ -1,7 +1,7 @@
 export async function getUserCPFEmail (data: string) {
 
     const response = await fetch(
-        `https://abcpd-backend.onrender.com/user/getUserByEmailCpf/${data}`,
+        `https://abcpd-backend-production.up.railway.app/user/getUserByEmailCpf/${data}`,
         {
             "method": "GET"
         }
@@ -13,7 +13,7 @@ export async function getUserCPFEmail (data: string) {
 export async function getUserById (data: string, token: string) {
 
     const response = await fetch(
-        `https://abcpd-backend.onrender.com/user/getUserById/${data}`,
+        `https://abcpd-backend-production.up.railway.app/user/getUserById/${data}`,
         {
             "method": "GET",
             "headers": {"Authorization": `Bearer ${token}`}
@@ -28,7 +28,7 @@ export async function getUserById (data: string, token: string) {
 export async function getAllUsers (token: string) {
 
     const response = await fetch(
-        "https://abcpd-backend.onrender.com/user/getUsers/",
+        "https://abcpd-backend-production.up.railway.app/user/getUsers/",
         {
             "method": "GET",
             "headers": {"Authorization": `Bearer ${token}`}

@@ -957,36 +957,6 @@ export function CriadorDashboard (data: { token: string }) {
                                 marginLeftImage={"0.6vw"}
                                 textSize="0.9vw"
                                 textColor={
-                                    comunicObito
-                                        ? "white"
-                                        : "black"
-                                }
-                                widthButton="100%"
-                                widthImage="0.5vw"
-                                src={arrowLeft}
-                                heightButton="3.3vw"
-                                onClick={() => {
-
-                                    setPaginas((prev) => ({
-                                        ...updatedPages,
-                                        "comunicObito": !prev.comunicObito
-                                    }));
-                                    getCoberturas();
-
-                                }}
-                                colorButton={
-                                    comunicObito
-                                        ? "black"
-                                        : "white"
-                                }
-                                textButton="Comunicar Óbito"
-                            />
-
-                            <Button
-                                marginRightImage="0.6vw"
-                                marginLeftImage={"0.6vw"}
-                                textSize="0.9vw"
-                                textColor={
                                     transferirPage
                                         ? "white"
                                         : "black"
@@ -1841,7 +1811,7 @@ export function CriadorDashboard (data: { token: string }) {
                         <Button
                             colorButton="#9E4B00"
                             heightButton="2vw"
-                            textButton="Fazer pagamento"
+                            textButton="Solicitar"
                             widthButton="13vw"
                             textColor="white"
                             type="submit"

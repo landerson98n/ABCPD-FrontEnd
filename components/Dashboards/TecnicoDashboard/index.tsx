@@ -167,7 +167,7 @@ export function TecnicoDashboard (data: { token: string }) {
     } = useQuery(
         "criadores",
         async () => fetch(
-            "https://abcpd-backend.onrender.com/criador/get-criadores",
+            "https://abcpd-backend-production.up.railway.app/criador/get-criadores",
             {
                 "headers": {
                     "Authorization": `Bearer ${data.token}`
