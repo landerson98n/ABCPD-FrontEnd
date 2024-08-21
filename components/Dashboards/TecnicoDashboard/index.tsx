@@ -327,29 +327,7 @@ export function TecnicoDashboard (data: { token: string }) {
                                 "alignItems": "center"
                             }}
                         >
-                            <div style={{"width": "4vw"}}>
-                                {/* <Image
-                  src={logo2Branca}
-                  alt="Logo"
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    objectFit: 'cover',
-                  }}
-                /> */}
-                            </div>
-
-                            <div style={{"width": "10vw"}}>
-                                {/* <Image
-                  src={logoBranca}
-                  alt="Logo"
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    objectFit: 'cover',
-                  }}
-                /> */}
-                            </div>
+                    
                         </div>
 
                         <div
