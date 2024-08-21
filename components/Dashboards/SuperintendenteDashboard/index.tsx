@@ -3107,16 +3107,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 >
                     {comunicCoberPage
                         ? <>
-                            <div style={{ "width": "4vw" }}>
-                                <Image
-                                    alt="Logo"
-                                    style={{
-                                        "width": "100%",
-                                        "height": "auto",
-                                        "objectFit": "cover"
-                                    }}
-                                />
-                            </div>
+
                             <Text
                                 fontFamily="pop"
                                 size={"1.5vw"}
@@ -3539,16 +3530,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 >
                     {tecnicoPage
                         ? <>
-                            <div style={{ "width": "4vw" }}>
-                                <Image
-                                    alt="Logo"
-                                    style={{
-                                        "width": "100%",
-                                        "height": "auto",
-                                        "objectFit": "cover"
-                                    }}
-                                />
-                            </div>
+
                             <Text
                                 fontFamily="pop"
                                 size={"1.5vw"}
