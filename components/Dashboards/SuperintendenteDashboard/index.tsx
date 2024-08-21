@@ -5,6 +5,9 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-sequences */
 /* eslint-disable no-unused-expressions */
+/* eslint-disable object-curly-spacing */
+/* eslint-disable space-before-function-paren */
+
 import { useContext, useEffect, useState } from "react";
 import {
     Home,
@@ -1056,8 +1059,8 @@ export function SuperintendenteDashboard(data: { token: string }) {
                             transition={{ "duration": 0.5 }}
                             style={{
                                 "pointerEvents": `${comunicPage || comunicNascPage || comunicCoberPage
-                                        ? "auto"
-                                        : "none"
+                                    ? "auto"
+                                    : "none"
                                     }`
                             }}
                         >
@@ -1128,8 +1131,8 @@ export function SuperintendenteDashboard(data: { token: string }) {
                             transition={{ "duration": 0.5 }}
                             style={{
                                 "pointerEvents": `${usersPage || tecnicoPage || criadorPage
-                                        ? "auto"
-                                        : "none"
+                                    ? "auto"
+                                    : "none"
                                     }`
                             }}
                         >
@@ -1196,8 +1199,8 @@ export function SuperintendenteDashboard(data: { token: string }) {
                             transition={{ "duration": 0.5 }}
                             style={{
                                 "pointerEvents": `${solicitacao || animalBasePage
-                                        ? "auto"
-                                        : "none"
+                                    ? "auto"
+                                    : "none"
                                     }`
                             }}
                         >

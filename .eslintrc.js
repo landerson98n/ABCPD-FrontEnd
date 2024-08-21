@@ -63,6 +63,10 @@ module.exports = {
         "no-empty-function": "off",
         "complexity": "off",
         "no-negated-condition": "off",
-        "no-confusing-arrow": "off"
+        "no-confusing-arrow": "off",
+        "object-curly-spacing": "off",
+        "space-before-function-paren": "off",
+        "no-trailing-spaces": "off",
+        "indent": "off"
     }
 };

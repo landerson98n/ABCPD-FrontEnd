@@ -39,47 +39,47 @@ import {
     InputText,
     Select
 } from "./style";
-import {format} from "date-fns";
+import { format } from "date-fns";
 import Image from "next/legacy/image";
-import {Button} from "../../Button";
-import {Text} from "../../Text";
-import {useContext, useEffect, useState} from "react";
-import {motion} from "framer-motion";
+import { Button } from "../../Button";
+import { Text } from "../../Text";
+import { useContext, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import * as z from "zod";
 import AnimalDTO from "@/utils/AnimalDTO";
 import TecnicoDTO from "@/utils/TecnicoDTO";
-import {ComunicarCobertura, getAllCoberturas} from "@/actions/coberturaApi";
+import { ComunicarCobertura, getAllCoberturas } from "@/actions/coberturaApi";
 import jsonWebTokenService from "jsonwebtoken";
 import FazendaDTO from "@/utils/FazendaDTO";
-import {AlertContext} from "@/context/AlertContextProvider";
-import {useQuery} from "react-query";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useForm} from "react-hook-form";
-import {Checkbox, CircularProgress, LinearProgress} from "@mui/material";
-import {SolicitacaoRegistroAnimalBaseDTO} from "@/utils/SolicitacaoDTO";
-import {registrarAnimaisBase} from "@/actions/animalBaseApi";
-import {getCriadorByUserId, getCriadorTransferencia} from "@/actions/criadorApi";
+import { AlertContext } from "@/context/AlertContextProvider";
+import { useQuery } from "react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Checkbox, CircularProgress, LinearProgress } from "@mui/material";
+import { SolicitacaoRegistroAnimalBaseDTO } from "@/utils/SolicitacaoDTO";
+import { registrarAnimaisBase } from "@/actions/animalBaseApi";
+import { getCriadorByUserId, getCriadorTransferencia } from "@/actions/criadorApi";
 import ComunicacaoCoberturaDto from "@/utils/CoberturaDTO";
-import {ComunicacaoNascimentoDto} from "@/utils/ComunicacaoNascimentoDTO";
-import {criarComunicacaoNacimento} from "@/actions/comunicacaoNascimento";
+import { ComunicacaoNascimentoDto } from "@/utils/ComunicacaoNascimentoDTO";
+import { criarComunicacaoNacimento } from "@/actions/comunicacaoNascimento";
 import RebanhoDTO from "@/utils/RebanhoDTO";
-import {getRebanhoByFazendaId} from "@/actions/RebanhApi";
-import {getFazendaCriador} from "@/actions/fazendaApi";
-import {getTecnicoEmail, getTecnicos} from "@/actions/tecnicoApi";
-import {getAnimaisCriador} from "@/actions/animaisApi";
-import {DetalhesAnimal} from "../../Screens/DetalhesAnimal";
+import { getRebanhoByFazendaId } from "@/actions/RebanhApi";
+import { getFazendaCriador } from "@/actions/fazendaApi";
+import { getTecnicoEmail, getTecnicos } from "@/actions/tecnicoApi";
+import { getAnimaisCriador } from "@/actions/animaisApi";
+import { DetalhesAnimal } from "../../Screens/DetalhesAnimal";
 import CriadorDTO from "@/utils/CriadorDTO";
-import {sendEmail} from "@/actions/emailApi";
-import {useRouter} from "next/navigation";
+import { sendEmail } from "@/actions/emailApi";
+import { useRouter } from "next/navigation";
 
-export function CriadorDashboard (data: { token: string }) {
+export function CriadorDashboard(data: { token: string }) {
 
     const router = useRouter();
     const decodedJwt = jsonWebTokenService.decode(data.token);
     const userId = typeof decodedJwt?.sub === "string"
         ? decodedJwt.sub
         : "";
-    const {"data": criador, "isLoading": isLoadingCriador} = useQuery<CriadorDTO>(
+    const { "data": criador, "isLoading": isLoadingCriador } = useQuery<CriadorDTO>(
         "criadores",
         async () => getCriadorByUserId(
             userId,
@@ -87,7 +87,7 @@ export function CriadorDashboard (data: { token: string }) {
         )
     );
 
-    const {"data": criadorAdquirente, "isLoading": isLoadingCriadorAdquirente} = useQuery<CriadorDTO>(
+    const { "data": criadorAdquirente, "isLoading": isLoadingCriadorAdquirente } = useQuery<CriadorDTO>(
         "adquirente",
         async () => getCriadorTransferencia(data.token)
     );
@@ -96,17 +96,17 @@ export function CriadorDashboard (data: { token: string }) {
         fazendaID,
         setFazendaID
     ] = useState("");
-    const {"data": rebanhos, "isLoading": isLoadingRebanho} = useQuery(
+    const { "data": rebanhos, "isLoading": isLoadingRebanho } = useQuery(
         "rebanhos",
         async () => getRebanhoByFazendaId(
             fazendaID,
             data.token
         ),
 
-        {"enabled": fazendaID != ""}
+        { "enabled": fazendaID != "" }
     );
 
-    const {"isLoading": isLoadingFazendas, "data": fazendas} = useQuery(
+    const { "isLoading": isLoadingFazendas, "data": fazendas } = useQuery(
         "fazendas",
         async () => getFazendaCriador(
             data.token,
@@ -114,15 +114,15 @@ export function CriadorDashboard (data: { token: string }) {
                 ? criador.id
                 : ""
         ),
-        {"enabled": criador !== undefined}
+        { "enabled": criador !== undefined }
     );
 
-    const {"isLoading": isLoadingTecnicos, "data": tecnicos} = useQuery(
+    const { "isLoading": isLoadingTecnicos, "data": tecnicos } = useQuery(
         "tecnicos",
         async () => getTecnicos(data.token)
     );
 
-    const {"isLoading": isLoadingAnimais, "data": animaisCriador} = useQuery(
+    const { "isLoading": isLoadingAnimais, "data": animaisCriador } = useQuery(
         "animais",
         async () => getAnimaisCriador(data.token)
     );
@@ -168,7 +168,7 @@ export function CriadorDashboard (data: { token: string }) {
     const {
         "register": registerCobertura,
         "handleSubmit": handleCobertura,
-        "formState": {"errors": errorsCobertura},
+        "formState": { "errors": errorsCobertura },
         "setValue": setValueCobertura
     } = useForm({
         "criteriaMode": "all",
@@ -179,7 +179,7 @@ export function CriadorDashboard (data: { token: string }) {
     const {
         "register": registerTransferencia,
         "handleSubmit": handleTransferencia,
-        "formState": {"errors": errorsTransferencia},
+        "formState": { "errors": errorsTransferencia },
         "setValue": setValueTransferencia
     } = useForm({
         "criteriaMode": "all",
@@ -187,11 +187,11 @@ export function CriadorDashboard (data: { token: string }) {
         "resolver": zodResolver(schemaTransferencia)
     });
 
-    const {"register": registerAnimalBase, "handleSubmit": handleAnimalBase, "setValue": setValueAnimalBase} =
-    useForm({
-        "criteriaMode": "all",
-        "mode": "all"
-    });
+    const { "register": registerAnimalBase, "handleSubmit": handleAnimalBase, "setValue": setValueAnimalBase } =
+        useForm({
+            "criteriaMode": "all",
+            "mode": "all"
+        });
 
     const nascimentoSchema = z.object({
         "nomeBezerro": z.string().nonempty("Nome do bezerro é um campo obrigatório"),
@@ -213,7 +213,7 @@ export function CriadorDashboard (data: { token: string }) {
     const {
         "register": registerNascimento,
         "handleSubmit": handleNascimento,
-        "formState": {"errors": errorsNascimento}
+        "formState": { "errors": errorsNascimento }
     } = useForm({
         "criteriaMode": "all",
         "mode": "all",
@@ -250,7 +250,7 @@ export function CriadorDashboard (data: { token: string }) {
         "maeSelecionado": {} as AnimalDTO,
         "resgistro": false
     });
-    const {animalSelecionado} = animalInfos;
+    const { animalSelecionado } = animalInfos;
     const [
         adquirente,
         setAdquirente
@@ -279,21 +279,21 @@ export function CriadorDashboard (data: { token: string }) {
         "numeroProcuradoF": ""
     });
 
-    const {alert} = useContext(AlertContext);
+    const { alert } = useContext(AlertContext);
     const [
         animaisSelecionadosCobertura,
         setAnimaisSelecionadosCobertura
     ] =
-    useState({
-        "animaisSelecionadosMatriz": [] as AnimalDTO[],
-        "animaisSelecionados": [] as AnimalDTO[]
-    });
+        useState({
+            "animaisSelecionadosMatriz": [] as AnimalDTO[],
+            "animaisSelecionados": [] as AnimalDTO[]
+        });
 
     const [
         coberturaSelecionada,
         setCoberturaSelecionada
     ] =
-    useState<ComunicacaoCoberturaDto>({} as ComunicacaoCoberturaDto);
+        useState<ComunicacaoCoberturaDto>({} as ComunicacaoCoberturaDto);
     const [
         coberturas,
         setCoberturas
@@ -311,9 +311,9 @@ export function CriadorDashboard (data: { token: string }) {
         "tipoCobertura": "Tipo de Cobertura"
     };
     const fieldNames = Object.keys(initialComunicacaoCobertura);
-    const {animaisSelecionados, animaisSelecionadosMatriz} =
-    animaisSelecionadosCobertura;
-    const {numeroProcuradoF, numeroProcuradoM} = search;
+    const { animaisSelecionados, animaisSelecionadosMatriz } =
+        animaisSelecionadosCobertura;
+    const { numeroProcuradoF, numeroProcuradoM } = search;
 
     let fazendaCobertura: FazendaDTO | null = null;
 
@@ -424,7 +424,7 @@ export function CriadorDashboard (data: { token: string }) {
 
             }
 
-        } catch (e) {}
+        } catch (e) { }
         setAnimaisSelecionadosCobertura((prev) => ({
             "animaisSelecionados": [],
             "animaisSelecionadosMatriz": []
@@ -432,12 +432,12 @@ export function CriadorDashboard (data: { token: string }) {
 
     };
 
-    async function submitTransferencia (data) {
+    async function submitTransferencia(data) {
 
 
     }
 
-    async function handleSubmitNascimento (e) {
+    async function handleSubmitNascimento(e) {
 
         if (coberturaSelecionada.statusCobertura === "Em análise") {
 
@@ -517,7 +517,7 @@ export function CriadorDashboard (data: { token: string }) {
 
     }
 
-    async function solicitacaoAnimalBase (dataSolicitacao: SolicitacaoRegistroAnimalBaseDTO) {
+    async function solicitacaoAnimalBase(dataSolicitacao: SolicitacaoRegistroAnimalBaseDTO) {
 
         setPaginas((prev) => ({
             ...prev,
@@ -583,8 +583,10 @@ export function CriadorDashboard (data: { token: string }) {
                 "success"
             );
             await sendEmail(
-                {"to": `${tecnicoUser.user.email}`,
-                    "subject": "Nova solicitação de registro de animais puros por adjudicação foi criada"},
+                {
+                    "to": `${tecnicoUser.user.email}`,
+                    "subject": "Nova solicitação de registro de animais puros por adjudicação foi criada"
+                },
                 data.token
             );
 
@@ -596,7 +598,7 @@ export function CriadorDashboard (data: { token: string }) {
 
     }
 
-    async function getCoberturas () {
+    async function getCoberturas() {
 
         setPaginas((prev) => ({
             ...prev,
@@ -625,7 +627,7 @@ export function CriadorDashboard (data: { token: string }) {
 
     }
 
-    function paginate ({items, currentPage}: PaginationOptions) {
+    function paginate({ items, currentPage }: PaginationOptions) {
 
         const itemsPerPage = 4;
 
@@ -645,7 +647,7 @@ export function CriadorDashboard (data: { token: string }) {
 
     }
 
-    const updatedPages = {...paginas};
+    const updatedPages = { ...paginas };
 
     for (const key in updatedPages) {
 
@@ -659,9 +661,9 @@ export function CriadorDashboard (data: { token: string }) {
 
     if (
         isLoadingAnimais ||
-    isLoadingFazendas ||
-    isLoadingCriador ||
-    isLoadingTecnicos
+        isLoadingFazendas ||
+        isLoadingCriador ||
+        isLoadingTecnicos
     ) {
 
         return (
@@ -684,18 +686,22 @@ export function CriadorDashboard (data: { token: string }) {
         <Container>
 
             <Menu
-                initial={{"width": "20%"}}
-                animate={{"width": menu
-                    ? "20%"
-                    : "5%"}}
-                transition={{"duration": 0.5}}
+                initial={{ "width": "20%" }}
+                animate={{
+                    "width": menu
+                        ? "20%"
+                        : "5%"
+                }}
+                transition={{ "duration": 0.5 }}
             >
                 <motion.div
-                    initial={{"x": "13vw"}}
-                    transition={{"duration": 0.5}}
-                    animate={{"x": menu
-                        ? "13vw"
-                        : "1.5vw"}}
+                    initial={{ "x": "13vw" }}
+                    transition={{ "duration": 0.5 }}
+                    animate={{
+                        "x": menu
+                            ? "13vw"
+                            : "1.5vw"
+                    }}
                     onClick={async () => {
 
                         setPaginas((prev) => ({
@@ -704,30 +710,36 @@ export function CriadorDashboard (data: { token: string }) {
                         }));
 
                     }}
-                    style={{"width": "100%",
+                    style={{
+                        "width": "100%",
                         "display": "flex",
-                        "marginTop": "1vw"}}
+                        "marginTop": "1vw"
+                    }}
                 >
-                    <div style={{"width": "2vw"}}>
+                    <div style={{ "width": "2vw" }}>
                         <Image
                             src={hamb}
                             alt="Logo"
-                            style={{"width": "100%",
+                            style={{
+                                "width": "100%",
                                 "height": "auto",
-                                "objectFit": "cover"}}
+                                "objectFit": "cover"
+                            }}
                         />
                     </div>
                 </motion.div>
 
                 <motion.div
-                    initial={{"x": "0vw"}}
-                    transition={{"duration": 0.7}}
-                    animate={{"x": menu
-                        ? "0vw"
-                        : "-20vw",
-                    "opacity": menu
-                        ? 1
-                        : 0}}
+                    initial={{ "x": "0vw" }}
+                    transition={{ "duration": 0.7 }}
+                    animate={{
+                        "x": menu
+                            ? "0vw"
+                            : "-20vw",
+                        "opacity": menu
+                            ? 1
+                            : 0
+                    }}
                     style={{
                         "display": menu
                             ? "flex"
@@ -746,7 +758,6 @@ export function CriadorDashboard (data: { token: string }) {
                             "alignItems": "center"
                         }}
                     >
-                        
                     </div>
 
                     <div
@@ -809,11 +820,11 @@ export function CriadorDashboard (data: { token: string }) {
                             }}
                             colorButton={
                                 comunicPage ||
-                animalBasePage ||
-                comunicCoberturaPage ||
-                comunicNascPage ||
-                verComunicNascPage ||
-                comunicObito
+                                    animalBasePage ||
+                                    comunicCoberturaPage ||
+                                    comunicNascPage ||
+                                    verComunicNascPage ||
+                                    comunicObito
                                     ? "black"
                                     : "#9E4B00"
                             }
@@ -821,42 +832,41 @@ export function CriadorDashboard (data: { token: string }) {
                         />
 
                         <DropdownMenu
-                            initial={{"opacity": 0}}
+                            initial={{ "opacity": 0 }}
                             animate={{
                                 "y":
-                  comunicPage ||
-                  animalBasePage ||
-                  comunicCoberturaPage ||
-                  comunicNascPage ||
-                  verComunicNascPage ||
-                  comunicObito ||
-                  transferirPage
-                      ? 0
-                      : -50,
-                                "opacity":
-                  comunicPage ||
-                  animalBasePage ||
-                  comunicCoberturaPage ||
-                  comunicNascPage ||
-                  verComunicNascPage ||
-                  comunicObito ||
-                  transferirPage
-                      ? 1
-                      : 0
-                            }}
-                            transition={{"duration": 0.5}}
-                            style={{
-                                "pointerEvents": `${
                                     comunicPage ||
-                  animalBasePage ||
-                  comunicCoberturaPage ||
-                  comunicNascPage ||
-                  verComunicNascPage ||
-                  comunicObito ||
-                  transferirPage
-                                        ? "auto"
-                                        : "none"
-                                }`
+                                        animalBasePage ||
+                                        comunicCoberturaPage ||
+                                        comunicNascPage ||
+                                        verComunicNascPage ||
+                                        comunicObito ||
+                                        transferirPage
+                                        ? 0
+                                        : -50,
+                                "opacity":
+                                    comunicPage ||
+                                        animalBasePage ||
+                                        comunicCoberturaPage ||
+                                        comunicNascPage ||
+                                        verComunicNascPage ||
+                                        comunicObito ||
+                                        transferirPage
+                                        ? 1
+                                        : 0
+                            }}
+                            transition={{ "duration": 0.5 }}
+                            style={{
+                                "pointerEvents": `${comunicPage ||
+                                    animalBasePage ||
+                                    comunicCoberturaPage ||
+                                    comunicNascPage ||
+                                    verComunicNascPage ||
+                                    comunicObito ||
+                                    transferirPage
+                                    ? "auto"
+                                    : "none"
+                                    }`
                             }}
                         >
                             <Button
@@ -976,7 +986,7 @@ export function CriadorDashboard (data: { token: string }) {
 
                 <Header>
                     <DropdownMenu
-                        initial={{"opacity": 0}}
+                        initial={{ "opacity": 0 }}
                         animate={{
                             "y": options
                                 ? 0
@@ -985,7 +995,7 @@ export function CriadorDashboard (data: { token: string }) {
                                 ? 1
                                 : 0
                         }}
-                        transition={{"duration": 0.5}}
+                        transition={{ "duration": 0.5 }}
                         style={{
                             "pointerEvents": `${options
                                 ? "auto"
@@ -1066,15 +1076,19 @@ export function CriadorDashboard (data: { token: string }) {
                             textButton="Logout"
                         />
                     </DropdownMenu>
-                    <div style={{"display": "flex",
-                        "width": "27%"}}>
-                        <div style={{"width": "4vw"}}>
+                    <div style={{
+                        "display": "flex",
+                        "width": "27%"
+                    }}>
+                        <div style={{ "width": "4vw" }}>
                             <Image
                                 src={user}
                                 alt="Logo"
-                                style={{"width": "100%",
+                                style={{
+                                    "width": "100%",
                                     "height": "auto",
-                                    "objectFit": "cover"}}
+                                    "objectFit": "cover"
+                                }}
                             />
                         </div>
                         <div
@@ -1086,8 +1100,10 @@ export function CriadorDashboard (data: { token: string }) {
                                 }));
 
                             }}
-                            style={{"cursor": "pointer",
-                                "width": "15vw"}}
+                            style={{
+                                "cursor": "pointer",
+                                "width": "15vw"
+                            }}
                         >
                             <Text
                                 fontFamily="pop"
@@ -1101,13 +1117,15 @@ export function CriadorDashboard (data: { token: string }) {
                 </Header>
 
                 <motion.div
-                    animate={{"y": initialPage
-                        ? 0
-                        : -50,
-                    "opacity": initialPage
-                        ? 1
-                        : 0}}
-                    transition={{"duration": 0.5}}
+                    animate={{
+                        "y": initialPage
+                            ? 0
+                            : -50,
+                        "opacity": initialPage
+                            ? 1
+                            : 0
+                    }}
+                    transition={{ "duration": 0.5 }}
                     style={{
                         "display": `${initialPage
                             ? "flex"
@@ -1129,14 +1147,16 @@ export function CriadorDashboard (data: { token: string }) {
                 </motion.div>
 
                 <Animals
-                    initial={{"opacity": 0}}
-                    animate={{"y": animalPage
-                        ? 0
-                        : -50,
-                    "opacity": animalPage
-                        ? 1
-                        : 0}}
-                    transition={{"duration": 0.5}}
+                    initial={{ "opacity": 0 }}
+                    animate={{
+                        "y": animalPage
+                            ? 0
+                            : -50,
+                        "opacity": animalPage
+                            ? 1
+                            : 0
+                    }}
+                    transition={{ "duration": 0.5 }}
                     style={{
                         "display": `${animalPage
                             ? "block"
@@ -1146,13 +1166,15 @@ export function CriadorDashboard (data: { token: string }) {
                             : "none"}`
                     }}
                 >
-                    <div style={{"width": "4vw"}}>
+                    <div style={{ "width": "4vw" }}>
                         <Image
                             src={logo2Branca}
                             alt="Logo"
-                            style={{"width": "100%",
+                            style={{
+                                "width": "100%",
                                 "height": "auto",
-                                "objectFit": "cover"}}
+                                "objectFit": "cover"
+                            }}
                         />
                     </div>
                     <Text
@@ -1163,7 +1185,7 @@ export function CriadorDashboard (data: { token: string }) {
                         fontWeight="600"
                     />
 
-                    <div style={{"width": "30%"}}>
+                    <div style={{ "width": "30%" }}>
                         <InputText
                             fontSize="1.2vw"
                             placeholder="Buscar"
@@ -1242,13 +1264,15 @@ export function CriadorDashboard (data: { token: string }) {
                             </th>
                         </TableHeader>
 
-                        {paginate({"items": animaisCriador,
-                            "currentPage": page}).map((data: AnimalDTO) => {
+                        {paginate({
+                            "items": animaisCriador,
+                            "currentPage": page
+                        }).map((data: AnimalDTO) => {
 
                             const fazendaCriador: FazendaDTO = fazendas.find((index) => index.id == data.fazenda);
                             return (
                                 <TableContent key={data.id}>
-                                    <td style={{"width": "20%"}}>
+                                    <td style={{ "width": "20%" }}>
                                         <Text
                                             textAlign="center"
                                             fontFamily="rob"
@@ -1268,7 +1292,7 @@ export function CriadorDashboard (data: { token: string }) {
                                             fontWeight="400"
                                         />
                                     </td>
-                                    <td style={{"width": "25%"}}>
+                                    <td style={{ "width": "25%" }}>
                                         <Text
                                             textAlign="center"
                                             fontFamily="rob"
@@ -1347,8 +1371,8 @@ export function CriadorDashboard (data: { token: string }) {
                                                         "animalSelecionado": data,
                                                         "fazendaSelecionado": fazendas.find((index: FazendaDTO) => index.id === data?.fazenda),
                                                         "criadorSelecionado": criador!,
-                                                        "paiSelecionado": animaisCriador.find((index : AnimalDTO) => index.id === data.pai) || {},
-                                                        "maeSelecionado": animaisCriador.find((index : AnimalDTO) => index.id === data.mae) || {}
+                                                        "paiSelecionado": animaisCriador.find((index: AnimalDTO) => index.id === data.pai) || {},
+                                                        "maeSelecionado": animaisCriador.find((index: AnimalDTO) => index.id === data.mae) || {}
                                                     }));
 
                                                     setPaginas((prev) => ({
@@ -1373,7 +1397,7 @@ export function CriadorDashboard (data: { token: string }) {
                             "marginTop": "1vw"
                         }}
                     >
-                        <div style={{"marginRight": "1vw"}}>
+                        <div style={{ "marginRight": "1vw" }}>
                             <Button
                                 colorButton="green"
                                 heightButton="2vw"
@@ -1404,7 +1428,7 @@ export function CriadorDashboard (data: { token: string }) {
                 </Animals>
 
                 <VerAnimals
-                    initial={{"opacity": 0}}
+                    initial={{ "opacity": 0 }}
                     animate={{
                         "y": verAnimalPage
                             ? 0
@@ -1413,7 +1437,7 @@ export function CriadorDashboard (data: { token: string }) {
                             ? 1
                             : 0
                     }}
-                    transition={{"duration": 0.5}}
+                    transition={{ "duration": 0.5 }}
                     style={{
                         "display": `${verAnimalPage
                             ? "flex"
@@ -1425,12 +1449,12 @@ export function CriadorDashboard (data: { token: string }) {
                 >
                     {Object.values(animalSelecionado).length == 0
                         ? null
-                        : <DetalhesAnimal animaisCriador={animaisCriador} animalInfos={animalInfos} token={data.token} registro={false}/>}
+                        : <DetalhesAnimal animaisCriador={animaisCriador} animalInfos={animalInfos} token={data.token} registro={false} />}
 
                 </VerAnimals>
 
                 <RegistroAnimalBase
-                    initial={{"opacity": 0}}
+                    initial={{ "opacity": 0 }}
                     animate={{
                         "y": animalBasePage
                             ? 0
@@ -1439,7 +1463,7 @@ export function CriadorDashboard (data: { token: string }) {
                             ? 1
                             : 0
                     }}
-                    transition={{"duration": 0.5}}
+                    transition={{ "duration": 0.5 }}
                     style={{
                         "display": `${animalBasePage
                             ? "flex"
@@ -1450,13 +1474,15 @@ export function CriadorDashboard (data: { token: string }) {
                     }}
                     onSubmit={handleAnimalBase(solicitacaoAnimalBase)}
                 >
-                    <div style={{"width": "10vw"}}>
+                    <div style={{ "width": "10vw" }}>
                         <Image
                             src={logo2Branca}
                             alt="logoAnimal"
-                            style={{"width": "100%",
+                            style={{
+                                "width": "100%",
                                 "height": "auto",
-                                "objectFit": "cover"}}
+                                "objectFit": "cover"
+                            }}
                         />
                     </div>
                     <Text
@@ -1466,7 +1492,7 @@ export function CriadorDashboard (data: { token: string }) {
                         size="2vw"
                         color="black"
                     />
-                    <div style={{"width": "90%"}}>
+                    <div style={{ "width": "90%" }}>
                         <div>
                             <Text
                                 text="Técnico"
@@ -1478,12 +1504,12 @@ export function CriadorDashboard (data: { token: string }) {
                             <Select
                                 {...registerAnimalBase(
                                     "tecnicoId",
-                                    {"required": true}
+                                    { "required": true }
                                 )}
                             >
                                 {" "}
                                 <option disabled selected>
-                Selecione um tecnico
+                                    Selecione um tecnico
                                 </option>
                                 {tecnicos.map((data: TecnicoDTO) => <option value={data.id} key={data.nomeCompleto}>
                                     {data.nomeCompleto}
@@ -1503,7 +1529,7 @@ export function CriadorDashboard (data: { token: string }) {
 
                                 {...registerAnimalBase(
                                     "fazendaId",
-                                    {"required": true}
+                                    { "required": true }
                                 )}
                                 onChange={(e) => {
 
@@ -1513,7 +1539,7 @@ export function CriadorDashboard (data: { token: string }) {
                                 }}
                             >
                                 <option disabled selected>
-                Selecione uma fazenda
+                                    Selecione uma fazenda
                                 </option>
                                 {fazendas.map((data: FazendaDTO) => <option value={data.id} key={data.id}>
                                     {data.nomeFazenda}
@@ -1533,11 +1559,11 @@ export function CriadorDashboard (data: { token: string }) {
 
                                 {...registerAnimalBase(
                                     "rebanhoId",
-                                    {"required": true}
+                                    { "required": true }
                                 )}
                             >
                                 <option disabled selected>
-                Selecione um rebanho
+                                    Selecione um rebanho
                                 </option>
                                 {rebanhos
                                     ? rebanhos.map((data: RebanhoDTO) => <option value={data.id} key={data.id}>
@@ -1558,9 +1584,9 @@ export function CriadorDashboard (data: { token: string }) {
                             <InputText
                                 {...registerAnimalBase(
                                     "quantidadeAnimais",
-                                    {"required": true}
+                                    { "required": true }
                                 )}
-                                style={{"width": "98%"}}
+                                style={{ "width": "98%" }}
                                 type="number"
                             />
                         </div>
@@ -1591,7 +1617,7 @@ export function CriadorDashboard (data: { token: string }) {
                 </RegistroAnimalBase>
 
                 <ComunicCobertura
-                    initial={{"opacity": 0}}
+                    initial={{ "opacity": 0 }}
                     animate={{
                         "y": comunicCoberturaPage
                             ? 0
@@ -1600,7 +1626,7 @@ export function CriadorDashboard (data: { token: string }) {
                             ? 1
                             : 0
                     }}
-                    transition={{"duration": 0.5}}
+                    transition={{ "duration": 0.5 }}
                     style={{
                         "display": `${comunicCoberturaPage
                             ? "flex"
@@ -1611,13 +1637,15 @@ export function CriadorDashboard (data: { token: string }) {
                     }}
                     onSubmit={handleCobertura(submitCobertura)}
                 >
-                    <div style={{"width": "10vw"}}>
+                    <div style={{ "width": "10vw" }}>
                         <Image
                             src={logo2Branca}
                             alt="logoAnimal"
-                            style={{"width": "100%",
+                            style={{
+                                "width": "100%",
                                 "height": "auto",
-                                "objectFit": "cover"}}
+                                "objectFit": "cover"
+                            }}
                         />
                     </div>
                     <Text
@@ -1627,7 +1655,7 @@ export function CriadorDashboard (data: { token: string }) {
                         size="1.8vw"
                         color="black"
                     />
-                    <div style={{"width": "100%"}}>
+                    <div style={{ "width": "100%" }}>
                         <Text
                             fontFamily="pop"
                             size={"1.5vw"}
@@ -1636,12 +1664,12 @@ export function CriadorDashboard (data: { token: string }) {
                             fontWeight="300"
                         />
                         <Select
-                            style={{"width": "92%"}}
+                            style={{ "width": "92%" }}
                             {...registerCobertura("fazendaCobertura")}
                             width="67.5vw"
                         >
                             <option selected disabled value="">
-                Selecione uma fazenda
+                                Selecione uma fazenda
                             </option>
                             {fazendas.map((data: FazendaDTO) => <option value={data.id} key={data.id}>
                                 {data.nomeFazenda}
@@ -1658,7 +1686,7 @@ export function CriadorDashboard (data: { token: string }) {
                                 />
                                 {fieldName == "tipoCobertura"
                                     ? <Select
-                                        style={{"width": "102%"}}
+                                        style={{ "width": "102%" }}
                                         {...registerCobertura(
                                             "tipoCobertura",
                                             {
@@ -1667,7 +1695,7 @@ export function CriadorDashboard (data: { token: string }) {
                                         )}
                                     >
                                         <option selected disabled value="">
-                        Selecione um tipo de cobertura
+                                            Selecione um tipo de cobertura
                                         </option>
                                         <option>Monta Natural</option>
                                         <option>Inseminação Artificial</option>
@@ -1680,9 +1708,11 @@ export function CriadorDashboard (data: { token: string }) {
                             </InputPlace>
                         </div>)}
 
-                        <InputPlace style={{"marginTop": "2vw"}}>
-                            <div style={{"display": "flex",
-                                "justifyContent": "space-between"}}>
+                        <InputPlace style={{ "marginTop": "2vw" }}>
+                            <div style={{
+                                "display": "flex",
+                                "justifyContent": "space-between"
+                            }}>
                                 <div>
                                     <Text
                                         fontFamily="pop"
@@ -1693,7 +1723,7 @@ export function CriadorDashboard (data: { token: string }) {
                                     />
                                     <InputText
                                         placeholder="Procurar animal por número"
-                                        style={{"width": "30vw"}}
+                                        style={{ "width": "30vw" }}
                                         type="text"
                                         onChange={(e) => {
 
@@ -1704,14 +1734,16 @@ export function CriadorDashboard (data: { token: string }) {
 
                                         }}
                                     />
-                                    <div style={{"overflowY": "scroll",
-                                        "height": "20vw"}}>
+                                    <div style={{
+                                        "overflowY": "scroll",
+                                        "height": "20vw"
+                                    }}>
                                         {animaisCriador.map((data: AnimalDTO) => {
 
                                             if (data.nomeAnimal.toLocaleLowerCase().includes(numeroProcuradoF.toLocaleLowerCase()) && data.sexoAnimal == "Fêmea") {
 
                                                 return (
-                                                    <div style={{"display": "flex"}} key={data.id}>
+                                                    <div style={{ "display": "flex" }} key={data.id}>
                                                         <Text
                                                             text={data.nomeAnimal}
                                                             color="black"
@@ -1741,7 +1773,7 @@ export function CriadorDashboard (data: { token: string }) {
                                     />
                                     <InputText
                                         placeholder="Procurar animal por número"
-                                        style={{"width": "30vw"}}
+                                        style={{ "width": "30vw" }}
                                         type="text"
                                         onChange={(e) => {
 
@@ -1752,14 +1784,16 @@ export function CriadorDashboard (data: { token: string }) {
 
                                         }}
                                     />
-                                    <div style={{"overflowY": "scroll",
-                                        "height": "20vw"}}>
+                                    <div style={{
+                                        "overflowY": "scroll",
+                                        "height": "20vw"
+                                    }}>
                                         {animaisCriador.map((data: AnimalDTO) => {
 
                                             if (data.nomeAnimal.toLocaleLowerCase().includes(numeroProcuradoM.toLocaleLowerCase()) && data.sexoAnimal == "Macho") {
 
                                                 return (
-                                                    <div style={{"display": "flex"}} key={data.id}>
+                                                    <div style={{ "display": "flex" }} key={data.id}>
                                                         <Text
                                                             text={data.nomeAnimal}
                                                             color="black"
@@ -1816,7 +1850,7 @@ export function CriadorDashboard (data: { token: string }) {
                 </ComunicCobertura>
 
                 <ComunicNascimento
-                    initial={{"opacity": 0}}
+                    initial={{ "opacity": 0 }}
                     animate={{
                         "y": comunicNascPage
                             ? 0
@@ -1825,7 +1859,7 @@ export function CriadorDashboard (data: { token: string }) {
                             ? 1
                             : 0
                     }}
-                    transition={{"duration": 0.5}}
+                    transition={{ "duration": 0.5 }}
                     style={{
                         "display": `${comunicNascPage
                             ? "block"
@@ -1835,13 +1869,15 @@ export function CriadorDashboard (data: { token: string }) {
                             : "none"}`
                     }}
                 >
-                    <div style={{"width": "4vw"}}>
+                    <div style={{ "width": "4vw" }}>
                         <Image
                             src={logo2Branca}
                             alt="Logo"
-                            style={{"width": "100%",
+                            style={{
+                                "width": "100%",
                                 "height": "auto",
-                                "objectFit": "cover"}}
+                                "objectFit": "cover"
+                            }}
                         />
                     </div>
                     <Text
@@ -1852,7 +1888,7 @@ export function CriadorDashboard (data: { token: string }) {
                         fontWeight="600"
                     />
 
-                    <div style={{"width": "30%"}}>
+                    <div style={{ "width": "30%" }}>
                         <InputText
                             fontSize="1.2vw"
                             placeholder="Buscar"
@@ -1922,8 +1958,10 @@ export function CriadorDashboard (data: { token: string }) {
                                 <LinearProgress color="inherit" />
                                 <LinearProgress color="inherit" />
                             </div>
-                            : paginate({"items": coberturas,
-                                "currentPage": page}).map((data: ComunicacaoCoberturaDto) => <TableContent key={data.id}>
+                            : paginate({
+                                "items": coberturas,
+                                "currentPage": page
+                            }).map((data: ComunicacaoCoberturaDto) => <TableContent key={data.id}>
                                 <td>
                                     <Text
                                         textAlign="center"
@@ -2000,7 +2038,7 @@ export function CriadorDashboard (data: { token: string }) {
                             "marginTop": "1vw"
                         }}
                     >
-                        <div style={{"marginRight": "1vw"}}>
+                        <div style={{ "marginRight": "1vw" }}>
                             <Button
                                 colorButton="green"
                                 heightButton="2vw"
@@ -2031,7 +2069,7 @@ export function CriadorDashboard (data: { token: string }) {
                 </ComunicNascimento>
 
                 <ComunicCobertura
-                    initial={{"opacity": 0}}
+                    initial={{ "opacity": 0 }}
                     animate={{
                         "y": transferirPage
                             ? 0
@@ -2040,7 +2078,7 @@ export function CriadorDashboard (data: { token: string }) {
                             ? 1
                             : 0
                     }}
-                    transition={{"duration": 0.5}}
+                    transition={{ "duration": 0.5 }}
                     style={{
                         "display": `${transferirPage
                             ? "flex"
@@ -2051,13 +2089,15 @@ export function CriadorDashboard (data: { token: string }) {
                     }}
                     onSubmit={handleTransferencia(submitTransferencia)}
                 >
-                    <div style={{"width": "10vw"}}>
+                    <div style={{ "width": "10vw" }}>
                         <Image
                             src={logo2Branca}
                             alt="logoAnimal"
-                            style={{"width": "100%",
+                            style={{
+                                "width": "100%",
                                 "height": "auto",
-                                "objectFit": "cover"}}
+                                "objectFit": "cover"
+                            }}
                         />
                     </div>
                     <Text
@@ -2067,7 +2107,7 @@ export function CriadorDashboard (data: { token: string }) {
                         size="1.8vw"
                         color="black"
                     />
-                    <div style={{"width": "100%"}}>
+                    <div style={{ "width": "100%" }}>
                         <Text
                             fontFamily="pop"
                             size={"1.5vw"}
@@ -2076,12 +2116,12 @@ export function CriadorDashboard (data: { token: string }) {
                             fontWeight="300"
                         />
                         <Select
-                            style={{"width": "92%"}}
+                            style={{ "width": "92%" }}
                             {...registerTransferencia("animal")}
                             width="67.5vw"
                         >
                             <option selected disabled value="">
-                Selecione um animal
+                                Selecione um animal
                             </option>
                             {animaisCriador.map((data: AnimalDTO) => <option value={data.id} key={data.id}>
                                 {data.nomeAnimal}
@@ -2091,7 +2131,7 @@ export function CriadorDashboard (data: { token: string }) {
 
                     </div>
 
-                    <div style={{"width": "100%"}}>
+                    <div style={{ "width": "100%" }}>
                         <Text
                             fontFamily="pop"
                             size={"1.5vw"}
@@ -2100,7 +2140,7 @@ export function CriadorDashboard (data: { token: string }) {
                             fontWeight="300"
                         />
                         <Select
-                            style={{"width": "92%"}}
+                            style={{ "width": "92%" }}
                             {...registerTransferencia("adquirente")}
                             width="67.5vw"
                             onChange={(e) => {
@@ -2110,7 +2150,7 @@ export function CriadorDashboard (data: { token: string }) {
                             }}
                         >
                             <option selected disabled value="">
-                Selecione um criador adquirente
+                                Selecione um criador adquirente
                             </option>
                             {criadorAdquirente?.map((data: CriadorDTO) => <option value={data.id} key={data.id}>
                                 {data.nomeCompleto}
@@ -2120,7 +2160,7 @@ export function CriadorDashboard (data: { token: string }) {
 
                     </div>
 
-                    <div style={{"width": "100%"}}>
+                    <div style={{ "width": "100%" }}>
                         <Text
                             fontFamily="pop"
                             size={"1.5vw"}
@@ -2129,12 +2169,12 @@ export function CriadorDashboard (data: { token: string }) {
                             fontWeight="300"
                         />
                         <Select
-                            style={{"width": "92%"}}
+                            style={{ "width": "92%" }}
                             {...registerTransferencia("fazendaAdquirente")}
                             width="67.5vw"
                         >
                             <option selected disabled value="">
-                Selecione uma fazenda adquirente
+                                Selecione uma fazenda adquirente
                             </option>
                             {criadorAdquirente?.map((data: CriadorDTO) => {
 
@@ -2184,7 +2224,7 @@ export function CriadorDashboard (data: { token: string }) {
                 </ComunicCobertura>
 
                 <VerComunicNascimento
-                    initial={{"opacity": 0}}
+                    initial={{ "opacity": 0 }}
                     animate={{
                         "y": verComunicNascPage
                             ? 0
@@ -2193,7 +2233,7 @@ export function CriadorDashboard (data: { token: string }) {
                             ? 1
                             : 0
                     }}
-                    transition={{"duration": 0.5}}
+                    transition={{ "duration": 0.5 }}
                     style={{
                         "display": `${verComunicNascPage
                             ? "flex"
@@ -2204,13 +2244,15 @@ export function CriadorDashboard (data: { token: string }) {
                     }}
                     onSubmit={handleNascimento(handleSubmitNascimento)}
                 >
-                    <div style={{"width": "10vw"}}>
+                    <div style={{ "width": "10vw" }}>
                         <Image
                             src={logo2Branca}
                             alt="logoAnimal"
-                            style={{"width": "100%",
+                            style={{
+                                "width": "100%",
                                 "height": "auto",
-                                "objectFit": "cover"}}
+                                "objectFit": "cover"
+                            }}
                         />
                     </div>
                     <Text
@@ -2220,8 +2262,10 @@ export function CriadorDashboard (data: { token: string }) {
                         size="1.8vw"
                         color="black"
                     />
-                    <div style={{"display": "flex",
-                        "width": "100%"}}>
+                    <div style={{
+                        "display": "flex",
+                        "width": "100%"
+                    }}>
                         <InputPlace>
                             <Text
                                 fontFamily="pop"
@@ -2236,7 +2280,7 @@ export function CriadorDashboard (data: { token: string }) {
                                     if (data.sexoAnimal == "Macho") {
 
                                         return (
-                                            <div style={{"display": "flex"}} key={data.id}>
+                                            <div style={{ "display": "flex" }} key={data.id}>
                                                 <Text
                                                     text={data.nomeAnimal}
                                                     color="black"
@@ -2270,7 +2314,7 @@ export function CriadorDashboard (data: { token: string }) {
                                     if (data.sexoAnimal == "Fêmea") {
 
                                         return (
-                                            <div style={{"display": "flex"}} key={data.id}>
+                                            <div style={{ "display": "flex" }} key={data.id}>
                                                 <Text
                                                     text={data.nomeAnimal}
                                                     color="black"
@@ -2302,7 +2346,7 @@ export function CriadorDashboard (data: { token: string }) {
                         <InputText
                             disabled
                             value={coberturaSelecionada.tipoCobertura}
-                            style={{"border": "solid 0.2vw #9E4B00"}}
+                            style={{ "border": "solid 0.2vw #9E4B00" }}
                         />
                     </InputPlace>
 
@@ -2324,7 +2368,7 @@ export function CriadorDashboard (data: { token: string }) {
                                     )
                                     : ""
                             }
-                            style={{"border": "solid 0.2vw #9E4B00"}}
+                            style={{ "border": "solid 0.2vw #9E4B00" }}
                             disabled
                         />
                     </InputPlace>
@@ -2342,7 +2386,7 @@ export function CriadorDashboard (data: { token: string }) {
                             value={fazendaCobertura
                                 ? fazendaCobertura?.nomeFazenda
                                 : ""}
-                            style={{"border": "solid 0.2vw #9E4B00"}}
+                            style={{ "border": "solid 0.2vw #9E4B00" }}
                         />
                     </InputPlace>
 
@@ -2358,13 +2402,15 @@ export function CriadorDashboard (data: { token: string }) {
 
                             {...registerNascimento(
                                 "fazendaNascimento",
-                                {"required": true}
+                                { "required": true }
                             )}
-                            style={{"border": "solid 0.2vw #9E4B00",
-                                "width": "102%"}}
+                            style={{
+                                "border": "solid 0.2vw #9E4B00",
+                                "width": "102%"
+                            }}
                         >
                             <option selected disabled value="">
-                Selecione uma fazenda
+                                Selecione uma fazenda
                             </option>
                             {fazendas.map((data) => <option key={data.id} value={data.id}>
                                 {data.nomeFazenda}
@@ -2383,13 +2429,15 @@ export function CriadorDashboard (data: { token: string }) {
                         <Select
                             {...registerNascimento(
                                 "tecnicoNascimento",
-                                {"required": true}
+                                { "required": true }
                             )}
-                            style={{"border": "solid 0.2vw #9E4B00",
-                                "width": "102%"}}
+                            style={{
+                                "border": "solid 0.2vw #9E4B00",
+                                "width": "102%"
+                            }}
                         >
                             <option value={""} selected disabled>
-                Selecione um técnico
+                                Selecione um técnico
                             </option>
                             {tecnicos.map((data: TecnicoDTO) => <option key={data.id} value={data.id}>
                                 {data.nomeCompleto}
@@ -2408,9 +2456,9 @@ export function CriadorDashboard (data: { token: string }) {
                         <InputText
                             {...registerNascimento(
                                 "nomeBezerro",
-                                {"required": true}
+                                { "required": true }
                             )}
-                            style={{"border": "solid 0.2vw #9E4B00"}}
+                            style={{ "border": "solid 0.2vw #9E4B00" }}
                         />
                     </InputPlace>
 
@@ -2425,10 +2473,10 @@ export function CriadorDashboard (data: { token: string }) {
                         <InputText
                             {...registerNascimento(
                                 "dataNascimento",
-                                {"required": true}
+                                { "required": true }
                             )}
                             type="date"
-                            style={{"border": "solid 0.2vw #9E4B00"}}
+                            style={{ "border": "solid 0.2vw #9E4B00" }}
                         />
                     </InputPlace>
 
@@ -2442,7 +2490,7 @@ export function CriadorDashboard (data: { token: string }) {
                         />
                         <InputText
                             {...registerNascimento("observacoes")}
-                            style={{"border": "solid 0.2vw #9E4B00"}}
+                            style={{ "border": "solid 0.2vw #9E4B00" }}
                         />
                     </InputPlace>
 
