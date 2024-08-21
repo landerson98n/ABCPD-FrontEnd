@@ -1915,16 +1915,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                             : "none"}`
                     }}
                 >
-                    <div style={{ "width": "4vw" }}>
-                        <Image
-                            alt="Logo"
-                            style={{
-                                "width": "100%",
-                                "height": "auto",
-                                "objectFit": "cover"
-                            }}
-                        />
-                    </div>
+
                     <Text
                         fontFamily="pop"
                         size={"1.5vw"}
@@ -2101,16 +2092,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                             : "none"}`
                     }}
                 >
-                    <div style={{ "width": "4vw" }}>
-                        <Image
-                            alt="Logo"
-                            style={{
-                                "width": "100%",
-                                "height": "auto",
-                                "objectFit": "cover"
-                            }}
-                        />
-                    </div>
+
                     <Text
                         fontFamily="pop"
                         size={"1.5vw"}
@@ -3301,16 +3283,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 >
                     {verComunicCoberPage
                         ? <>
-                            <div style={{ "width": "10vw" }}>
-                                <Image
-                                    alt="logoAnimal"
-                                    style={{
-                                        "width": "100%",
-                                        "height": "auto",
-                                        "objectFit": "cover"
-                                    }}
-                                />
-                            </div>
+
                             <Text
                                 text="Detalhe da Cobertura | ABCPD"
                                 fontFamily="pop"
@@ -3696,16 +3669,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                             : "none"}`
                     }}
                 >
-                    <div style={{ "width": "4vw" }}>
-                        <Image
-                            alt="Logo"
-                            style={{
-                                "width": "100%",
-                                "height": "auto",
-                                "objectFit": "cover"
-                            }}
-                        />
-                    </div>
+
                     <Text
                         fontFamily="pop"
                         size={"1.5vw"}
@@ -3873,16 +3837,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 >
                     {criadorRegister
                         ? <>
-                            <div style={{ "width": "10vw" }}>
-                                <Image
-                                    alt="logoAnimal"
-                                    style={{
-                                        "width": "100%",
-                                        "height": "auto",
-                                        "objectFit": "cover"
-                                    }}
-                                />
-                            </div>
+
                             <Text
                                 text="Registro do Criador"
                                 fontFamily="pop"
@@ -4112,16 +4067,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                 >
                     {tecnicoRegister
                         ? <>
-                            <div style={{ "width": "10vw" }}>
-                                <Image
-                                    alt="logoAnimal"
-                                    style={{
-                                        "width": "100%",
-                                        "height": "auto",
-                                        "objectFit": "cover"
-                                    }}
-                                />
-                            </div>
+
                             <Text
                                 text="Registro do Técnico"
                                 fontFamily="pop"
@@ -4316,16 +4262,7 @@ export function SuperintendenteDashboard(data: { token: string }) {
                     onSubmit={handleSubmit(registrarUsuario)}
                 >
                     <>
-                        <div style={{ "width": "10vw" }}>
-                            <Image
-                                alt="logoAnimal"
-                                style={{
-                                    "width": "100%",
-                                    "height": "auto",
-                                    "objectFit": "cover"
-                                }}
-                            />
-                        </div>
+
                         <Text
                             text="Registrar usuario"
                             fontFamily="pop"
