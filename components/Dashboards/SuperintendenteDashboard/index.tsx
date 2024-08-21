@@ -92,9 +92,10 @@ import { SolicitacaoRegistroAnimalBaseDTO } from "@/utils/SolicitacaoDTO";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { sendEmail } from "@/actions/emailApi";
+import { useRouter } from "next/navigation";
 
 export function SuperintendenteDashboard(data: { token: string }) {
-
+    const router = useRouter();
     const decodedJwt = jsonWebTokenService.decode(data.token);
     const { token } = data;
     const { "isLoading": isLoadingSuperintendenteUser, "data": superintendenteUser } =

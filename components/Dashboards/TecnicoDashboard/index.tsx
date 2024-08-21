@@ -48,9 +48,10 @@ import {AnimaisRegistro} from "@/components/Screens/AnimaisSemRegistro";
 import {RegistroAnimal} from "@/components/Screens/RegistroAnimalPA";
 import {ViewComunicNascimento} from "@/components/Screens/ViewComunicNascimento";
 import {ComunicacaoNascimentoDto} from "@/utils/ComunicacaoNascimentoDTO";
+import { useRouter } from "next/navigation";
 
 export function TecnicoDashboard (data: { token: string }) {
-
+    const router = useRouter();
     const [
         paginas,
         setPaginas
